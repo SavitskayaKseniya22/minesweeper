@@ -1,52 +1,31 @@
 import React from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
+import { checkGridSize, checkSize } from '../utils';
 
-export const StyledField = styled.ul.attrs(() => ({
-  hardeness: 'easy',
-}))`
+export const StyledField = styled.ul`
   margin: 0 auto;
-
-  width: ${(props) => {
-    switch (props.hardeness) {
-      case 'medium':
-        return '468px';
-      case 'hard':
-        return '768px';
-      default:
-        return '468px';
-    }
-  }};
-  height: ${(props) => {
-    switch (props.hardeness) {
-      case 'medium':
-        return '468px';
-      case 'hard':
-        return '750px';
-      default:
-        return '468px';
-    }
-  }};
+  width: ${(props) => checkSize(props['aria-details'])};
+  height: ${(props) => checkSize(props['aria-details'])};
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(10, 1fr);
+  grid-template-columns: ${(props) => checkGridSize(props['aria-details'])};
+  grid-template-rows: ${(props) => checkGridSize(props['aria-details'])};
   grid-column-gap: 2px;
   grid-row-gap: 2px;
 `;
 
-function Field({ hardeness }: { hardeness: string }) {
-  // const [isPressed, setIsPressed] = useState(false);
+function Field({ difficulty }: { difficulty: string }) {
   const numberOfCells = {
     easy: 100,
     medium: 225,
     hard: 625,
   };
-  const arrayOfNumbers = new Array(numberOfCells[hardeness as keyof typeof numberOfCells]).fill(1);
+  const arrayOfNumbers = new Array(numberOfCells[difficulty as keyof typeof numberOfCells]).fill(1);
   const listItems = arrayOfNumbers.map((number, index) => (
     <Cell key={number.toString() + index.toString()} />
   ));
 
-  return <StyledField hardeness={hardeness}>{listItems}</StyledField>;
+  return <StyledField aria-details={difficulty}>{listItems}</StyledField>;
 }
 
 export default Field;
