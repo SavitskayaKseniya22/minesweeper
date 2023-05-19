@@ -11,7 +11,7 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: '../remember-moments-app/remember-moments-app/tsconfig.json'
+        project: '../minesweeper/tsconfig.json'
     },
     plugins: [
         'react',

@@ -1,5 +1,5 @@
 {
-  "name": "remember-moments-app",
+  "name": "minesweeper",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,6 +10,7 @@
     "@types/node": "^16.18.25",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.3",
+    "@types/styled-components": "^5.1.26",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
