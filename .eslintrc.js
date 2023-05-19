@@ -9,6 +9,10 @@ module.exports = {
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
+        parser: "@typescript-eslint/parser",
+        ecmaFeatures: {
+            jsx: true,
+        },
         ecmaVersion: 'latest',
         sourceType: 'module',
         project: '../minesweeper/tsconfig.json'
@@ -16,8 +20,11 @@ module.exports = {
     plugins: [
         'react',
         '@typescript-eslint',
+        "prettier"
+
     ],
     rules: {
+        "@typescript-eslint/no-explicit-any": "error",
     },
 
 };
