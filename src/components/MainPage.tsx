@@ -13,7 +13,9 @@ function MainPage() {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    navigate('game-board', { state: { difficulty: data.difficulty, bombNumber: data.bombNumber } });
+    navigate('game-board', {
+      state: { difficulty: data.difficulty as string, bombNumber: data.bombNumber as number },
+    });
   };
 
   return (
