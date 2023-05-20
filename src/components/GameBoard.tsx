@@ -5,11 +5,11 @@ import Field from './Field';
 
 function GameBoard() {
   const { state } = useLocation();
+  const { difficulty, bombNumber } = state;
 
-  console.log(state);
   return (
     <main>
-      <Field difficulty={state.difficulty} />
+      <Field difficulty={difficulty} bombNumber={bombNumber} />
     </main>
   );
 }

@@ -14,7 +14,8 @@ export const StyledField = styled.ul`
   grid-row-gap: 2px;
 `;
 
-function Field({ difficulty }: { difficulty: string }) {
+function Field({ difficulty, bombNumber }: { difficulty: string; bombNumber: number }) {
+  console.log(bombNumber);
   const numberOfCells = {
     easy: 100,
     medium: 225,

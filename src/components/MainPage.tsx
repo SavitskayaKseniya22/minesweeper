@@ -1,28 +1,30 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { Form, useNavigate } from 'react-router-dom';
 
 function MainPage() {
-  const [difficulty, setDifficulty] = useState('easy');
-  const { register, watch, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: { difficulty: 'easy', bombNumber: 10 },
+  });
+
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<FieldValues> = () =>
-    navigate('game-board', { state: { difficulty } });
-
-  useEffect(() => {
-    watch((value) => setDifficulty(value.difficulty));
-  }, [watch]);
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    navigate('game-board', { state: { difficulty: data.difficulty, bombNumber: data.bombNumber } });
+  };
 
   return (
     <main>
       <Form method="post" action="/" onSubmit={handleSubmit(onSubmit)}>
-        <select defaultValue={difficulty} {...register('difficulty')}>
+        <select {...register('difficulty')}>
           <option value="easy">easy</option>
           <option value="medium">medium</option>
           <option value="hard">hard</option>
         </select>
+        <input type="number" {...register('bombNumber', { required: true, max: 99, min: 10 })} />
         <button type="submit">Start</button>
       </Form>
     </main>
