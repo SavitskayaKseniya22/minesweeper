@@ -9,6 +9,10 @@ export const GlobalStyle = createGlobalStyle`
   #root{
     width: 100vw;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
   }
 
   li{
@@ -18,6 +22,10 @@ export const GlobalStyle = createGlobalStyle`
   ul{
     margin:0;
     padding:0;
+  }
+
+  main{
+    flex-grow:1;
   }
 `;
 

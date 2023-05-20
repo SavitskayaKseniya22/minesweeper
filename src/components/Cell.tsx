@@ -25,18 +25,12 @@ function Cell() {
 
   switch (isPressed) {
     case 'left':
-      return (
-        <StyledPressedLeftCell
-          onClick={() => {
-            setIsPressed('false');
-          }}
-        />
-      );
+      return <StyledPressedLeftCell />;
     case 'right':
       return (
         <StyledPressedRightCell
           onClick={() => {
-            setIsPressed('false');
+            setIsPressed('left');
           }}
           onContextMenu={(event) => {
             event.preventDefault();
