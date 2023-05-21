@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import styled from 'styled-components';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +15,17 @@ export const StyledCell = styled('li')`
   background-color: ${(props) => checkColor(props['aria-details'])};
 `;
 
-function Cell({ bombs }: { bombs: number }) {
+function Cell({
+  bombs,
+  handleStartGame,
+  handleStartPosition,
+  index,
+}: {
+  bombs: number;
+  handleStartGame?: Dispatch<SetStateAction<boolean>>;
+  handleStartPosition?: Dispatch<SetStateAction<number | undefined>>;
+  index: number;
+}) {
   const [isPressed, setIsPressed] = useState('false');
   const [isBombed] = useState(Boolean(bombs));
 
@@ -48,14 +58,27 @@ function Cell({ bombs }: { bombs: number }) {
         <StyledCell
           onClick={() => {
             setIsPressed('left');
+            if (handleStartGame && handleStartPosition) {
+              handleStartGame(true);
+              handleStartPosition(index);
+            }
           }}
           onContextMenu={(event) => {
             event.preventDefault();
             setIsPressed('right');
+            if (handleStartGame && handleStartPosition) {
+              handleStartGame(true);
+              handleStartPosition(index);
+            }
           }}
         />
       );
   }
 }
+
+Cell.defaultProps = {
+  handleStartGame: () => {},
+  handleStartPosition: () => {},
+};
 
 export default Cell;
