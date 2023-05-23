@@ -17,16 +17,14 @@ export const StyledCell = styled('li')`
 
 function Cell({
   bombs,
-  handleStartGame,
-  handleStartPosition,
-  index,
+  handleFinishGame,
   nearbyBombs,
+  onClick,
 }: {
   bombs: number;
-  handleStartGame?: Dispatch<SetStateAction<boolean>>;
-  handleStartPosition?: Dispatch<SetStateAction<number | undefined>>;
-  index: number;
+  handleFinishGame: Dispatch<SetStateAction<boolean>>;
   nearbyBombs?: number;
+  onClick: () => void;
 }) {
   const [isPressed, setIsPressed] = useState('false');
   const [isBombed] = useState(Boolean(bombs));
@@ -60,18 +58,16 @@ function Cell({
         <StyledCell
           onClick={() => {
             setIsPressed('left');
-            if (handleStartGame && handleStartPosition) {
-              handleStartPosition(index);
-              handleStartGame(true);
+            onClick();
+
+            if (isBombed) {
+              handleFinishGame(true);
             }
           }}
           onContextMenu={(event) => {
             event.preventDefault();
             setIsPressed('right');
-            if (handleStartGame && handleStartPosition) {
-              handleStartGame(true);
-              handleStartPosition(index);
-            }
+            onClick();
           }}
         />
       );
@@ -79,8 +75,6 @@ function Cell({
 }
 
 Cell.defaultProps = {
-  handleStartGame: () => {},
-  handleStartPosition: () => {},
   nearbyBombs: 0,
 };
 

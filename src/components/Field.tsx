@@ -12,9 +12,25 @@ export const StyledField = styled.ul`
   grid-template-rows: ${(props) => checkGridSize(props['aria-details'])};
   grid-column-gap: 2px;
   grid-row-gap: 2px;
+  pointer-events: ${(props) => {
+    if (props['aria-busy']) {
+      return 'none';
+    }
+    return 'auto';
+  }};
 `;
 
-function Field({ difficulty, bombNumber }: { difficulty: string; bombNumber: number }) {
+function Field({
+  difficulty,
+  bombNumber,
+  setIsGameFinished,
+  isGameFinished,
+}: {
+  difficulty: string;
+  bombNumber: number;
+  setIsGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
+  isGameFinished: boolean;
+}) {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [listItems, setListItems] = useState<number[] | undefined>(undefined);
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
@@ -30,15 +46,19 @@ function Field({ difficulty, bombNumber }: { difficulty: string; bombNumber: num
   }, [bombNumber, difficulty]);
 
   return (
-    <StyledField aria-details={difficulty}>
+    <StyledField aria-busy={isGameFinished} aria-details={difficulty}>
       {listItems &&
         listItems.map((number, index) => (
           <Cell
+            onClick={() => {
+              if (!isGameStarted) {
+                setIndexToInsert(index);
+                setIsGameStarted(true);
+              }
+            }}
             key={number.toString() + index.toString()}
             bombs={listItems[index]}
-            index={index}
-            handleStartGame={!isGameStarted ? setIsGameStarted : undefined}
-            handleStartPosition={!isGameStarted ? setIndexToInsert : undefined}
+            handleFinishGame={setIsGameFinished}
             nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty) : 0}
           />
         ))}

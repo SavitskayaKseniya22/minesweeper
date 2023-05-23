@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import Field from './Field';
 
 function GameBoard() {
   const { state }: { state: { difficulty: string; bombNumber: number } } = useLocation();
+  const [isGameFinished, setIsGameFinished] = useState(false);
   if (!state) {
     return <Navigate to="/" />;
   }
@@ -12,7 +13,18 @@ function GameBoard() {
 
   return (
     <main>
-      <Field difficulty={difficulty} bombNumber={bombNumber} />
+      {isGameFinished && (
+        <>
+          <span>game over</span>
+          <button type="button">start new game</button>
+        </>
+      )}
+      <Field
+        difficulty={difficulty}
+        bombNumber={bombNumber}
+        setIsGameFinished={setIsGameFinished}
+        isGameFinished={isGameFinished}
+      />
     </main>
   );
 }
