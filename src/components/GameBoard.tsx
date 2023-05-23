@@ -6,6 +6,7 @@ import Field from './Field';
 function GameBoard() {
   const { state }: { state: { difficulty: string; bombNumber: number } } = useLocation();
   const [isGameFinished, setIsGameFinished] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   if (!state) {
     return <Navigate to="/" />;
   }
@@ -16,7 +17,15 @@ function GameBoard() {
       {isGameFinished && (
         <>
           <span>game over</span>
-          <button type="button">start new game</button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsGameStarted(false);
+              setIsGameFinished(false);
+            }}
+          >
+            start new game
+          </button>
         </>
       )}
       <Field
@@ -24,6 +33,8 @@ function GameBoard() {
         bombNumber={bombNumber}
         setIsGameFinished={setIsGameFinished}
         isGameFinished={isGameFinished}
+        isGameStarted={isGameStarted}
+        setIsGameStarted={setIsGameStarted}
       />
     </main>
   );

@@ -25,25 +25,26 @@ function Field({
   bombNumber,
   setIsGameFinished,
   isGameFinished,
+  setIsGameStarted,
+  isGameStarted,
 }: {
   difficulty: string;
   bombNumber: number;
   setIsGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
   isGameFinished: boolean;
+  isGameStarted: boolean;
+  setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [isGameStarted, setIsGameStarted] = useState(false);
   const [listItems, setListItems] = useState<number[] | undefined>(undefined);
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (isGameStarted) {
       setListItems(updateCellsList(getCellsList(true, difficulty, bombNumber), indexToInsert));
+    } else {
+      setListItems(getCellsList(false, difficulty, bombNumber));
     }
   }, [bombNumber, difficulty, indexToInsert, isGameStarted]);
-
-  useEffect(() => {
-    setListItems(getCellsList(false, difficulty, bombNumber));
-  }, [bombNumber, difficulty]);
 
   return (
     <StyledField aria-busy={isGameFinished} aria-details={difficulty}>
