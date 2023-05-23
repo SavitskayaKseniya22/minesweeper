@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,14 +20,22 @@ function Cell({
   handleFinishGame,
   nearbyBombs,
   onClick,
+  reset,
 }: {
   bombs: number;
   handleFinishGame: Dispatch<SetStateAction<boolean>>;
   nearbyBombs?: number;
   onClick: () => void;
+  reset: boolean;
 }) {
   const [isPressed, setIsPressed] = useState('false');
   const [isBombed] = useState(Boolean(bombs));
+
+  useEffect(() => {
+    if (reset) {
+      setIsPressed('false');
+    }
+  }, [reset]);
 
   switch (isPressed) {
     case 'left':

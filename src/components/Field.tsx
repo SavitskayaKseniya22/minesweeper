@@ -27,6 +27,8 @@ function Field({
   isGameFinished,
   setIsGameStarted,
   isGameStarted,
+  reset,
+  setReset,
 }: {
   difficulty: string;
   bombNumber: number;
@@ -34,6 +36,8 @@ function Field({
   isGameFinished: boolean;
   isGameStarted: boolean;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
+  reset: boolean;
+  setReset: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [listItems, setListItems] = useState<number[] | undefined>(undefined);
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
@@ -55,12 +59,14 @@ function Field({
               if (!isGameStarted) {
                 setIndexToInsert(index);
                 setIsGameStarted(true);
+                setReset(false);
               }
             }}
             key={number.toString() + index.toString()}
             bombs={listItems[index]}
             handleFinishGame={setIsGameFinished}
             nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty) : 0}
+            reset={reset}
           />
         ))}
     </StyledField>

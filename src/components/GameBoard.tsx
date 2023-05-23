@@ -7,6 +7,7 @@ function GameBoard() {
   const { state }: { state: { difficulty: string; bombNumber: number } } = useLocation();
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [reset, setReset] = useState<boolean>(false);
   if (!state) {
     return <Navigate to="/" />;
   }
@@ -22,6 +23,7 @@ function GameBoard() {
             onClick={() => {
               setIsGameStarted(false);
               setIsGameFinished(false);
+              setReset(true);
             }}
           >
             start new game
@@ -35,6 +37,8 @@ function GameBoard() {
         isGameFinished={isGameFinished}
         isGameStarted={isGameStarted}
         setIsGameStarted={setIsGameStarted}
+        reset={reset}
+        setReset={setReset}
       />
     </main>
   );
