@@ -20,11 +20,13 @@ function Cell({
   handleStartGame,
   handleStartPosition,
   index,
+  nearbyBombs,
 }: {
   bombs: number;
   handleStartGame?: Dispatch<SetStateAction<boolean>>;
   handleStartPosition?: Dispatch<SetStateAction<number | undefined>>;
   index: number;
+  nearbyBombs?: number;
 }) {
   const [isPressed, setIsPressed] = useState('false');
   const [isBombed] = useState(Boolean(bombs));
@@ -36,7 +38,7 @@ function Cell({
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       ) : (
-        <StyledCell aria-details="empty" />
+        <StyledCell aria-details="empty">{nearbyBombs}</StyledCell>
       );
     case 'right':
       return (
@@ -59,8 +61,8 @@ function Cell({
           onClick={() => {
             setIsPressed('left');
             if (handleStartGame && handleStartPosition) {
-              handleStartGame(true);
               handleStartPosition(index);
+              handleStartGame(true);
             }
           }}
           onContextMenu={(event) => {
@@ -79,6 +81,7 @@ function Cell({
 Cell.defaultProps = {
   handleStartGame: () => {},
   handleStartPosition: () => {},
+  nearbyBombs: 0,
 };
 
 export default Cell;

@@ -42,3 +42,63 @@ export function shuffle(array: number[]) {
   }
   return arrayToChange;
 }
+
+const fieldSettings = {
+  easy: { bombNumber: 100, widthOfField: 10 },
+  medium: { bombNumber: 225, widthOfField: 15 },
+  hard: { bombNumber: 625, widthOfField: 25 },
+};
+
+function correctExtremeValue(i: number, array: number[], widthOfField: number) {
+  if (i % widthOfField === 0 || (i + 1) % widthOfField === 0) {
+    return undefined;
+  }
+  return array[i];
+}
+
+export function getNearbyBombs(i: number, array: number[], difficulty: string) {
+  const { widthOfField } = fieldSettings[difficulty as keyof typeof fieldSettings];
+
+  const upperIndex = i - widthOfField;
+  const lowerIndex = i + widthOfField;
+
+  const topLine = [
+    correctExtremeValue(upperIndex - 1, array, widthOfField),
+    array[upperIndex],
+    correctExtremeValue(upperIndex + 1, array, widthOfField),
+  ];
+
+  const middleLine = [
+    correctExtremeValue(i - 1, array, widthOfField),
+    correctExtremeValue(i + 1, array, widthOfField),
+  ];
+
+  const bottomLine = [
+    correctExtremeValue(lowerIndex - 1, array, widthOfField),
+    array[lowerIndex],
+    correctExtremeValue(lowerIndex + 1, array, widthOfField),
+  ];
+
+  const count = topLine.concat(middleLine).concat(bottomLine);
+  return count.filter((value) => value !== undefined).reduce((a, b) => Number(a) + Number(b));
+}
+
+export function getCellsList(trigger: boolean, difficulty: string, bombNumber: number) {
+  const arrayOfBombs = new Array(Number(bombNumber)).fill(1);
+  const arrayOfEmptyCells = new Array(
+    fieldSettings[difficulty as keyof typeof fieldSettings].bombNumber
+  ).fill(0);
+
+  const gameSetup = shuffle(
+    arrayOfBombs.concat(arrayOfEmptyCells).slice(0, arrayOfEmptyCells.length)
+  );
+  const cellsList = trigger ? gameSetup : arrayOfEmptyCells;
+  return cellsList;
+}
+
+export function updateCellsList(listItems: number[], indexToInsert: number | undefined) {
+  listItems.splice(indexToInsert as number, 0, 0);
+  const indexToDelete = listItems.indexOf(0, indexToInsert as number);
+  listItems.splice(indexToDelete + 1, 1);
+  return listItems;
+}
