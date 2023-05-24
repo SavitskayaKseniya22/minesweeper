@@ -1,13 +1,18 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Navigate, useActionData } from 'react-router-dom';
 import Field from './Field';
-import { GameContext } from './MainPage';
+import { GameCycleContext, InitContext } from './MainPage';
 
 function GameBoard() {
-  const [isGameFinished, setIsGameFinished] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isGameFinished, setIsGameFinished] = useState(false);
   const [resetValue, setResetValue] = useState<number>(1);
+
+  const gameCycleValues = useMemo(
+    () => ({ isGameFinished, isGameStarted }),
+    [isGameFinished, isGameStarted]
+  );
 
   const actionData = useActionData() as { difficulty: string; bombNumber: string };
   if (!actionData) {
@@ -15,33 +20,33 @@ function GameBoard() {
   }
 
   return (
-    <GameContext.Provider value={actionData}>
-      <main>
-        {isGameFinished && (
-          <>
-            <span>game over</span>
-            <button
-              type="button"
-              onClick={() => {
-                setIsGameStarted(false);
-                setIsGameFinished(false);
-                setResetValue(Math.random());
-              }}
-            >
-              start new game
-            </button>
-          </>
-        )}
+    <InitContext.Provider value={actionData}>
+      <GameCycleContext.Provider value={gameCycleValues}>
+        <main>
+          {isGameFinished && (
+            <>
+              <span>game over</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsGameStarted(false);
+                  setIsGameFinished(false);
+                  setResetValue(Math.random());
+                }}
+              >
+                start new game
+              </button>
+            </>
+          )}
 
-        <Field
-          setIsGameFinished={setIsGameFinished}
-          isGameFinished={isGameFinished}
-          isGameStarted={isGameStarted}
-          setIsGameStarted={setIsGameStarted}
-          resetValue={resetValue}
-        />
-      </main>
-    </GameContext.Provider>
+          <Field
+            setIsGameFinished={setIsGameFinished}
+            setIsGameStarted={setIsGameStarted}
+            resetValue={resetValue}
+          />
+        </main>
+      </GameCycleContext.Provider>
+    </InitContext.Provider>
   );
 }
 
