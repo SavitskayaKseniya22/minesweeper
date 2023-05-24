@@ -83,22 +83,30 @@ export function getNearbyBombs(i: number, array: number[], difficulty: string) {
   return count.filter((value) => value !== undefined).reduce((a, b) => Number(a) + Number(b));
 }
 
-export function getCellsList(trigger: boolean, difficulty: string, bombNumber: string) {
-  const arrayOfBombs = new Array(Number(bombNumber)).fill(1);
+export function getCellsList(
+  trigger: boolean,
+  difficulty: string,
+  bombNumber: string,
+  indexToInsert: number | undefined
+) {
   const arrayOfEmptyCells = new Array(
     fieldSettings[difficulty as keyof typeof fieldSettings].bombNumber
   ).fill(0);
 
+  if (!trigger) {
+    return arrayOfEmptyCells;
+  }
+
+  const arrayOfBombs = new Array(Number(bombNumber)).fill(1);
   const gameSetup = shuffle(
     arrayOfBombs.concat(arrayOfEmptyCells).slice(0, arrayOfEmptyCells.length)
   );
-  const cellsList = trigger ? gameSetup : arrayOfEmptyCells;
-  return cellsList;
-}
 
-export function updateCellsList(listItems: number[], indexToInsert: number | undefined) {
-  listItems.splice(indexToInsert as number, 0, 0);
-  const indexToDelete = listItems.indexOf(0, indexToInsert as number);
-  listItems.splice(indexToDelete + 1, 1);
-  return listItems;
+  if (indexToInsert) {
+    gameSetup.splice(indexToInsert as number, 0, 0);
+    const indexToDelete = gameSetup.indexOf(0, indexToInsert as number);
+    gameSetup.splice(indexToDelete + 1, 1);
+  }
+
+  return gameSetup;
 }

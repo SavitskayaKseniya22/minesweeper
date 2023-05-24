@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
-import { checkGridSize, checkSize, getCellsList, getNearbyBombs, updateCellsList } from '../utils';
+import { checkGridSize, checkSize, getCellsList, getNearbyBombs } from '../utils';
 import { GameContext } from './MainPage';
 
 export const StyledField = styled.ul`
@@ -34,18 +34,13 @@ function Field({
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
   resetValue: number;
 }) {
-  const [listItems, setListItems] = useState<number[] | undefined>(undefined);
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
-
   const { difficulty, bombNumber } = useContext(GameContext);
 
-  useEffect(() => {
-    if (isGameStarted) {
-      setListItems(updateCellsList(getCellsList(true, difficulty, bombNumber), indexToInsert));
-    } else {
-      setListItems(getCellsList(false, difficulty, bombNumber));
-    }
-  }, [bombNumber, difficulty, indexToInsert, isGameStarted]);
+  const listItems = useMemo(
+    () => getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert),
+    [bombNumber, difficulty, indexToInsert, isGameStarted]
+  );
 
   return (
     <StyledField aria-busy={isGameFinished} aria-details={difficulty}>
