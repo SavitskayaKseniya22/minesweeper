@@ -7,7 +7,7 @@ import { GameContext } from './MainPage';
 function GameBoard() {
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [reset, setReset] = useState<boolean>(false);
+  const [resetValue, setResetValue] = useState<number>(1);
 
   const actionData = useActionData() as { difficulty: string; bombNumber: string };
   if (!actionData) {
@@ -25,7 +25,7 @@ function GameBoard() {
               onClick={() => {
                 setIsGameStarted(false);
                 setIsGameFinished(false);
-                setReset(true);
+                setResetValue(Math.random());
               }}
             >
               start new game
@@ -38,8 +38,7 @@ function GameBoard() {
           isGameFinished={isGameFinished}
           isGameStarted={isGameStarted}
           setIsGameStarted={setIsGameStarted}
-          reset={reset}
-          setReset={setReset}
+          resetValue={resetValue}
         />
       </main>
     </GameContext.Provider>
