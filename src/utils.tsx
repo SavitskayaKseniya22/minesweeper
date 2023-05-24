@@ -51,7 +51,7 @@ const fieldSettings = {
 
 function correctExtremeValue(i: number, array: number[], widthOfField: number) {
   if (i % widthOfField === 0 || (i + 1) % widthOfField === 0) {
-    return undefined;
+    return 0;
   }
   return array[i];
 }

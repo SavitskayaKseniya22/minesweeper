@@ -52,15 +52,17 @@ function Field({
       {listItems &&
         listItems.map((number, index) => (
           <Cell
-            onClick={() => {
+            key={number.toString() + index.toString() + resetValue}
+            handleStartAndFinish={(e) => {
               if (!isGameStarted) {
                 setIndexToInsert(index);
                 setIsGameStarted(true);
               }
+              if (e.type === 'click' && isGameStarted && listItems[index]) {
+                setIsGameFinished(true);
+              }
             }}
-            key={number.toString() + index.toString() + resetValue}
-            bombs={listItems[index]}
-            handleFinishGame={setIsGameFinished}
+            isBombed={!!listItems[index]}
             nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty as string) : 0}
           />
         ))}
