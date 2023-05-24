@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
 import { checkGridSize, checkSize, getCellsList, getNearbyBombs, updateCellsList } from '../utils';
+import { GameContext } from './MainPage';
 
 export const StyledField = styled.ul`
   margin: 0 auto;
@@ -21,8 +22,6 @@ export const StyledField = styled.ul`
 `;
 
 function Field({
-  difficulty,
-  bombNumber,
   setIsGameFinished,
   isGameFinished,
   setIsGameStarted,
@@ -30,8 +29,6 @@ function Field({
   reset,
   setReset,
 }: {
-  difficulty: string;
-  bombNumber: number;
   setIsGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
   isGameFinished: boolean;
   isGameStarted: boolean;
@@ -41,6 +38,8 @@ function Field({
 }) {
   const [listItems, setListItems] = useState<number[] | undefined>(undefined);
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
+
+  const { difficulty, bombNumber } = useContext(GameContext);
 
   useEffect(() => {
     if (isGameStarted) {
@@ -65,7 +64,7 @@ function Field({
             key={number.toString() + index.toString()}
             bombs={listItems[index]}
             handleFinishGame={setIsGameFinished}
-            nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty) : 0}
+            nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty as string) : 0}
             reset={reset}
           />
         ))}

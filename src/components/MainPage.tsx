@@ -1,26 +1,20 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { Form, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { Form } from 'react-router-dom';
+
+export const GameContext = React.createContext({ difficulty: 'easy', bombNumber: '10' });
 
 function MainPage() {
-  const { register, handleSubmit } = useForm({
+  const { register } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { difficulty: 'easy', bombNumber: 10 },
   });
 
-  const navigate = useNavigate();
-
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    navigate('game-board', {
-      state: { difficulty: data.difficulty as string, bombNumber: data.bombNumber as number },
-    });
-  };
-
   return (
     <main>
-      <Form method="post" action="/" onSubmit={handleSubmit(onSubmit)}>
+      <Form method="post" action="game-board">
         <select {...register('difficulty')}>
           <option value="easy">easy</option>
           <option value="medium">medium</option>

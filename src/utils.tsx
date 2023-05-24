@@ -83,7 +83,7 @@ export function getNearbyBombs(i: number, array: number[], difficulty: string) {
   return count.filter((value) => value !== undefined).reduce((a, b) => Number(a) + Number(b));
 }
 
-export function getCellsList(trigger: boolean, difficulty: string, bombNumber: number) {
+export function getCellsList(trigger: boolean, difficulty: string, bombNumber: string) {
   const arrayOfBombs = new Array(Number(bombNumber)).fill(1);
   const arrayOfEmptyCells = new Array(
     fieldSettings[difficulty as keyof typeof fieldSettings].bombNumber
