@@ -3,12 +3,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Form } from 'react-router-dom';
 
-export const InitContext = React.createContext({ difficulty: 'easy', bombNumber: '10' });
-export const GameCycleContext = React.createContext({
-  isGameStarted: false,
-  isGameFinished: false,
-});
-
 function MainPage() {
   const { register } = useForm({
     mode: 'onChange',

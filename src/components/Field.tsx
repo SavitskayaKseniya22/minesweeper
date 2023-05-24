@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
 import { checkGridSize, checkSize, getCellsList, getNearbyBombs } from '../utils';
-import { GameCycleContext, InitContext } from './MainPage';
+import { GameCycleContext, InitContext } from '../contexts';
 
 export const StyledField = styled.ul`
   margin: 0 auto;
@@ -21,20 +21,14 @@ export const StyledField = styled.ul`
   }};
 `;
 
-function Field({
-  setIsGameFinished,
-  setIsGameStarted,
-  resetValue,
-}: {
-  setIsGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
-  resetValue: number;
-}) {
+function Field({ resetValue }: { resetValue: number }) {
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
 
-  const { isGameFinished, isGameStarted } = useContext(GameCycleContext);
+  const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
+    useContext(GameCycleContext);
 
   const { difficulty, bombNumber } = useContext(InitContext);
+
   const listItems = useMemo(
     () => getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert),
     [bombNumber, difficulty, indexToInsert, isGameStarted]

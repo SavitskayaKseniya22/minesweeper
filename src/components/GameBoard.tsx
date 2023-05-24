@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { Navigate, useActionData } from 'react-router-dom';
 import Field from './Field';
-import { GameCycleContext, InitContext } from './MainPage';
+import { InitContext, GameCycleContext } from '../contexts';
 
 function GameBoard() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -10,7 +10,7 @@ function GameBoard() {
   const [resetValue, setResetValue] = useState<number>(1);
 
   const gameCycleValues = useMemo(
-    () => ({ isGameFinished, isGameStarted }),
+    () => ({ isGameFinished, isGameStarted, setIsGameStarted, setIsGameFinished }),
     [isGameFinished, isGameStarted]
   );
 
@@ -39,11 +39,7 @@ function GameBoard() {
             </>
           )}
 
-          <Field
-            setIsGameFinished={setIsGameFinished}
-            setIsGameStarted={setIsGameStarted}
-            resetValue={resetValue}
-          />
+          <Field resetValue={resetValue} />
         </main>
       </GameCycleContext.Provider>
     </InitContext.Provider>
