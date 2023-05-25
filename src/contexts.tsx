@@ -20,3 +20,11 @@ export const RemainingBombsContext = React.createContext<{
   bombsCounterValue: 10,
   setBombsCounterValue: () => {},
 });
+
+export const MovesContext = React.createContext<{
+  setMovesCounterValue: React.Dispatch<React.SetStateAction<{ left: number; right: number }>>;
+  movesCounterValue: { left: number; right: number };
+}>({
+  movesCounterValue: { left: 0, right: 0 },
+  setMovesCounterValue: () => {},
+});

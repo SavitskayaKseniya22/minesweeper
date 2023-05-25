@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkColor } from '../utils';
-import { RemainingBombsContext } from '../contexts';
+import { MovesContext, RemainingBombsContext } from '../contexts';
 
 export const StyledCell = styled('li')`
   color: black;
@@ -27,6 +27,7 @@ function Cell({
 }) {
   const [isPressed, setIsPressed] = useState('false');
   const { bombsCounterValue, setBombsCounterValue } = useContext(RemainingBombsContext);
+  const { movesCounterValue, setMovesCounterValue } = useContext(MovesContext);
 
   switch (isPressed) {
     case 'left':
@@ -43,11 +44,19 @@ function Cell({
           aria-details="question"
           onClick={() => {
             setIsPressed('left');
+            setMovesCounterValue({
+              ...movesCounterValue,
+              left: movesCounterValue.left + 1,
+            });
           }}
           onContextMenu={(event) => {
             event.preventDefault();
             setIsPressed('false');
             setBombsCounterValue(bombsCounterValue + 1);
+            setMovesCounterValue({
+              ...movesCounterValue,
+              right: movesCounterValue.right + 1,
+            });
           }}
         >
           <FontAwesomeIcon icon={faQuestion} />
@@ -59,12 +68,20 @@ function Cell({
           onClick={(e) => {
             setIsPressed('left');
             handleStartAndFinish(e);
+            setMovesCounterValue({
+              ...movesCounterValue,
+              left: movesCounterValue.left + 1,
+            });
           }}
           onContextMenu={(e) => {
             e.preventDefault();
             setIsPressed('right');
             handleStartAndFinish(e);
             setBombsCounterValue(bombsCounterValue - 1);
+            setMovesCounterValue({
+              ...movesCounterValue,
+              right: movesCounterValue.right + 1,
+            });
           }}
         />
       );
