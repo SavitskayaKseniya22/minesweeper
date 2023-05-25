@@ -12,3 +12,11 @@ export const GameCycleContext = React.createContext<{
   setIsGameFinished: () => {},
   setIsGameStarted: () => {},
 });
+
+export const RemainingBombsContext = React.createContext<{
+  setBombsCounterValue: React.Dispatch<React.SetStateAction<number>>;
+  bombsCounterValue: number;
+}>({
+  bombsCounterValue: 10,
+  setBombsCounterValue: () => {},
+});

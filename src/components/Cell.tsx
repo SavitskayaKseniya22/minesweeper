@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkColor } from '../utils';
+import { RemainingBombsContext } from '../contexts';
 
 export const StyledCell = styled('li')`
   color: black;
@@ -25,6 +26,7 @@ function Cell({
   handleStartAndFinish: (e: React.MouseEvent) => void;
 }) {
   const [isPressed, setIsPressed] = useState('false');
+  const { bombsCounterValue, setBombsCounterValue } = useContext(RemainingBombsContext);
 
   switch (isPressed) {
     case 'left':
@@ -45,6 +47,7 @@ function Cell({
           onContextMenu={(event) => {
             event.preventDefault();
             setIsPressed('false');
+            setBombsCounterValue(bombsCounterValue + 1);
           }}
         >
           <FontAwesomeIcon icon={faQuestion} />
@@ -61,6 +64,7 @@ function Cell({
             e.preventDefault();
             setIsPressed('right');
             handleStartAndFinish(e);
+            setBombsCounterValue(bombsCounterValue - 1);
           }}
         />
       );
