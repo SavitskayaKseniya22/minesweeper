@@ -89,7 +89,7 @@ export function getCellsList(
   bombNumber: string,
   indexToInsert: number | undefined
 ) {
-  const arrayOfEmptyCells = new Array(
+  const arrayOfEmptyCells: number[] = new Array(
     fieldSettings[difficulty as keyof typeof fieldSettings].bombNumber
   ).fill(0);
 
@@ -97,7 +97,7 @@ export function getCellsList(
     return arrayOfEmptyCells;
   }
 
-  const arrayOfBombs = new Array(Number(bombNumber)).fill(1);
+  const arrayOfBombs: number[] = new Array(Number(bombNumber)).fill(1);
   const gameSetup = shuffle(
     arrayOfBombs.concat(arrayOfEmptyCells).slice(0, arrayOfEmptyCells.length)
   );

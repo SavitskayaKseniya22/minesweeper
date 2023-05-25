@@ -28,3 +28,13 @@ export const MovesContext = React.createContext<{
   movesCounterValue: { left: 0, right: 0 },
   setMovesCounterValue: () => {},
 });
+
+export const TimeContext = React.createContext<{
+  time: number;
+  setTime: React.Dispatch<React.SetStateAction<number>>;
+  intervalRef: React.MutableRefObject<number | NodeJS.Timeout> | undefined;
+}>({
+  time: 0,
+  setTime: () => {},
+  intervalRef: undefined,
+});
