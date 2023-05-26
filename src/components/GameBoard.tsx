@@ -2,8 +2,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Navigate, useActionData } from 'react-router-dom';
 import Field from './Field';
-import { InitContext, GameCycleContext, RemainingBombsContext } from '../contexts';
-import BombsCounter from './BombsCounter';
+import { InitContext, GameCycleContext } from '../contexts';
+import BombsCounter, { BombsCounterDataProvider } from './BombsCounter';
 import MovesCounter, { MovesCounterDataProvider } from './MovesCounter';
 import Timer from './Timer';
 
@@ -12,7 +12,6 @@ function GameBoard() {
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [resetValue, setResetValue] = useState<number>(1);
   const actionData = useActionData() as { difficulty: string; bombNumber: string };
-  const [bombsCounterValue, setBombsCounterValue] = useState(Number(actionData?.bombNumber) || 10);
 
   const intervalRef = useRef<number | NodeJS.Timeout>(0);
 
@@ -33,19 +32,14 @@ function GameBoard() {
     [isGameFinished, isGameStarted]
   );
 
-  const bombsCounterValues = useMemo(
-    () => ({
-      bombsCounterValue,
-      setBombsCounterValue,
-    }),
-    [bombsCounterValue]
-  );
-
   useEffect(() => {
     if (isGameFinished) {
       clearInterval(intervalRef.current);
     }
   }, [isGameFinished]);
+
+  // const { resetClicksValue } = useMoveState();
+  // const { resetBombsValue } = useBombsState();
 
   if (!actionData) {
     return <Navigate to="/" />;
@@ -54,7 +48,7 @@ function GameBoard() {
   return (
     <InitContext.Provider value={actionDataValues}>
       <GameCycleContext.Provider value={gameCycleValues}>
-        <RemainingBombsContext.Provider value={bombsCounterValues}>
+        <BombsCounterDataProvider maxValue={Number(actionData.bombNumber)}>
           <MovesCounterDataProvider>
             <main>
               {isGameFinished && (
@@ -66,20 +60,21 @@ function GameBoard() {
                       setIsGameStarted(false);
                       setIsGameFinished(false);
                       setResetValue(Math.random());
-                      setBombsCounterValue(Number(actionData?.bombNumber) || 10);
+                      // resetBombsValue();
+                      // resetClicksValue();
                     }}
                   >
                     start new game
                   </button>
                 </>
               )}
-              <BombsCounter maxValue={bombsCounterValue} />
+              <BombsCounter />
               <MovesCounter />
               <Timer intervalRef={intervalRef} resetValue={resetValue} />
               <Field resetValue={resetValue} />
             </main>
           </MovesCounterDataProvider>
-        </RemainingBombsContext.Provider>
+        </BombsCounterDataProvider>
       </GameCycleContext.Provider>
     </InitContext.Provider>
   );

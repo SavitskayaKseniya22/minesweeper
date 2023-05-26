@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkColor } from '../utils';
-import { RemainingBombsContext } from '../contexts';
+
 import { useMoveState } from './MovesCounter';
+import { useBombsState } from './BombsCounter';
 
 export const StyledCell = styled('li')`
   color: black;
@@ -27,9 +28,9 @@ function Cell({
   handleStartAndFinish: (e: React.MouseEvent) => void;
 }) {
   const [isPressed, setIsPressed] = useState('false');
-  const { bombsCounterValue, setBombsCounterValue } = useContext(RemainingBombsContext);
 
   const { updateLeftClicksValue, updateRightClicksValue } = useMoveState();
+  const { bombsValue, increseBombsValue, decreseBombsValue } = useBombsState();
 
   switch (isPressed) {
     case 'left':
@@ -51,7 +52,7 @@ function Cell({
           onContextMenu={(event) => {
             event.preventDefault();
             setIsPressed('false');
-            setBombsCounterValue(bombsCounterValue + 1);
+            increseBombsValue();
             updateRightClicksValue();
           }}
         >
@@ -67,11 +68,13 @@ function Cell({
             updateLeftClicksValue();
           }}
           onContextMenu={(e) => {
-            e.preventDefault();
-            setIsPressed('right');
-            handleStartAndFinish(e);
-            setBombsCounterValue(bombsCounterValue - 1);
-            updateRightClicksValue();
+            if (bombsValue > 0) {
+              e.preventDefault();
+              setIsPressed('right');
+              handleStartAndFinish(e);
+              decreseBombsValue();
+              updateRightClicksValue();
+            }
           }}
         />
       );

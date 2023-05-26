@@ -2,7 +2,7 @@ import React, { ReactNode, createContext, useContext, useMemo, useState } from '
 
 type State = { left: number; right: number };
 type Context = {
-  state: State;
+  movesValue: State;
   updateLeftClicksValue: () => void;
   updateRightClicksValue: () => void;
   resetClicksValue: () => void;
@@ -11,34 +11,34 @@ type Context = {
 const MovesCounterContext = createContext<Context>({} as Context);
 
 export function MovesCounterDataProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>({ left: 0, right: 0 });
+  const [movesValue, setMovesValue] = useState<State>({ left: 0, right: 0 });
 
   const value = useMemo(() => {
     const updateLeftClicksValue = () => {
-      setState({
-        ...state,
-        left: state.left + 1,
+      setMovesValue({
+        ...movesValue,
+        left: movesValue.left + 1,
       });
     };
 
     const updateRightClicksValue = () => {
-      setState({
-        ...state,
-        right: state.right + 1,
+      setMovesValue({
+        ...movesValue,
+        right: movesValue.right + 1,
       });
     };
 
     const resetClicksValue = () => {
-      setState({ left: 0, right: 0 });
+      setMovesValue({ left: 0, right: 0 });
     };
 
     return {
-      state,
+      movesValue,
       updateLeftClicksValue,
       updateRightClicksValue,
       resetClicksValue,
     };
-  }, [state]);
+  }, [movesValue]);
 
   return <MovesCounterContext.Provider value={value}>{children}</MovesCounterContext.Provider>;
 }
@@ -46,12 +46,12 @@ export function MovesCounterDataProvider({ children }: { children: ReactNode }) 
 export const useMoveState = () => useContext(MovesCounterContext);
 
 function MovesCounter() {
-  const { state } = useMoveState();
+  const { movesValue } = useMoveState();
   return (
     <div>
-      Left clicks made: {state.left}
+      Left clicks made: {movesValue.left}
       <br />
-      Right clicks made: {state.right}
+      Right clicks made: {movesValue.right}
     </div>
   );
 }
