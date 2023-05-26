@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkColor } from '../utils';
-import { MovesContext, RemainingBombsContext } from '../contexts';
+import { RemainingBombsContext } from '../contexts';
+import { useMoveState } from './MovesCounter';
 
 export const StyledCell = styled('li')`
   color: black;
@@ -27,7 +28,8 @@ function Cell({
 }) {
   const [isPressed, setIsPressed] = useState('false');
   const { bombsCounterValue, setBombsCounterValue } = useContext(RemainingBombsContext);
-  const { movesCounterValue, setMovesCounterValue } = useContext(MovesContext);
+
+  const { updateLeftClicksValue, updateRightClicksValue } = useMoveState();
 
   switch (isPressed) {
     case 'left':
@@ -44,19 +46,13 @@ function Cell({
           aria-details="question"
           onClick={() => {
             setIsPressed('left');
-            setMovesCounterValue({
-              ...movesCounterValue,
-              left: movesCounterValue.left + 1,
-            });
+            updateLeftClicksValue();
           }}
           onContextMenu={(event) => {
             event.preventDefault();
             setIsPressed('false');
             setBombsCounterValue(bombsCounterValue + 1);
-            setMovesCounterValue({
-              ...movesCounterValue,
-              right: movesCounterValue.right + 1,
-            });
+            updateRightClicksValue();
           }}
         >
           <FontAwesomeIcon icon={faQuestion} />
@@ -68,24 +64,20 @@ function Cell({
           onClick={(e) => {
             setIsPressed('left');
             handleStartAndFinish(e);
-            setMovesCounterValue({
-              ...movesCounterValue,
-              left: movesCounterValue.left + 1,
-            });
+            updateLeftClicksValue();
           }}
           onContextMenu={(e) => {
             e.preventDefault();
             setIsPressed('right');
             handleStartAndFinish(e);
             setBombsCounterValue(bombsCounterValue - 1);
-            setMovesCounterValue({
-              ...movesCounterValue,
-              right: movesCounterValue.right + 1,
-            });
+            updateRightClicksValue();
           }}
         />
       );
   }
 }
 
-export default Cell;
+const CellMemo = React.memo(Cell);
+
+export default CellMemo;

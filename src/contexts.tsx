@@ -1,6 +1,8 @@
 import React from 'react';
 
-export const InitContext = React.createContext({ difficulty: 'easy', bombNumber: '10' });
+export const InitContext = React.createContext({
+  actionData: { difficulty: 'easy', bombNumber: '10' },
+});
 export const GameCycleContext = React.createContext<{
   isGameFinished: boolean;
   isGameStarted: boolean;
@@ -19,12 +21,4 @@ export const RemainingBombsContext = React.createContext<{
 }>({
   bombsCounterValue: 10,
   setBombsCounterValue: () => {},
-});
-
-export const MovesContext = React.createContext<{
-  setMovesCounterValue: React.Dispatch<React.SetStateAction<{ left: number; right: number }>>;
-  movesCounterValue: { left: number; right: number };
-}>({
-  movesCounterValue: { left: 0, right: 0 },
-  setMovesCounterValue: () => {},
 });
