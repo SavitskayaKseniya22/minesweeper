@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
 import { checkGridSize, checkSize, getCellsList, getNearbyBombs } from '../utils';
-import { GameCycleContext, InitContext, TimeContext } from '../contexts';
+import { GameCycleContext, InitContext } from '../contexts';
 
 export const StyledField = styled.ul`
   margin: 0 auto;
@@ -28,7 +28,6 @@ function Field({ resetValue }: { resetValue: number }) {
     useContext(GameCycleContext);
 
   const { difficulty, bombNumber } = useContext(InitContext);
-  const { intervalRef } = useContext(TimeContext);
 
   const listItems = useMemo(
     () => getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert),
@@ -47,7 +46,6 @@ function Field({ resetValue }: { resetValue: number }) {
             }
             if (e.type === 'click' && isGameStarted && listItems[index]) {
               setIsGameFinished(true);
-              clearInterval(intervalRef?.current);
             }
           }}
           isBombed={!!listItems[index]}
@@ -58,4 +56,6 @@ function Field({ resetValue }: { resetValue: number }) {
   );
 }
 
-export default Field;
+const FieldMemo = React.memo(Field);
+
+export default FieldMemo;

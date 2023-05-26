@@ -1,8 +1,14 @@
-import React, { useContext, useEffect } from 'react';
-import { TimeContext } from '../contexts';
+/* eslint-disable no-param-reassign */
+import React, { useEffect, useState } from 'react';
 
-function Timer() {
-  const { time, setTime, intervalRef } = useContext(TimeContext);
+function Timer({
+  intervalRef,
+  resetValue,
+}: {
+  intervalRef: React.MutableRefObject<number | NodeJS.Timeout> | undefined;
+  resetValue: number;
+}) {
+  const [time, setTime] = useState(0);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -14,7 +20,11 @@ function Timer() {
     return () => {
       clearInterval(intervalId);
     };
-  }, [intervalRef, setTime, time]);
+  }, [intervalRef, time]);
+
+  useEffect(() => {
+    setTime(0);
+  }, [resetValue]);
 
   return <div>{time}</div>;
 }
