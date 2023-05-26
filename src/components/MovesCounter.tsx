@@ -10,4 +10,6 @@ function MovesCounter({ value }: { value: { left: number; right: number } }) {
   );
 }
 
-export default MovesCounter;
+const MovesCounterMemo = React.memo(MovesCounter);
+
+export default MovesCounterMemo;

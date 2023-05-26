@@ -4,4 +4,6 @@ function BombsCounter({ maxValue }: { maxValue: number }) {
   return <div>Bombs left: {maxValue}</div>;
 }
 
-export default BombsCounter;
+const BombsCounterMemo = React.memo(BombsCounter);
+
+export default BombsCounterMemo;
