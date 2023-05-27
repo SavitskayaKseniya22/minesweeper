@@ -4,8 +4,8 @@ import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkColor } from '../utils';
 
-import { useMoveState } from './MovesCounter';
-import { useBombsState } from './BombsCounter';
+import { useMoveAPI } from './MovesCounter';
+import { useBombsApi, useBombsState } from './BombsCounter';
 
 export const StyledCell = styled('li')`
   color: black;
@@ -28,9 +28,9 @@ function Cell({
   handleStartAndFinish: (e: React.MouseEvent) => void;
 }) {
   const [isPressed, setIsPressed] = useState('false');
-
-  const { updateLeftClicksValue, updateRightClicksValue } = useMoveState();
-  const { bombsValue, increseBombsValue, decreseBombsValue } = useBombsState();
+  const { updateLeftClicksValue, updateRightClicksValue } = useMoveAPI();
+  const { increseBombsValue, decreseBombsValue } = useBombsApi();
+  const valueOfBombs = useBombsState();
 
   switch (isPressed) {
     case 'left':
@@ -68,7 +68,7 @@ function Cell({
             updateLeftClicksValue();
           }}
           onContextMenu={(e) => {
-            if (bombsValue > 0) {
+            if (valueOfBombs > 0) {
               e.preventDefault();
               setIsPressed('right');
               handleStartAndFinish(e);

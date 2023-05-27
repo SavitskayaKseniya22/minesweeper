@@ -27,31 +27,40 @@ function Field({ resetValue }: { resetValue: number }) {
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
 
-  const { difficulty, bombNumber } = useContext(InitContext);
+  const { difficulty, bombNumber } = useContext(InitContext).actionData;
 
-  const listItems = useMemo(
-    () => getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert),
-    [bombNumber, difficulty, indexToInsert, isGameStarted]
-  );
+  const cellsListValue = useMemo(() => {
+    const listItems = getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert);
+
+    return listItems.map((number, index) => (
+      <Cell
+        key={number.toString() + index.toString() + resetValue}
+        handleStartAndFinish={(e) => {
+          if (!isGameStarted) {
+            setIndexToInsert(index);
+            setIsGameStarted(true);
+          }
+          if (e.type === 'click' && isGameStarted && listItems[index]) {
+            setIsGameFinished(true);
+          }
+        }}
+        isBombed={!!listItems[index]}
+        nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty as string) : 0}
+      />
+    ));
+  }, [
+    bombNumber,
+    difficulty,
+    indexToInsert,
+    isGameStarted,
+    resetValue,
+    setIsGameFinished,
+    setIsGameStarted,
+  ]);
 
   return (
     <StyledField aria-busy={isGameFinished} aria-details={difficulty}>
-      {listItems.map((number, index) => (
-        <Cell
-          key={number.toString() + index.toString() + resetValue}
-          handleStartAndFinish={(e) => {
-            if (!isGameStarted) {
-              setIndexToInsert(index);
-              setIsGameStarted(true);
-            }
-            if (e.type === 'click' && isGameStarted && listItems[index]) {
-              setIsGameFinished(true);
-            }
-          }}
-          isBombed={!!listItems[index]}
-          nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty as string) : 0}
-        />
-      ))}
+      {cellsListValue}
     </StyledField>
   );
 }

@@ -12,7 +12,6 @@ function GameBoard() {
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [resetValue, setResetValue] = useState<number>(1);
   const actionData = useActionData() as { difficulty: string; bombNumber: string };
-
   const intervalRef = useRef<number | NodeJS.Timeout>(0);
 
   const actionDataValues = useMemo(
@@ -48,7 +47,7 @@ function GameBoard() {
   return (
     <InitContext.Provider value={actionDataValues}>
       <GameCycleContext.Provider value={gameCycleValues}>
-        <BombsCounterDataProvider maxValue={Number(actionData.bombNumber)}>
+        <BombsCounterDataProvider>
           <MovesCounterDataProvider>
             <main>
               {isGameFinished && (

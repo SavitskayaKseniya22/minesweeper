@@ -1,57 +1,74 @@
-import React, { ReactNode, createContext, useContext, useMemo, useState } from 'react';
+import React, { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
 
 type State = { left: number; right: number };
-type Context = {
-  movesValue: State;
+
+type API = {
   updateLeftClicksValue: () => void;
   updateRightClicksValue: () => void;
   resetClicksValue: () => void;
 };
 
-const MovesCounterContext = createContext<Context>({} as Context);
+type Actions =
+  | { type: 'updateLeftClicksValue' }
+  | { type: 'updateRightClicksValue' }
+  | { type: 'resetClicksValue' };
+
+const reducer = (state: State, action: Actions): State => {
+  switch (action.type) {
+    case 'updateLeftClicksValue':
+      return { ...state, left: state.left + 1 };
+    case 'updateRightClicksValue':
+      return { ...state, left: state.right + 1 };
+    case 'resetClicksValue':
+      return { left: 0, right: 0 };
+    default:
+      return { left: 0, right: 0 };
+  }
+};
+
+const MovesCounterValueContext = createContext<State>({} as State);
+const MovesCounterApiContext = createContext<API>({} as API);
 
 export function MovesCounterDataProvider({ children }: { children: ReactNode }) {
-  const [movesValue, setMovesValue] = useState<State>({ left: 0, right: 0 });
+  const [state, dispatch] = useReducer(reducer, { left: 0, right: 0 });
 
-  const value = useMemo(() => {
+  const api = useMemo(() => {
     const updateLeftClicksValue = () => {
-      setMovesValue({
-        ...movesValue,
-        left: movesValue.left + 1,
-      });
+      dispatch({ type: 'updateLeftClicksValue' });
     };
 
     const updateRightClicksValue = () => {
-      setMovesValue({
-        ...movesValue,
-        right: movesValue.right + 1,
-      });
+      dispatch({ type: 'updateRightClicksValue' });
     };
 
     const resetClicksValue = () => {
-      setMovesValue({ left: 0, right: 0 });
+      dispatch({ type: 'resetClicksValue' });
     };
 
     return {
-      movesValue,
       updateLeftClicksValue,
       updateRightClicksValue,
       resetClicksValue,
     };
-  }, [movesValue]);
+  }, []);
 
-  return <MovesCounterContext.Provider value={value}>{children}</MovesCounterContext.Provider>;
+  return (
+    <MovesCounterValueContext.Provider value={state}>
+      <MovesCounterApiContext.Provider value={api}>{children}</MovesCounterApiContext.Provider>
+    </MovesCounterValueContext.Provider>
+  );
 }
 
-export const useMoveState = () => useContext(MovesCounterContext);
+export const useMoveState = () => useContext(MovesCounterValueContext);
+export const useMoveAPI = () => useContext(MovesCounterApiContext);
 
 function MovesCounter() {
-  const { movesValue } = useMoveState();
+  const { left, right } = useMoveState();
   return (
     <div>
-      Left clicks made: {movesValue.left}
+      Left clicks made: {left}
       <br />
-      Right clicks made: {movesValue.right}
+      Right clicks made: {right}
     </div>
   );
 }

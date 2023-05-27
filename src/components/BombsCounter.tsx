@@ -1,52 +1,70 @@
-import React, { ReactNode, createContext, useContext, useMemo, useState } from 'react';
+import React, { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
+import { InitContext } from '../contexts';
 
-type Context = {
-  bombsValue: number;
+type API = {
   increseBombsValue: () => void;
   decreseBombsValue: () => void;
-  resetBombsValue: () => void;
+  resetBombsValue: (maxValue: number) => void;
 };
 
-const BombsCounterContext = createContext<Context>({} as Context);
+type Actions =
+  | { type: 'increseBombsValue' }
+  | { type: 'decreseBombsValue' }
+  | { type: 'resetBombsValue'; maxValue: number };
 
-export function BombsCounterDataProvider({
-  children,
-  maxValue,
-}: {
-  children: ReactNode;
-  maxValue: number;
-}) {
-  const [bombsValue, setBombsValue] = useState(maxValue);
+const reducer = (state: number, action: Actions): number => {
+  switch (action.type) {
+    case 'increseBombsValue':
+      return state + 1;
+    case 'decreseBombsValue':
+      return state - 1;
+    case 'resetBombsValue':
+      return action.maxValue;
+    default:
+      return action;
+  }
+};
 
-  const value = useMemo(() => {
+const BombsCounterValueContext = createContext<number>(0);
+const BombsCounterApiContext = createContext<API>({} as API);
+
+export function BombsCounterDataProvider({ children }: { children: ReactNode }) {
+  const { bombNumber } = useContext(InitContext).actionData;
+  const [state, dispatch] = useReducer(reducer, Number(bombNumber));
+
+  const api = useMemo(() => {
     const increseBombsValue = () => {
-      setBombsValue(bombsValue + 1);
+      dispatch({ type: 'increseBombsValue' });
     };
 
     const decreseBombsValue = () => {
-      setBombsValue(bombsValue - 1);
+      dispatch({ type: 'decreseBombsValue' });
     };
 
-    const resetBombsValue = () => {
-      setBombsValue(maxValue);
+    const resetBombsValue = (maxValue: number) => {
+      dispatch({ type: 'resetBombsValue', maxValue });
     };
 
     return {
-      bombsValue,
       increseBombsValue,
       decreseBombsValue,
       resetBombsValue,
     };
-  }, [maxValue, bombsValue]);
+  }, []);
 
-  return <BombsCounterContext.Provider value={value}>{children}</BombsCounterContext.Provider>;
+  return (
+    <BombsCounterValueContext.Provider value={state}>
+      <BombsCounterApiContext.Provider value={api}>{children}</BombsCounterApiContext.Provider>
+    </BombsCounterValueContext.Provider>
+  );
 }
 
-export const useBombsState = () => useContext(BombsCounterContext);
+export const useBombsState = () => useContext(BombsCounterValueContext);
+export const useBombsApi = () => useContext(BombsCounterApiContext);
 
 function BombsCounter() {
-  const { bombsValue } = useBombsState();
-  return <div>Bombs left: {bombsValue}</div>;
+  const value = useBombsState();
+  return <div>Bombs left: {value}</div>;
 }
 
 const BombsCounterMemo = React.memo(BombsCounter);
