@@ -80,10 +80,11 @@ export function getNearbyBombs(i: number, array: number[], difficulty: string) {
   ];
 
   const count = topLine.concat(middleLine).concat(bottomLine);
+
   return count.filter((value) => value !== undefined).reduce((a, b) => Number(a) + Number(b));
 }
 
-export function getCellsList(
+export function getCellsContentList(
   trigger: boolean,
   difficulty: string,
   bombNumber: string,
@@ -109,4 +110,23 @@ export function getCellsList(
   }
 
   return gameSetup;
+}
+
+export function getCellsList(
+  trigger: boolean,
+  difficulty: string,
+  bombNumber: string,
+  indexToInsert: number | undefined
+) {
+  const list = getCellsContentList(trigger, difficulty, bombNumber, indexToInsert);
+
+  const cells = list.map((elem, index) => {
+    const cell = {
+      isBombed: Boolean(elem),
+      nearbyBombs: getNearbyBombs(index, list, difficulty as string),
+    };
+    return cell;
+  });
+
+  return cells;
 }

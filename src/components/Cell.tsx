@@ -19,12 +19,13 @@ export const StyledCell = styled('li')`
 `;
 
 function Cell({
-  isBombed,
-  nearbyBombs,
+  cellSettings,
   handleStartAndFinish,
 }: {
-  isBombed: boolean;
-  nearbyBombs: number;
+  cellSettings: {
+    isBombed: boolean;
+    nearbyBombs: number;
+  };
   handleStartAndFinish: (e: React.MouseEvent) => void;
 }) {
   const [isPressed, setIsPressed] = useState('false');
@@ -34,12 +35,12 @@ function Cell({
 
   switch (isPressed) {
     case 'left':
-      return isBombed ? (
+      return cellSettings.isBombed ? (
         <StyledCell aria-details="bomb">
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       ) : (
-        <StyledCell aria-details="empty">{nearbyBombs}</StyledCell>
+        <StyledCell aria-details="empty">{cellSettings.nearbyBombs}</StyledCell>
       );
     case 'right':
       return (

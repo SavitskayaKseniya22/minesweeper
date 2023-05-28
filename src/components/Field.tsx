@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Cell from './Cell';
-import { checkGridSize, checkSize, getCellsList, getNearbyBombs } from '../utils';
+import { checkGridSize, checkSize, getCellsList } from '../utils';
 import { GameCycleContext, InitContext } from '../contexts';
 
 export const StyledField = styled.ul`
@@ -29,38 +29,34 @@ function Field({ resetValue }: { resetValue: number }) {
 
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
 
-  const cellsListValue = useMemo(() => {
-    const listItems = getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert);
+  const listItems = useMemo(
+    () => getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert),
+    [bombNumber, difficulty, indexToInsert, isGameStarted]
+  );
 
-    return listItems.map((number, index) => (
-      <Cell
-        key={number.toString() + index.toString() + resetValue}
-        handleStartAndFinish={(e) => {
-          if (!isGameStarted) {
-            setIndexToInsert(index);
-            setIsGameStarted(true);
-          }
-          if (e.type === 'click' && isGameStarted && listItems[index]) {
-            setIsGameFinished(true);
-          }
-        }}
-        isBombed={!!listItems[index]}
-        nearbyBombs={isGameStarted ? getNearbyBombs(index, listItems, difficulty as string) : 0}
-      />
-    ));
-  }, [
-    bombNumber,
-    difficulty,
-    indexToInsert,
-    isGameStarted,
-    resetValue,
-    setIsGameFinished,
-    setIsGameStarted,
-  ]);
+  const cellsList = useMemo(
+    () =>
+      listItems.map((item, index) => (
+        <Cell
+          key={item.toString() + index.toString() + resetValue}
+          handleStartAndFinish={(e) => {
+            if (!isGameStarted) {
+              setIndexToInsert(index);
+              setIsGameStarted(true);
+            }
+            if (e.type === 'click' && isGameStarted && item.isBombed) {
+              setIsGameFinished(true);
+            }
+          }}
+          cellSettings={item}
+        />
+      )),
+    [isGameStarted, listItems, resetValue, setIsGameFinished, setIsGameStarted]
+  );
 
   return (
     <StyledField aria-busy={isGameFinished} aria-details={difficulty}>
-      {cellsListValue}
+      {cellsList}
     </StyledField>
   );
 }
