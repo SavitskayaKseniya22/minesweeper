@@ -59,9 +59,6 @@ function GameBoard() {
                       setIsGameStarted(false);
                       setIsGameFinished(false);
                       setResetValue(Math.random());
-                      // resetBombsValue();
-                      // resetClicksValue();
-                      // setPressedIndexes([]);
                     }}
                   >
                     start new game

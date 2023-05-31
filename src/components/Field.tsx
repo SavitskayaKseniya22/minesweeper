@@ -1,9 +1,11 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Cell from './Cell';
 import { getCellsContentList, getCellsList, getNearbyBombs } from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
+import { useBombsApi } from './BombsCounter';
+import { useMoveAPI } from './MovesCounter';
 
 function Field({ resetValue }: { resetValue: number }) {
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
@@ -31,6 +33,17 @@ function Field({ resetValue }: { resetValue: number }) {
     [dataToMakeCells, bombList, ranges, pressedIndexes]
   );
 
+  const { resetClicksValue } = useMoveAPI();
+  const { resetBombsValue } = useBombsApi();
+
+  useEffect(() => {
+    if (!isGameFinished && !isGameStarted) {
+      setPressedIndexes([]);
+      resetBombsValue(Number(bombNumber));
+      resetClicksValue();
+    }
+  }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValue]);
+
   const cellsList = useMemo(
     () =>
       rawCellsList.map((item, index) => (
@@ -43,7 +56,6 @@ function Field({ resetValue }: { resetValue: number }) {
             }
             if (e.type === 'click' && isGameStarted && item.isBombed) {
               setIsGameFinished(true);
-              // setPressedIndexes([]);
             }
             setPressedIndexes([...pressedIndexes, index]);
           }}
