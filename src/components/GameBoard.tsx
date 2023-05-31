@@ -37,9 +37,6 @@ function GameBoard() {
     }
   }, [isGameFinished]);
 
-  // const { resetClicksValue } = useMoveState();
-  // const { resetBombsValue } = useBombsState();
-
   if (!actionData) {
     return <Navigate to="/" />;
   }

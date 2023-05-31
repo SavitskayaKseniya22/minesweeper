@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Cell from './Cell';
-import { getCellsContentList, getCellsList, getNearbyBombs } from '../utils/utils';
+import {
+  getCellsContentList,
+  getCellsList,
+  getFieldSettings,
+  getNearbyBombs,
+} from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
@@ -8,6 +13,8 @@ import { useBombsApi } from './BombsCounter';
 import { useMoveAPI } from './MovesCounter';
 
 function Field({ resetValue }: { resetValue: number }) {
+  const { resetClicksValue } = useMoveAPI();
+  const { resetBombsValue } = useBombsApi();
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
   const [pressedIndexes, setPressedIndexes] = useState<number[]>([] as number[]);
 
@@ -15,26 +22,30 @@ function Field({ resetValue }: { resetValue: number }) {
     useContext(GameCycleContext);
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
 
+  const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
+
   const dataToMakeCells = useMemo(
-    () => getCellsContentList(isGameStarted, difficulty, bombNumber, indexToInsert),
-    [bombNumber, difficulty, indexToInsert, isGameStarted]
+    () => getCellsContentList(isGameStarted, fieldSettings.cellsNumber, bombNumber, indexToInsert),
+    [bombNumber, fieldSettings.cellsNumber, indexToInsert, isGameStarted]
   );
 
   const bombList = useMemo(
     () =>
-      dataToMakeCells.map((elem, i) => getNearbyBombs(i, dataToMakeCells, difficulty as string)),
-    [dataToMakeCells, difficulty]
+      dataToMakeCells.map((elem, i) =>
+        getNearbyBombs(i, dataToMakeCells, fieldSettings.widthOfField)
+      ),
+    [dataToMakeCells, fieldSettings.widthOfField]
   );
 
-  const ranges = useMemo(() => getConnectedRanges(bombList, difficulty), [bombList, difficulty]);
+  const ranges = useMemo(
+    () => getConnectedRanges(bombList, fieldSettings.widthOfField),
+    [bombList, fieldSettings.widthOfField]
+  );
 
   const rawCellsList = useMemo(
     () => getCellsList(dataToMakeCells, bombList, ranges, pressedIndexes),
     [dataToMakeCells, bombList, ranges, pressedIndexes]
   );
-
-  const { resetClicksValue } = useMoveAPI();
-  const { resetBombsValue } = useBombsApi();
 
   useEffect(() => {
     if (!isGameFinished && !isGameStarted) {

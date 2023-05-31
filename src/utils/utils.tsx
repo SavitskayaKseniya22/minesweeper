@@ -1,4 +1,14 @@
 /* eslint-disable no-plusplus */
+
+export function getFieldSettings(difficulty: string) {
+  const fieldSettings = {
+    easy: { cellsNumber: 100, widthOfField: 10 },
+    medium: { cellsNumber: 225, widthOfField: 15 },
+    hard: { cellsNumber: 625, widthOfField: 25 },
+  };
+  return fieldSettings[difficulty as keyof typeof fieldSettings];
+}
+
 export function checkSize(prop: string | undefined) {
   switch (prop) {
     case 'medium':
@@ -43,12 +53,6 @@ export function shuffle(array: number[]) {
   return arrayToChange;
 }
 
-export const fieldSettings = {
-  easy: { bombNumber: 100, widthOfField: 10 },
-  medium: { bombNumber: 225, widthOfField: 15 },
-  hard: { bombNumber: 625, widthOfField: 25 },
-};
-
 function correctExtremeValue(i: number, array: number[], widthOfField: number) {
   if (i % widthOfField === 0 || (i + 1) % widthOfField === 0) {
     return 0;
@@ -56,11 +60,9 @@ function correctExtremeValue(i: number, array: number[], widthOfField: number) {
   return array[i];
 }
 
-export function getNearbyBombs(i: number, array: number[], difficulty: string) {
+export function getNearbyBombs(i: number, array: number[], widthOfField: number) {
   let count = 100;
   if (!array[i]) {
-    const { widthOfField } = fieldSettings[difficulty as keyof typeof fieldSettings];
-
     const upperIndex = i - widthOfField;
     const lowerIndex = i + widthOfField;
 
@@ -93,13 +95,11 @@ export function getNearbyBombs(i: number, array: number[], difficulty: string) {
 
 export function getCellsContentList(
   trigger: boolean,
-  difficulty: string,
+  cellsNumber: number,
   bombNumber: string,
   indexToInsert: number | undefined
 ) {
-  const arrayOfEmptyCells: number[] = new Array(
-    fieldSettings[difficulty as keyof typeof fieldSettings].bombNumber
-  ).fill(0);
+  const arrayOfEmptyCells: number[] = new Array(cellsNumber).fill(0);
 
   if (!trigger) {
     return arrayOfEmptyCells;

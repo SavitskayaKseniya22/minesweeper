@@ -8,6 +8,7 @@ function getArrayOfIndexes(array: number[]) {
   }
   return madeArray;
 }
+
 function cutArray(array: number[], width: number) {
   let i = 0;
   const exitArray = [];
@@ -90,14 +91,7 @@ function reduceRanges(ranges: number[][], width: number) {
   return rec(ranges);
 }
 
-const fieldSettings = {
-  easy: { bombNumber: 100, widthOfField: 10 },
-  medium: { bombNumber: 225, widthOfField: 15 },
-  hard: { bombNumber: 625, widthOfField: 25 },
-};
-
-export default function getConnectedRanges(array: number[], difficulty: string) {
-  const { widthOfField } = fieldSettings[difficulty as keyof typeof fieldSettings];
+export default function getConnectedRanges(array: number[], widthOfField: number) {
   const arrayOfIndexes = getArrayOfIndexes(array);
   const arrayToChange = array.slice();
   const chopedArray = cutArray(arrayToChange, widthOfField);
