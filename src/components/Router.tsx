@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, Outlet, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
-import { Footer } from './Footer';
 import GameBoard from './GameBoard';
 import MainPage from './MainPage';
-import { Header } from './Header';
+import Header from './Header';
+import Footer from './Footer';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
