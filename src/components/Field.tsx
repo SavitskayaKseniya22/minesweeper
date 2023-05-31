@@ -1,42 +1,39 @@
 import React, { useContext, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import Cell from './Cell';
-import { checkGridSize, checkSize, getCellsList } from '../utils';
+import { getCellsContentList, getCellsList, getNearbyBombs } from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
-
-export const StyledField = styled.ul`
-  margin: 0 auto;
-  width: ${(props) => checkSize(props['aria-details'])};
-  height: ${(props) => checkSize(props['aria-details'])};
-  display: grid;
-  grid-template-columns: ${(props) => checkGridSize(props['aria-details'])};
-  grid-template-rows: ${(props) => checkGridSize(props['aria-details'])};
-  grid-column-gap: 2px;
-  grid-row-gap: 2px;
-  pointer-events: ${(props) => {
-    if (props['aria-busy']) {
-      return 'none';
-    }
-    return 'auto';
-  }};
-`;
+import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
+import { StyledField } from './styledComponents';
 
 function Field({ resetValue }: { resetValue: number }) {
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
+  const [pressedIndexes, setPressedIndexes] = useState<number[]>([] as number[]);
 
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
-
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
 
-  const listItems = useMemo(
-    () => getCellsList(isGameStarted, difficulty, bombNumber, indexToInsert),
+  const dataToMakeCells = useMemo(
+    () => getCellsContentList(isGameStarted, difficulty, bombNumber, indexToInsert),
     [bombNumber, difficulty, indexToInsert, isGameStarted]
+  );
+
+  const bombList = useMemo(
+    () =>
+      dataToMakeCells.map((elem, i) => getNearbyBombs(i, dataToMakeCells, difficulty as string)),
+    [dataToMakeCells, difficulty]
+  );
+
+  const ranges = useMemo(() => getConnectedRanges(bombList, difficulty), [bombList, difficulty]);
+
+  const rawCellsList = useMemo(
+    () => getCellsList(dataToMakeCells, bombList, ranges, pressedIndexes),
+    [dataToMakeCells, bombList, ranges, pressedIndexes]
   );
 
   const cellsList = useMemo(
     () =>
-      listItems.map((item, index) => (
+      rawCellsList.map((item, index) => (
         <Cell
           key={item.toString() + index.toString() + resetValue}
           handleStartAndFinish={(e) => {
@@ -46,12 +43,14 @@ function Field({ resetValue }: { resetValue: number }) {
             }
             if (e.type === 'click' && isGameStarted && item.isBombed) {
               setIsGameFinished(true);
+              // setPressedIndexes([]);
             }
+            setPressedIndexes([...pressedIndexes, index]);
           }}
           cellSettings={item}
         />
       )),
-    [isGameStarted, listItems, resetValue, setIsGameFinished, setIsGameStarted]
+    [isGameStarted, pressedIndexes, rawCellsList, resetValue, setIsGameFinished, setIsGameStarted]
   );
 
   return (

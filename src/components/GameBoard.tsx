@@ -61,6 +61,7 @@ function GameBoard() {
                       setResetValue(Math.random());
                       // resetBombsValue();
                       // resetClicksValue();
+                      // setPressedIndexes([]);
                     }}
                   >
                     start new game

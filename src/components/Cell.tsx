@@ -1,22 +1,9 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { checkColor } from '../utils';
-
 import { useMoveAPI } from './MovesCounter';
 import { useBombsApi, useBombsState } from './BombsCounter';
-
-export const StyledCell = styled('li')`
-  color: black;
-  border: 1px solid black;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  background-color: ${(props) => checkColor(props['aria-details'])};
-`;
+import { StyledCell } from './styledComponents';
 
 function Cell({
   cellSettings,
@@ -25,13 +12,18 @@ function Cell({
   cellSettings: {
     isBombed: boolean;
     nearbyBombs: number;
+    isOpen: string;
   };
   handleStartAndFinish: (e: React.MouseEvent) => void;
 }) {
-  const [isPressed, setIsPressed] = useState('false');
+  const [isPressed, setIsPressed] = useState(cellSettings.isOpen);
   const { updateLeftClicksValue, updateRightClicksValue } = useMoveAPI();
   const { increseBombsValue, decreseBombsValue } = useBombsApi();
   const valueOfBombs = useBombsState();
+
+  useEffect(() => {
+    setIsPressed(cellSettings.isOpen);
+  }, [cellSettings.isOpen]);
 
   switch (isPressed) {
     case 'left':
@@ -40,8 +32,11 @@ function Cell({
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       ) : (
-        <StyledCell aria-details="empty">{cellSettings.nearbyBombs}</StyledCell>
+        <StyledCell aria-details="empty">
+          {cellSettings.nearbyBombs > 0 ? cellSettings.nearbyBombs : ''}
+        </StyledCell>
       );
+
     case 'right':
       return (
         <StyledCell

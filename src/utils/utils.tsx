@@ -43,7 +43,7 @@ export function shuffle(array: number[]) {
   return arrayToChange;
 }
 
-const fieldSettings = {
+export const fieldSettings = {
   easy: { bombNumber: 100, widthOfField: 10 },
   medium: { bombNumber: 225, widthOfField: 15 },
   hard: { bombNumber: 625, widthOfField: 25 },
@@ -57,31 +57,38 @@ function correctExtremeValue(i: number, array: number[], widthOfField: number) {
 }
 
 export function getNearbyBombs(i: number, array: number[], difficulty: string) {
-  const { widthOfField } = fieldSettings[difficulty as keyof typeof fieldSettings];
+  let count = 100;
+  if (!array[i]) {
+    const { widthOfField } = fieldSettings[difficulty as keyof typeof fieldSettings];
 
-  const upperIndex = i - widthOfField;
-  const lowerIndex = i + widthOfField;
+    const upperIndex = i - widthOfField;
+    const lowerIndex = i + widthOfField;
 
-  const topLine = [
-    correctExtremeValue(upperIndex - 1, array, widthOfField),
-    array[upperIndex],
-    correctExtremeValue(upperIndex + 1, array, widthOfField),
-  ];
+    const topLine = [
+      correctExtremeValue(upperIndex - 1, array, widthOfField),
+      array[upperIndex],
+      correctExtremeValue(upperIndex + 1, array, widthOfField),
+    ];
 
-  const middleLine = [
-    correctExtremeValue(i - 1, array, widthOfField),
-    correctExtremeValue(i + 1, array, widthOfField),
-  ];
+    const middleLine = [
+      correctExtremeValue(i - 1, array, widthOfField),
+      correctExtremeValue(i + 1, array, widthOfField),
+    ];
 
-  const bottomLine = [
-    correctExtremeValue(lowerIndex - 1, array, widthOfField),
-    array[lowerIndex],
-    correctExtremeValue(lowerIndex + 1, array, widthOfField),
-  ];
+    const bottomLine = [
+      correctExtremeValue(lowerIndex - 1, array, widthOfField),
+      array[lowerIndex],
+      correctExtremeValue(lowerIndex + 1, array, widthOfField),
+    ];
 
-  const count = topLine.concat(middleLine).concat(bottomLine);
+    count = topLine
+      .concat(middleLine)
+      .concat(bottomLine)
+      .filter((value) => value !== undefined)
+      .reduce((a, b) => Number(a) + Number(b));
+  }
 
-  return count.filter((value) => value !== undefined).reduce((a, b) => Number(a) + Number(b));
+  return count;
 }
 
 export function getCellsContentList(
@@ -113,20 +120,33 @@ export function getCellsContentList(
 }
 
 export function getCellsList(
-  trigger: boolean,
-  difficulty: string,
-  bombNumber: string,
-  indexToInsert: number | undefined
+  list: number[],
+  bombsList: number[],
+  ranges: number[][],
+  indexesToInsert: number[]
 ) {
-  const list = getCellsContentList(trigger, difficulty, bombNumber, indexToInsert);
+  const filtered = indexesToInsert
+    ? ranges.filter((item) => {
+        const commonData = indexesToInsert.concat(item);
+        const changedData = Array.from(new Set(commonData));
+        if (commonData.length === changedData.length) {
+          return false;
+        }
+        return true;
+      })
+    : [];
 
   const cells = list.map((elem, index) => {
     const cell = {
       isBombed: Boolean(elem),
-      nearbyBombs: getNearbyBombs(index, list, difficulty as string),
+      nearbyBombs: bombsList[index],
+      isOpen:
+        filtered.filter((item) => item.includes(index)).length > 0 && ranges.flat().length !== 100
+          ? 'left'
+          : 'false',
     };
+
     return cell;
   });
-
   return cells;
 }
