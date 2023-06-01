@@ -53,10 +53,19 @@ export function shuffle(array: number[]) {
   return arrayToChange;
 }
 
-function correctExtremeValue(i: number, array: number[], widthOfField: number) {
-  if (i % widthOfField === 0 || (i + 1) % widthOfField === 0) {
+function correctExtremeRightValue(i: number, array: number[], widthOfField: number) {
+  if (i % widthOfField === 0) {
     return 0;
   }
+
+  return array[i];
+}
+
+function correctExtremeLeftValue(i: number, array: number[], widthOfField: number) {
+  if (i % widthOfField === 9) {
+    return 0;
+  }
+
   return array[i];
 }
 
@@ -67,20 +76,20 @@ export function getNearbyBombs(i: number, array: number[], widthOfField: number)
     const lowerIndex = i + widthOfField;
 
     const topLine = [
-      correctExtremeValue(upperIndex - 1, array, widthOfField),
+      correctExtremeLeftValue(upperIndex - 1, array, widthOfField),
       array[upperIndex],
-      correctExtremeValue(upperIndex + 1, array, widthOfField),
+      correctExtremeRightValue(upperIndex + 1, array, widthOfField),
     ];
 
     const middleLine = [
-      correctExtremeValue(i - 1, array, widthOfField),
-      correctExtremeValue(i + 1, array, widthOfField),
+      correctExtremeLeftValue(i - 1, array, widthOfField),
+      correctExtremeRightValue(i + 1, array, widthOfField),
     ];
 
     const bottomLine = [
-      correctExtremeValue(lowerIndex - 1, array, widthOfField),
+      correctExtremeLeftValue(lowerIndex - 1, array, widthOfField),
       array[lowerIndex],
-      correctExtremeValue(lowerIndex + 1, array, widthOfField),
+      correctExtremeRightValue(lowerIndex + 1, array, widthOfField),
     ];
 
     count = topLine
