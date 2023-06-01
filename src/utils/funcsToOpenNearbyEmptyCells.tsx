@@ -91,11 +91,65 @@ function reduceRanges(ranges: number[][], width: number) {
   return rec(ranges);
 }
 
+function correctExtremeRightValue(i: number, widthOfField: number) {
+  if (i % widthOfField === 0) {
+    return -1;
+  }
+  return i;
+}
+
+function correctExtremeLeftValue(i: number, widthOfField: number) {
+  if (i % widthOfField === 9) {
+    return -1;
+  }
+  return i;
+}
+
+function getAroundIndexes(i: number, array: number[], widthOfField: number) {
+  const upperIndex = i - widthOfField;
+  const lowerIndex = i + widthOfField;
+
+  const topLine = [
+    correctExtremeLeftValue(upperIndex - 1, widthOfField),
+    upperIndex,
+    correctExtremeRightValue(upperIndex + 1, widthOfField),
+  ];
+
+  const middleLine = [
+    correctExtremeLeftValue(i - 1, widthOfField),
+    correctExtremeRightValue(i + 1, widthOfField),
+  ];
+
+  const bottomLine = [
+    correctExtremeLeftValue(lowerIndex - 1, widthOfField),
+    lowerIndex,
+    correctExtremeRightValue(lowerIndex + 1, widthOfField),
+  ];
+
+  const count = topLine
+    .concat(middleLine)
+    .concat(bottomLine)
+    .filter((value) => value > -1 && value < widthOfField * widthOfField && array[value] !== 0)
+    .concat([i]);
+
+  return count;
+}
+
+export function getAroundIndexesForArray(
+  array: number[],
+  bombsList: number[],
+  widthOfField: number
+) {
+  const data = array.map((item) => getAroundIndexes(item, bombsList, widthOfField));
+  return Array.from(new Set(data.flat()));
+}
+
 export default function getConnectedRanges(array: number[], widthOfField: number) {
   const arrayOfIndexes = getArrayOfIndexes(array);
   const arrayToChange = array.slice();
   const chopedArray = cutArray(arrayToChange, widthOfField);
   const chopedArrayOfIndxes = cutArray(arrayOfIndexes, widthOfField);
   const ranges = getRanges(chopedArray, chopedArrayOfIndxes);
-  return reduceRanges(ranges, widthOfField);
+  const reducedRanges = reduceRanges(ranges, widthOfField);
+  return reducedRanges;
 }

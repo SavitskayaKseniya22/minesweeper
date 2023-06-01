@@ -45,8 +45,9 @@ function Field({ resetValue }: { resetValue: number }) {
   );
 
   const rawCellsList = useMemo(
-    () => getCellsList(dataToMakeCells, bombList, ranges, pressedIndexes),
-    [dataToMakeCells, bombList, ranges, pressedIndexes]
+    () =>
+      getCellsList(dataToMakeCells, bombList, ranges, pressedIndexes, fieldSettings.widthOfField),
+    [dataToMakeCells, bombList, ranges, pressedIndexes, fieldSettings.widthOfField]
   );
 
   useEffect(() => {

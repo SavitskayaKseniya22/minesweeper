@@ -1,5 +1,7 @@
 /* eslint-disable no-plusplus */
 
+import { getAroundIndexesForArray } from './funcsToOpenNearbyEmptyCells';
+
 export function getFieldSettings(difficulty: string) {
   const fieldSettings = {
     easy: { cellsNumber: 100, widthOfField: 10 },
@@ -135,11 +137,12 @@ export function getCellsList(
   list: number[],
   bombsList: number[],
   ranges: number[][],
-  indexesToInsert: number[]
+  pressedIndexes: number[],
+  width: number
 ) {
-  const filtered = indexesToInsert
+  const filtered = pressedIndexes
     ? ranges.filter((item) => {
-        const commonData = indexesToInsert.concat(item);
+        const commonData = pressedIndexes.concat(item);
         const changedData = Array.from(new Set(commonData));
         if (commonData.length === changedData.length) {
           return false;
@@ -148,13 +151,18 @@ export function getCellsList(
       })
     : [];
 
+  const filteredWithBorders = filtered.map((item) =>
+    getAroundIndexesForArray(item, bombsList, width)
+  );
+
   const cells = list.map((elem, index) => {
     const cell = {
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
       size: ranges.flat().length !== 100 ? addOpenedChunkSize(index, ranges) : 1,
       isOpen:
-        filtered.filter((item) => item.includes(index)).length > 0 && ranges.flat().length !== 100
+        filteredWithBorders.filter((item) => item.includes(index)).length > 0 &&
+        ranges.flat().length !== 100
           ? 'left'
           : 'false',
     };
