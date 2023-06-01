@@ -5,9 +5,9 @@ export const InitContext = React.createContext({
 });
 
 export const GameCycleContext = React.createContext<{
-  isGameFinished: boolean;
+  isGameFinished: 'win' | 'lose' | false;
   isGameStarted: boolean;
-  setIsGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsGameFinished: React.Dispatch<React.SetStateAction<'win' | 'lose' | false>>;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }>({
   isGameStarted: false,

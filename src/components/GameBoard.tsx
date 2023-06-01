@@ -9,7 +9,7 @@ import Timer from './Timer';
 
 function GameBoard() {
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isGameFinished, setIsGameFinished] = useState(false);
+  const [isGameFinished, setIsGameFinished] = useState<'win' | 'lose' | false>(false);
   const [resetValue, setResetValue] = useState<number>(1);
   const actionData = useActionData() as { difficulty: string; bombNumber: string };
   const intervalRef = useRef<number | NodeJS.Timeout>(0);
@@ -47,7 +47,7 @@ function GameBoard() {
         <BombsCounterDataProvider>
           <MovesCounterDataProvider>
             <main>
-              {isGameFinished && (
+              {isGameFinished === 'lose' && (
                 <>
                   <span>game over</span>
                   <button
@@ -62,6 +62,22 @@ function GameBoard() {
                   </button>
                 </>
               )}
+              {isGameFinished === 'win' && (
+                <>
+                  <span>game win!</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsGameStarted(false);
+                      setIsGameFinished(false);
+                      setResetValue(Math.random());
+                    }}
+                  >
+                    start new game
+                  </button>
+                </>
+              )}
+
               <BombsCounter />
               <MovesCounter />
               <Timer intervalRef={intervalRef} resetValue={resetValue} />

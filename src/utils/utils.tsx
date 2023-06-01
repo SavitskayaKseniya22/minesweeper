@@ -118,6 +118,9 @@ export function getCellsContentList(
 
   return gameSetup;
 }
+export function addOpenedChunkSize(i: number, array: number[][]) {
+  return array.find((element) => element.includes(i))?.length || 1;
+}
 
 export function getCellsList(
   list: number[],
@@ -140,6 +143,7 @@ export function getCellsList(
     const cell = {
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
+      size: ranges.flat().length !== 100 ? addOpenedChunkSize(index, ranges) : 1,
       isOpen:
         filtered.filter((item) => item.includes(index)).length > 0 && ranges.flat().length !== 100
           ? 'left'

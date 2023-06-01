@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Cell from './Cell';
 import {
   getCellsContentList,
@@ -23,6 +23,8 @@ function Field({ resetValue }: { resetValue: number }) {
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
 
   const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
+
+  const openedCellsAmount = useRef(0);
 
   const dataToMakeCells = useMemo(
     () => getCellsContentList(isGameStarted, fieldSettings.cellsNumber, bombNumber, indexToInsert),
@@ -52,8 +54,15 @@ function Field({ resetValue }: { resetValue: number }) {
       setPressedIndexes([]);
       resetBombsValue(Number(bombNumber));
       resetClicksValue();
+      openedCellsAmount.current = 0;
     }
   }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValue]);
+
+  useEffect(() => {
+    if (openedCellsAmount.current + Number(bombNumber) === fieldSettings.cellsNumber) {
+      setIsGameFinished('win');
+    }
+  }, [bombNumber, fieldSettings.cellsNumber, pressedIndexes, setIsGameFinished]);
 
   const cellsList = useMemo(
     () =>
@@ -65,10 +74,15 @@ function Field({ resetValue }: { resetValue: number }) {
               setIndexToInsert(index);
               setIsGameStarted(true);
             }
-            if (e.type === 'click' && isGameStarted && item.isBombed) {
-              setIsGameFinished(true);
+
+            if (e.type === 'click' && !item.isBombed) {
+              setPressedIndexes([...pressedIndexes, index]);
+              openedCellsAmount.current += item.size;
             }
-            setPressedIndexes([...pressedIndexes, index]);
+
+            if (e.type === 'click' && isGameStarted && item.isBombed) {
+              setIsGameFinished('lose');
+            }
           }}
           cellSettings={item}
         />
@@ -77,7 +91,7 @@ function Field({ resetValue }: { resetValue: number }) {
   );
 
   return (
-    <StyledField aria-busy={isGameFinished} aria-details={difficulty}>
+    <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>
       {cellsList}
     </StyledField>
   );
