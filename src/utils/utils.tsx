@@ -129,8 +129,19 @@ export function getCellsContentList(
 
   return gameSetup;
 }
-export function addOpenedChunkSize(i: number, array: number[][]) {
-  return array.find((element) => element.includes(i))?.length || 1;
+export function addOpenedChunkSize(i: number, shortRange: number[][], longRange: number[][]) {
+  const elemInShortRange = shortRange.find((element) => element.includes(i));
+  const elemInLongRange = longRange.find((element) => element.includes(i));
+
+  if (elemInShortRange && elemInLongRange) {
+    return elemInLongRange.length;
+  }
+
+  if (!elemInShortRange && elemInLongRange) {
+    return 0;
+  }
+
+  return 1;
 }
 
 export function getCellsList(
@@ -159,12 +170,8 @@ export function getCellsList(
     const cell = {
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
-      size: ranges.flat().length !== 100 ? addOpenedChunkSize(index, ranges) : 1,
-      isOpen:
-        filteredWithBorders.filter((item) => item.includes(index)).length > 0 &&
-        ranges.flat().length !== 100
-          ? 'left'
-          : 'false',
+
+      isOpen: filteredWithBorders.find((element) => element.includes(index)) ? 'left' : 'false',
     };
 
     return cell;

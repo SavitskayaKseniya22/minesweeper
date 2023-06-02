@@ -7,7 +7,7 @@ import {
   getNearbyBombs,
 } from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
-import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
+import getConnectedRanges, { getAroundIndexesForArray } from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { useBombsApi } from './BombsCounter';
 import { useMoveAPI } from './MovesCounter';
@@ -59,11 +59,24 @@ function Field({ resetValue }: { resetValue: number }) {
     }
   }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValue]);
 
+  const openedCellsSize = useMemo(() => {
+    const rangesWithBorders = ranges.map((item) =>
+      getAroundIndexesForArray(item, bombList, fieldSettings.widthOfField)
+    );
+
+    const value = pressedIndexes.map((item) => {
+      const filtered = rangesWithBorders.filter((range) => range.includes(item));
+      return filtered.length ? filtered : item;
+    });
+
+    return Array.from(new Set(value.flat())).flat().length;
+  }, [bombList, fieldSettings.widthOfField, pressedIndexes, ranges]);
+
   useEffect(() => {
-    if (openedCellsAmount.current + Number(bombNumber) === fieldSettings.cellsNumber) {
+    if (openedCellsSize + Number(bombNumber) === fieldSettings.cellsNumber) {
       setIsGameFinished('win');
     }
-  }, [bombNumber, fieldSettings.cellsNumber, pressedIndexes, setIsGameFinished]);
+  }, [bombNumber, fieldSettings.cellsNumber, openedCellsSize, setIsGameFinished]);
 
   const cellsList = useMemo(
     () =>
@@ -78,7 +91,6 @@ function Field({ resetValue }: { resetValue: number }) {
 
             if (e.type === 'click' && !item.isBombed) {
               setPressedIndexes([...pressedIndexes, index]);
-              openedCellsAmount.current += item.size;
             }
 
             if (e.type === 'click' && isGameStarted && item.isBombed) {
