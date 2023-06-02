@@ -47,40 +47,43 @@ function GameBoard() {
         <BombsCounterDataProvider>
           <MovesCounterDataProvider>
             <main>
-              {isGameFinished === 'lose' && (
-                <>
-                  <span>game over</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsGameStarted(false);
-                      setIsGameFinished(false);
-                      setResetValue(Math.random());
-                    }}
-                  >
-                    start new game
-                  </button>
-                </>
-              )}
-              {isGameFinished === 'win' && (
-                <>
-                  <span>game win!</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsGameStarted(false);
-                      setIsGameFinished(false);
-                      setResetValue(Math.random());
-                    }}
-                  >
-                    start new game
-                  </button>
-                </>
-              )}
+              <div className="side">
+                {isGameFinished === 'lose' && (
+                  <>
+                    <span>game over</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsGameStarted(false);
+                        setIsGameFinished(false);
+                        setResetValue(Math.random());
+                      }}
+                    >
+                      start new game
+                    </button>
+                  </>
+                )}
+                {isGameFinished === 'win' && (
+                  <>
+                    <span>game win!</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsGameStarted(false);
+                        setIsGameFinished(false);
+                        setResetValue(Math.random());
+                      }}
+                    >
+                      start new game
+                    </button>
+                  </>
+                )}
 
-              <BombsCounter />
-              <MovesCounter />
-              <Timer intervalRef={intervalRef} resetValue={resetValue} />
+                <BombsCounter />
+                <MovesCounter />
+                <Timer intervalRef={intervalRef} resetValue={resetValue} />
+              </div>
+
               <Field resetValue={resetValue} />
             </main>
           </MovesCounterDataProvider>

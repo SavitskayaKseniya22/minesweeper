@@ -4,7 +4,7 @@ import { StyledHeader } from './styledComponents';
 function Header() {
   return (
     <StyledHeader>
-      <h2>Minesweeper</h2>
+      <h2>Find your way through the wastelands</h2>
     </StyledHeader>
   );
 }

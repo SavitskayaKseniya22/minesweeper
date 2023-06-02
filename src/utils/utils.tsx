@@ -14,11 +14,11 @@ export function getFieldSettings(difficulty: string) {
 export function checkSize(prop: string | undefined) {
   switch (prop) {
     case 'medium':
-      return '468px';
+      return '42rem';
     case 'hard':
-      return '768px';
+      return '47rem';
     default:
-      return '318px';
+      return '28rem';
   }
 }
 
@@ -36,13 +36,13 @@ export function checkGridSize(prop: string | undefined) {
 export function checkColor(prop: string | undefined) {
   switch (prop) {
     case 'empty':
-      return '#9f9f9f';
+      return 'white';
     case 'bomb':
       return 'red';
     case 'question':
       return 'orange';
     default:
-      return 'white';
+      return '#9c8f77';
   }
 }
 
