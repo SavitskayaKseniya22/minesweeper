@@ -1,12 +1,16 @@
 /* eslint-disable no-plusplus */
 
-import { getAroundIndexesForArray } from './funcsToOpenNearbyEmptyCells';
+import { getBorderIndexes, getRangeWithBorder } from './funcsToOpenNearbyEmptyCells';
+
+export function clearOfDuplicates(array: number[]) {
+  return Array.from(new Set(array));
+}
 
 export function getFieldSettings(difficulty: string) {
   const fieldSettings = {
-    easy: { cellsNumber: 100, widthOfField: 10 },
-    medium: { cellsNumber: 225, widthOfField: 15 },
-    hard: { cellsNumber: 625, widthOfField: 25 },
+    easy: { cellsNumber: 100, width: 10 },
+    medium: { cellsNumber: 225, width: 15 },
+    hard: { cellsNumber: 625, width: 25 },
   };
   return fieldSettings[difficulty as keyof typeof fieldSettings];
 }
@@ -55,53 +59,14 @@ export function shuffle(array: number[]) {
   return arrayToChange;
 }
 
-function correctExtremeRightValue(i: number, array: number[], widthOfField: number) {
-  if (i % widthOfField === 0) {
-    return 0;
-  }
+export function getNearbyBombs(i: number, dataToMakeCells: number[], width: number) {
+  const borderIndexes = getBorderIndexes(i, width);
+  const nearbyBombs: number[] = [];
+  borderIndexes.forEach((item) => {
+    nearbyBombs.push(dataToMakeCells[item]);
+  });
 
-  return array[i];
-}
-
-function correctExtremeLeftValue(i: number, array: number[], widthOfField: number) {
-  if (i % widthOfField === 9) {
-    return 0;
-  }
-
-  return array[i];
-}
-
-export function getNearbyBombs(i: number, array: number[], widthOfField: number) {
-  let count = 100;
-  if (!array[i]) {
-    const upperIndex = i - widthOfField;
-    const lowerIndex = i + widthOfField;
-
-    const topLine = [
-      correctExtremeLeftValue(upperIndex - 1, array, widthOfField),
-      array[upperIndex],
-      correctExtremeRightValue(upperIndex + 1, array, widthOfField),
-    ];
-
-    const middleLine = [
-      correctExtremeLeftValue(i - 1, array, widthOfField),
-      correctExtremeRightValue(i + 1, array, widthOfField),
-    ];
-
-    const bottomLine = [
-      correctExtremeLeftValue(lowerIndex - 1, array, widthOfField),
-      array[lowerIndex],
-      correctExtremeRightValue(lowerIndex + 1, array, widthOfField),
-    ];
-
-    count = topLine
-      .concat(middleLine)
-      .concat(bottomLine)
-      .filter((value) => value !== undefined)
-      .reduce((a, b) => Number(a) + Number(b));
-  }
-
-  return count;
+  return nearbyBombs.filter((value) => value !== undefined).reduce((a, b) => a + b);
 }
 
 export function getCellsContentList(
@@ -151,26 +116,20 @@ export function getCellsList(
   pressedIndexes: number[],
   width: number
 ) {
-  const filtered = pressedIndexes
-    ? ranges.filter((item) => {
-        const commonData = pressedIndexes.concat(item);
-        const changedData = Array.from(new Set(commonData));
-        if (commonData.length === changedData.length) {
-          return false;
-        }
-        return true;
-      })
-    : [];
+  const filteredRanges = ranges.filter((item) => {
+    const commonData = pressedIndexes.concat(item);
+    const changedData = clearOfDuplicates(commonData);
+    return commonData.length !== changedData.length;
+  });
 
-  const filteredWithBorders = filtered.map((item) =>
-    getAroundIndexesForArray(item, bombsList, width)
+  const filteredWithBorders = filteredRanges.map((item) =>
+    getRangeWithBorder(item, bombsList, width)
   );
 
   const cells = list.map((elem, index) => {
     const cell = {
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
-
       isOpen: filteredWithBorders.find((element) => element.includes(index)) ? 'left' : 'false',
     };
 

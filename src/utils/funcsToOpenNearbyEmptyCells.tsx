@@ -1,4 +1,9 @@
 /* eslint-disable no-plusplus */
+
+function clearOfDuplicates(array: number[]) {
+  return Array.from(new Set(array));
+}
+
 function getArrayOfIndexes(array: number[]) {
   const madeArray = [];
   let i = 0;
@@ -56,11 +61,11 @@ function reduceRanges(ranges: number[][], width: number) {
         extrData.push(j - width);
       });
       extrData = extrData.filter((value) => value >= 0);
-      extrData = Array.from(new Set(extrData));
+      extrData = clearOfDuplicates(extrData);
 
       const filtered = restArrays.filter((item) => {
         const commonData = extrData.concat(item);
-        const changedData = Array.from(new Set(commonData));
+        const changedData = clearOfDuplicates(commonData);
         if (commonData.length === changedData.length) {
           return false;
         }
@@ -72,7 +77,7 @@ function reduceRanges(ranges: number[][], width: number) {
 
         rangeToChange = rangeToChange.filter((rangeItem) => {
           const commonData = filtered.flat().concat(rangeItem);
-          const changedData = Array.from(new Set(commonData));
+          const changedData = clearOfDuplicates(commonData);
           if (commonData.length === changedData.length) {
             return true;
           }
@@ -91,65 +96,58 @@ function reduceRanges(ranges: number[][], width: number) {
   return rec(ranges);
 }
 
-function correctExtremeRightValue(i: number, widthOfField: number) {
-  if (i % widthOfField === 0) {
+function correctExtremeValue(i: number, width: number, side: string) {
+  if ((i % width === 9 && side === 'left') || (i % width === 0 && side === 'right')) {
     return -1;
   }
+
   return i;
 }
 
-function correctExtremeLeftValue(i: number, widthOfField: number) {
-  if (i % widthOfField === 9) {
-    return -1;
-  }
-  return i;
-}
-
-function getAroundIndexes(i: number, array: number[], widthOfField: number) {
-  const upperIndex = i - widthOfField;
-  const lowerIndex = i + widthOfField;
+export function getBorderIndexes(i: number, width: number) {
+  const upperIndex = i - width;
+  const lowerIndex = i + width;
 
   const topLine = [
-    correctExtremeLeftValue(upperIndex - 1, widthOfField),
+    correctExtremeValue(upperIndex - 1, width, 'left'),
     upperIndex,
-    correctExtremeRightValue(upperIndex + 1, widthOfField),
+    correctExtremeValue(upperIndex + 1, width, 'right'),
   ];
 
   const middleLine = [
-    correctExtremeLeftValue(i - 1, widthOfField),
-    correctExtremeRightValue(i + 1, widthOfField),
+    correctExtremeValue(i - 1, width, 'left'),
+    correctExtremeValue(i + 1, width, 'right'),
   ];
 
   const bottomLine = [
-    correctExtremeLeftValue(lowerIndex - 1, widthOfField),
+    correctExtremeValue(lowerIndex - 1, width, 'left'),
     lowerIndex,
-    correctExtremeRightValue(lowerIndex + 1, widthOfField),
+    correctExtremeValue(lowerIndex + 1, width, 'right'),
   ];
 
-  const count = topLine
+  return topLine
     .concat(middleLine)
     .concat(bottomLine)
-    .filter((value) => value > -1 && value < widthOfField * widthOfField && array[value] !== 0)
-    .concat([i]);
-
-  return count;
+    .filter((value) => value > -1 && value < width * width);
 }
 
-export function getAroundIndexesForArray(
-  array: number[],
-  bombsList: number[],
-  widthOfField: number
-) {
-  const data = array.map((item) => getAroundIndexes(item, bombsList, widthOfField));
-  return Array.from(new Set(data.flat()));
+export function getRangeWithBorder(range: number[], bombsList: number[], width: number) {
+  const rangeWithBorder = range
+    .map((centerValue) =>
+      getBorderIndexes(centerValue, width)
+        .filter((borderValue) => bombsList[borderValue] !== 0)
+        .concat([centerValue])
+    )
+    .flat();
+  return clearOfDuplicates(rangeWithBorder);
 }
 
-export default function getConnectedRanges(array: number[], widthOfField: number) {
-  const arrayOfIndexes = getArrayOfIndexes(array);
-  const arrayToChange = array.slice();
-  const chopedArray = cutArray(arrayToChange, widthOfField);
-  const chopedArrayOfIndxes = cutArray(arrayOfIndexes, widthOfField);
+export default function getConnectedRanges(bombsList: number[], width: number) {
+  const arrayOfIndexes = getArrayOfIndexes(bombsList);
+  const arrayToChange = bombsList.slice();
+  const chopedArray = cutArray(arrayToChange, width);
+  const chopedArrayOfIndxes = cutArray(arrayOfIndexes, width);
   const ranges = getRanges(chopedArray, chopedArrayOfIndxes);
-  const reducedRanges = reduceRanges(ranges, widthOfField);
+  const reducedRanges = reduceRanges(ranges, width);
   return reducedRanges;
 }

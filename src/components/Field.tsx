@@ -7,7 +7,7 @@ import {
   getNearbyBombs,
 } from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
-import getConnectedRanges, { getAroundIndexesForArray } from '../utils/funcsToOpenNearbyEmptyCells';
+import getConnectedRanges, { getRangeWithBorder } from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { useBombsApi } from './BombsCounter';
 import { useMoveAPI } from './MovesCounter';
@@ -30,24 +30,26 @@ function Field({ resetValue }: { resetValue: number }) {
     () => getCellsContentList(isGameStarted, fieldSettings.cellsNumber, bombNumber, indexToInsert),
     [bombNumber, fieldSettings.cellsNumber, indexToInsert, isGameStarted]
   );
-
-  const bombList = useMemo(
+  // TODO: erase bombed sequenses from bombList
+  const bombsList = useMemo(
     () =>
-      dataToMakeCells.map((elem, i) =>
-        getNearbyBombs(i, dataToMakeCells, fieldSettings.widthOfField)
-      ),
-    [dataToMakeCells, fieldSettings.widthOfField]
+      dataToMakeCells.map((elem, i) => {
+        if (elem === 0) {
+          return getNearbyBombs(i, dataToMakeCells, fieldSettings.width);
+        }
+        return 100;
+      }),
+    [dataToMakeCells, fieldSettings.width]
   );
 
   const ranges = useMemo(
-    () => getConnectedRanges(bombList, fieldSettings.widthOfField),
-    [bombList, fieldSettings.widthOfField]
+    () => getConnectedRanges(bombsList, fieldSettings.width),
+    [bombsList, fieldSettings.width]
   );
 
   const rawCellsList = useMemo(
-    () =>
-      getCellsList(dataToMakeCells, bombList, ranges, pressedIndexes, fieldSettings.widthOfField),
-    [dataToMakeCells, bombList, ranges, pressedIndexes, fieldSettings.widthOfField]
+    () => getCellsList(dataToMakeCells, bombsList, ranges, pressedIndexes, fieldSettings.width),
+    [dataToMakeCells, bombsList, ranges, pressedIndexes, fieldSettings.width]
   );
 
   useEffect(() => {
@@ -61,16 +63,16 @@ function Field({ resetValue }: { resetValue: number }) {
 
   const openedCellsSize = useMemo(() => {
     const rangesWithBorders = ranges.map((item) =>
-      getAroundIndexesForArray(item, bombList, fieldSettings.widthOfField)
+      getRangeWithBorder(item, bombsList, fieldSettings.width)
     );
 
     const value = pressedIndexes.map((item) => {
       const filtered = rangesWithBorders.filter((range) => range.includes(item));
-      return filtered.length ? filtered : item;
+      return filtered.length ? Array.from(new Set(filtered.flat())) : item;
     });
 
     return Array.from(new Set(value.flat())).flat().length;
-  }, [bombList, fieldSettings.widthOfField, pressedIndexes, ranges]);
+  }, [bombsList, fieldSettings.width, pressedIndexes, ranges]);
 
   useEffect(() => {
     if (openedCellsSize + Number(bombNumber) === fieldSettings.cellsNumber) {
