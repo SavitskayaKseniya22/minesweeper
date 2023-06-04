@@ -1,14 +1,20 @@
 import { createGlobalStyle } from 'styled-components';
 import logo from '../assets/images/main-background2.jpg';
-import overseer from '../assets/fonts/OverseerItalic.otf';
+import overseer from '../assets/fonts/Overseer/OverseerItalic.otf';
+import roboto from '../assets/fonts/Roboto/Roboto-Regular.ttf';
 
 export const FontStyles = createGlobalStyle`
 
 @font-face {
   font-family: 'Overseer';
-  src: url(${overseer}) format('otf'),
-      
+  src: url(${overseer}) format('otf'),   
 }
+
+@font-face {
+  font-family: 'Roboto';
+  src: url(${roboto}) format('ttf'),   
+}
+
 `;
 
 export const GlobalStyle = createGlobalStyle`
@@ -28,6 +34,7 @@ export const GlobalStyle = createGlobalStyle`
     background-position: center;
     background-repeat:no-repeat;
    color:white;
+    font-family: 'Roboto', sans-serif;
 
     
   }
