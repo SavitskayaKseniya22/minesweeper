@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Cell from './Cell';
 import {
+  clearOfDuplicates,
   getCellsContentList,
   getCellsList,
   getFieldSettings,
   getNearbyBombs,
 } from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
-import getConnectedRanges, { getRangeWithBorder } from '../utils/funcsToOpenNearbyEmptyCells';
+import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { useBombsApi } from './BombsCounter';
 import { useMoveAPI } from './MovesCounter';
@@ -30,7 +31,7 @@ function Field({ resetValue }: { resetValue: number }) {
     () => getCellsContentList(isGameStarted, fieldSettings.cellsNumber, bombNumber, indexToInsert),
     [bombNumber, fieldSettings.cellsNumber, indexToInsert, isGameStarted]
   );
-  // TODO: erase bombed sequenses from bombList
+
   const bombsList = useMemo(
     () =>
       dataToMakeCells.map((elem, i) => {
@@ -61,25 +62,6 @@ function Field({ resetValue }: { resetValue: number }) {
     }
   }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValue]);
 
-  const openedCellsSize = useMemo(() => {
-    const rangesWithBorders = ranges.map((item) =>
-      getRangeWithBorder(item, bombsList, fieldSettings.width)
-    );
-
-    const value = pressedIndexes.map((item) => {
-      const filtered = rangesWithBorders.filter((range) => range.includes(item));
-      return filtered.length ? Array.from(new Set(filtered.flat())) : item;
-    });
-
-    return Array.from(new Set(value.flat())).flat().length;
-  }, [bombsList, fieldSettings.width, pressedIndexes, ranges]);
-
-  useEffect(() => {
-    if (openedCellsSize + Number(bombNumber) === fieldSettings.cellsNumber) {
-      setIsGameFinished('win');
-    }
-  }, [bombNumber, fieldSettings.cellsNumber, openedCellsSize, setIsGameFinished]);
-
   const cellsList = useMemo(
     () =>
       rawCellsList.map((item, index) => (
@@ -104,6 +86,19 @@ function Field({ resetValue }: { resetValue: number }) {
       )),
     [isGameStarted, pressedIndexes, rawCellsList, resetValue, setIsGameFinished, setIsGameStarted]
   );
+
+  useEffect(() => {
+    const sizes = clearOfDuplicates(
+      pressedIndexes
+        .map((elem) => rawCellsList[elem].size)
+        .filter((elem) => elem !== -1)
+        .flat()
+    );
+
+    if (sizes.length + Number(bombNumber) === fieldSettings.cellsNumber) {
+      setIsGameFinished('win');
+    }
+  }, [bombNumber, fieldSettings.cellsNumber, pressedIndexes, rawCellsList, setIsGameFinished]);
 
   return (
     <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>
