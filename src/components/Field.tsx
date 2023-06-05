@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Cell from './Cell';
 import {
   clearOfDuplicates,
@@ -24,8 +24,6 @@ function Field({ resetValue }: { resetValue: number }) {
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
 
   const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
-
-  const openedCellsAmount = useRef(0);
 
   const dataToMakeCells = useMemo(
     () => getCellsContentList(isGameStarted, fieldSettings.cellsNumber, bombNumber, indexToInsert),
@@ -58,47 +56,55 @@ function Field({ resetValue }: { resetValue: number }) {
       setPressedIndexes([]);
       resetBombsValue(Number(bombNumber));
       resetClicksValue();
-      openedCellsAmount.current = 0;
     }
   }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValue]);
+
+  const openedCellsSize = useMemo(
+    () =>
+      clearOfDuplicates(
+        pressedIndexes
+          .map((elem) => rawCellsList[elem].size)
+          .filter((elem) => elem !== -1)
+          .flat()
+      ),
+    [pressedIndexes, rawCellsList]
+  );
+
+  useEffect(() => {
+    if (openedCellsSize.length + Number(bombNumber) === fieldSettings.cellsNumber) {
+      setIsGameFinished('win');
+    }
+  }, [
+    bombNumber,
+    fieldSettings.cellsNumber,
+    openedCellsSize.length,
+    pressedIndexes,
+    rawCellsList,
+    setIsGameFinished,
+  ]);
 
   const cellsList = useMemo(
     () =>
       rawCellsList.map((item, index) => (
         <Cell
-          key={item.toString() + index.toString() + resetValue}
-          handleStartAndFinish={(e) => {
+          key={index.toString() + resetValue}
+          handleStartAndFinishGame={() => {
             if (!isGameStarted) {
               setIndexToInsert(index);
               setIsGameStarted(true);
             }
-
-            if (e.type === 'click' && !item.isBombed) {
-              setPressedIndexes([...pressedIndexes, index]);
-            }
-
-            if (e.type === 'click' && isGameStarted && item.isBombed) {
+            if (isGameStarted && item.isBombed) {
               setIsGameFinished('lose');
             }
+          }}
+          handlePressedIndex={() => {
+            setPressedIndexes([...pressedIndexes, index]);
           }}
           cellSettings={item}
         />
       )),
     [isGameStarted, pressedIndexes, rawCellsList, resetValue, setIsGameFinished, setIsGameStarted]
   );
-
-  useEffect(() => {
-    const sizes = clearOfDuplicates(
-      pressedIndexes
-        .map((elem) => rawCellsList[elem].size)
-        .filter((elem) => elem !== -1)
-        .flat()
-    );
-
-    if (sizes.length + Number(bombNumber) === fieldSettings.cellsNumber) {
-      setIsGameFinished('win');
-    }
-  }, [bombNumber, fieldSettings.cellsNumber, pressedIndexes, rawCellsList, setIsGameFinished]);
 
   return (
     <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>

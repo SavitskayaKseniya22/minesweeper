@@ -2,19 +2,19 @@ import React, { ReactNode, createContext, useContext, useMemo, useReducer } from
 import { InitContext } from '../contexts';
 
 type API = {
-  increseBombsValue: () => void;
+  increaseBombsValue: () => void;
   decreseBombsValue: () => void;
   resetBombsValue: (maxValue: number) => void;
 };
 
 type Actions =
-  | { type: 'increseBombsValue' }
+  | { type: 'increaseBombsValue' }
   | { type: 'decreseBombsValue' }
   | { type: 'resetBombsValue'; maxValue: number };
 
 const reducer = (state: number, action: Actions): number => {
   switch (action.type) {
-    case 'increseBombsValue':
+    case 'increaseBombsValue':
       return state + 1;
     case 'decreseBombsValue':
       return state - 1;
@@ -33,8 +33,8 @@ export function BombsCounterDataProvider({ children }: { children: ReactNode }) 
   const [state, dispatch] = useReducer(reducer, Number(bombNumber));
 
   const api = useMemo(() => {
-    const increseBombsValue = () => {
-      dispatch({ type: 'increseBombsValue' });
+    const increaseBombsValue = () => {
+      dispatch({ type: 'increaseBombsValue' });
     };
 
     const decreseBombsValue = () => {
@@ -46,7 +46,7 @@ export function BombsCounterDataProvider({ children }: { children: ReactNode }) 
     };
 
     return {
-      increseBombsValue,
+      increaseBombsValue,
       decreseBombsValue,
       resetBombsValue,
     };

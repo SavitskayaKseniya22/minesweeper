@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMoveAPI } from './MovesCounter';
@@ -7,23 +7,63 @@ import { StyledCell } from './styledComponents';
 
 function Cell({
   cellSettings,
-  handleStartAndFinish,
+  handleStartAndFinishGame,
+  handlePressedIndex,
 }: {
   cellSettings: {
     isBombed: boolean;
     nearbyBombs: number;
     isOpen: string;
   };
-  handleStartAndFinish: (e: React.MouseEvent) => void;
+  handleStartAndFinishGame: () => void;
+  handlePressedIndex: () => void;
 }) {
   const [isPressed, setIsPressed] = useState(cellSettings.isOpen);
-  const { updateLeftClicksValue, updateRightClicksValue } = useMoveAPI();
-  const { increseBombsValue, decreseBombsValue } = useBombsApi();
+  const { increaseLeftClicksValue, increaseRightClicksValue } = useMoveAPI();
+  const { increaseBombsValue, decreseBombsValue } = useBombsApi();
   const valueOfBombs = useBombsState();
 
   useEffect(() => {
     setIsPressed(cellSettings.isOpen);
   }, [cellSettings.isOpen]);
+
+  const handleLeftClick = useCallback(() => {
+    setIsPressed('left');
+    increaseLeftClicksValue();
+    handleStartAndFinishGame();
+    handlePressedIndex();
+    if (cellSettings.isBombed) {
+      decreseBombsValue();
+    }
+  }, [
+    cellSettings.isBombed,
+    decreseBombsValue,
+    handlePressedIndex,
+    handleStartAndFinishGame,
+    increaseLeftClicksValue,
+  ]);
+
+  const handleRightClickToHold = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      if (valueOfBombs > 0) {
+        e.preventDefault();
+        setIsPressed('right');
+        decreseBombsValue();
+        increaseRightClicksValue();
+      }
+    },
+    [decreseBombsValue, increaseRightClicksValue, valueOfBombs]
+  );
+
+  const handleRightClickToRelease = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      e.preventDefault();
+      setIsPressed('false');
+      increaseBombsValue();
+      increaseRightClicksValue();
+    },
+    [increaseBombsValue, increaseRightClicksValue]
+  );
 
   switch (isPressed) {
     case 'left':
@@ -41,39 +81,14 @@ function Cell({
       return (
         <StyledCell
           aria-details="question"
-          onClick={() => {
-            setIsPressed('left');
-            updateLeftClicksValue();
-          }}
-          onContextMenu={(event) => {
-            event.preventDefault();
-            setIsPressed('false');
-            increseBombsValue();
-            updateRightClicksValue();
-          }}
+          onClick={handleLeftClick}
+          onContextMenu={handleRightClickToRelease}
         >
           <FontAwesomeIcon icon={faQuestion} />
         </StyledCell>
       );
     default:
-      return (
-        <StyledCell
-          onClick={(e) => {
-            setIsPressed('left');
-            handleStartAndFinish(e);
-            updateLeftClicksValue();
-          }}
-          onContextMenu={(e) => {
-            if (valueOfBombs > 0) {
-              e.preventDefault();
-              setIsPressed('right');
-              handleStartAndFinish(e);
-              decreseBombsValue();
-              updateRightClicksValue();
-            }
-          }}
-        />
-      );
+      return <StyledCell onClick={handleLeftClick} onContextMenu={handleRightClickToHold} />;
   }
 }
 

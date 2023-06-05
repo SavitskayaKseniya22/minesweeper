@@ -3,22 +3,22 @@ import React, { ReactNode, createContext, useContext, useMemo, useReducer } from
 type State = { left: number; right: number };
 
 type API = {
-  updateLeftClicksValue: () => void;
-  updateRightClicksValue: () => void;
+  increaseLeftClicksValue: () => void;
+  increaseRightClicksValue: () => void;
   resetClicksValue: () => void;
 };
 
 type Actions =
-  | { type: 'updateLeftClicksValue' }
-  | { type: 'updateRightClicksValue' }
+  | { type: 'increaseLeftClicksValue' }
+  | { type: 'increaseRightClicksValue' }
   | { type: 'resetClicksValue' };
 
 const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
-    case 'updateLeftClicksValue':
+    case 'increaseLeftClicksValue':
       return { ...state, left: state.left + 1 };
-    case 'updateRightClicksValue':
-      return { ...state, left: state.right + 1 };
+    case 'increaseRightClicksValue':
+      return { ...state, right: state.right + 1 };
     case 'resetClicksValue':
       return { left: 0, right: 0 };
     default:
@@ -33,12 +33,12 @@ export function MovesCounterDataProvider({ children }: { children: ReactNode }) 
   const [state, dispatch] = useReducer(reducer, { left: 0, right: 0 });
 
   const api = useMemo(() => {
-    const updateLeftClicksValue = () => {
-      dispatch({ type: 'updateLeftClicksValue' });
+    const increaseLeftClicksValue = () => {
+      dispatch({ type: 'increaseLeftClicksValue' });
     };
 
-    const updateRightClicksValue = () => {
-      dispatch({ type: 'updateRightClicksValue' });
+    const increaseRightClicksValue = () => {
+      dispatch({ type: 'increaseRightClicksValue' });
     };
 
     const resetClicksValue = () => {
@@ -46,8 +46,8 @@ export function MovesCounterDataProvider({ children }: { children: ReactNode }) 
     };
 
     return {
-      updateLeftClicksValue,
-      updateRightClicksValue,
+      increaseLeftClicksValue,
+      increaseRightClicksValue,
       resetClicksValue,
     };
   }, []);
