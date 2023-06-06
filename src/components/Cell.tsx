@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMoveAPI } from './MovesCounter';
@@ -16,22 +16,16 @@ function Cell({
     isOpen: string;
   };
   handleStartAndFinishGame: () => void;
-  handlePressedIndex: () => void;
+  handlePressedIndex: (button: 'left' | 'rightAdd' | 'rightDel') => void;
 }) {
-  const [isPressed, setIsPressed] = useState(cellSettings.isOpen);
   const { increaseLeftClicksValue, increaseRightClicksValue } = useMoveAPI();
   const { increaseBombsValue, decreseBombsValue } = useBombsApi();
   const valueOfBombs = useBombsState();
 
-  useEffect(() => {
-    setIsPressed(cellSettings.isOpen);
-  }, [cellSettings.isOpen]);
-
   const handleLeftClick = useCallback(() => {
-    setIsPressed('left');
     increaseLeftClicksValue();
     handleStartAndFinishGame();
-    handlePressedIndex();
+    handlePressedIndex('left');
     if (cellSettings.isBombed) {
       decreseBombsValue();
     }
@@ -47,25 +41,25 @@ function Cell({
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       if (valueOfBombs > 0) {
         e.preventDefault();
-        setIsPressed('right');
         decreseBombsValue();
         increaseRightClicksValue();
+        handlePressedIndex('rightAdd');
       }
     },
-    [decreseBombsValue, increaseRightClicksValue, valueOfBombs]
+    [decreseBombsValue, handlePressedIndex, increaseRightClicksValue, valueOfBombs]
   );
 
   const handleRightClickToRelease = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       e.preventDefault();
-      setIsPressed('false');
       increaseBombsValue();
       increaseRightClicksValue();
+      handlePressedIndex('rightDel');
     },
-    [increaseBombsValue, increaseRightClicksValue]
+    [handlePressedIndex, increaseBombsValue, increaseRightClicksValue]
   );
 
-  switch (isPressed) {
+  switch (cellSettings.isOpen) {
     case 'left':
       return cellSettings.isBombed ? (
         <StyledCell aria-details="bomb">

@@ -12,12 +12,23 @@ import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { useBombsApi } from './BombsCounter';
 import { useMoveAPI } from './MovesCounter';
+import { PressedIndexesType } from '../utils/interfaces';
+import {
+  useLeftClickAPI,
+  usePressedCellsState,
+  useResetClicksAPI,
+  useRightClickAPI,
+} from './PressedCells';
 
 function Field({ resetValue }: { resetValue: number }) {
   const { resetClicksValue } = useMoveAPI();
   const { resetBombsValue } = useBombsApi();
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
-  const [pressedIndexes, setPressedIndexes] = useState<number[]>([] as number[]);
+
+  const pressedIndexes: PressedIndexesType = usePressedCellsState();
+  const { updateLeftClicks } = useLeftClickAPI();
+  const { updateRightClicks, filterRightClicks } = useRightClickAPI();
+  const { resetClicksValues } = useResetClicksAPI();
 
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
@@ -53,31 +64,35 @@ function Field({ resetValue }: { resetValue: number }) {
 
   useEffect(() => {
     if (!isGameFinished && !isGameStarted) {
-      setPressedIndexes([]);
+      resetClicksValues();
       resetBombsValue(Number(bombNumber));
       resetClicksValue();
     }
-  }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValue]);
+  }, [
+    bombNumber,
+    isGameFinished,
+    isGameStarted,
+    resetBombsValue,
+    resetClicksValue,
+    resetClicksValues,
+  ]);
 
-  const openedCellsSize = useMemo(
+  const openedCells = useMemo(
     () =>
-      clearOfDuplicates(
-        pressedIndexes
-          .map((elem) => rawCellsList[elem].size)
-          .filter((elem) => elem !== -1)
-          .flat()
-      ),
+      clearOfDuplicates(pressedIndexes.left.clicks.map((elem) => rawCellsList[elem].range).flat()),
     [pressedIndexes, rawCellsList]
   );
 
+  const openedCellsSize = useMemo(() => openedCells.length, [openedCells.length]);
+
   useEffect(() => {
-    if (openedCellsSize.length + Number(bombNumber) === fieldSettings.cellsNumber) {
+    if (openedCellsSize + Number(bombNumber) === fieldSettings.cellsNumber) {
       setIsGameFinished('win');
     }
   }, [
     bombNumber,
     fieldSettings.cellsNumber,
-    openedCellsSize.length,
+    openedCellsSize,
     pressedIndexes,
     rawCellsList,
     setIsGameFinished,
@@ -97,13 +112,28 @@ function Field({ resetValue }: { resetValue: number }) {
               setIsGameFinished('lose');
             }
           }}
-          handlePressedIndex={() => {
-            setPressedIndexes([...pressedIndexes, index]);
+          handlePressedIndex={(button: 'left' | 'rightAdd' | 'rightDel') => {
+            if (button === 'left') {
+              updateLeftClicks(index);
+            } else if (button === 'rightAdd') {
+              updateRightClicks(index);
+            } else if (button === 'rightDel') {
+              filterRightClicks(index);
+            }
           }}
           cellSettings={item}
         />
       )),
-    [isGameStarted, pressedIndexes, rawCellsList, resetValue, setIsGameFinished, setIsGameStarted]
+    [
+      filterRightClicks,
+      isGameStarted,
+      rawCellsList,
+      resetValue,
+      setIsGameFinished,
+      setIsGameStarted,
+      updateLeftClicks,
+      updateRightClicks,
+    ]
   );
 
   return (

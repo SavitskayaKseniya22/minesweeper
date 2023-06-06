@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 
 import { getBorderIndexes, getRangeWithBorder } from './funcsToOpenNearbyEmptyCells';
+import { PressedIndexesType } from './interfaces';
 
 export function clearOfDuplicates(array: number[]) {
   return Array.from(new Set(array));
@@ -94,46 +95,45 @@ export function getCellsContentList(
 
   return gameSetup;
 }
-export function addOpenedChunkSize(i: number, shortRange: number[][], longRange: number[][]) {
-  const elemInShortRange = shortRange.filter((element) => element.includes(i)).flat().length;
-  const elemInLongRange = longRange.filter((element) => element.includes(i)).flat().length;
 
-  if (elemInShortRange && elemInLongRange) {
-    return longRange.filter((element) => element.includes(i)).flat();
+export function addOpenedChunk(i: number, shortRange: number[][], longRange: number[][]) {
+  const elemInShortRange = shortRange.filter((element) => element.includes(i)).flat();
+  const elemInLongRange = longRange.filter((element) => element.includes(i)).flat();
+
+  if (elemInShortRange.length && elemInLongRange.length) {
+    return elemInLongRange;
   }
 
-  if (!elemInShortRange && elemInLongRange) {
-    return -1;
-  }
-
-  return i;
+  return [i];
 }
 
 export function getCellsList(
   list: number[],
   bombsList: number[],
   ranges: number[][],
-  pressedIndexes: number[],
+  pressedIndexes: PressedIndexesType,
   width: number
 ) {
-  const filteredRanges = ranges.filter((item) => {
-    const commonData = pressedIndexes.concat(item);
-    const changedData = clearOfDuplicates(commonData);
-    return commonData.length !== changedData.length;
-  });
-
-  const filteredWithBorders = filteredRanges.map((item) =>
-    getRangeWithBorder(item, bombsList, width)
-  );
-
   const rangesWithBorders = ranges.map((item) => getRangeWithBorder(item, bombsList, width));
+
+  const openedCells = clearOfDuplicates(
+    pressedIndexes.left.clicks.map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders)).flat()
+  );
 
   const cells = list.map((elem, index) => {
     const cell = {
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
-      isOpen: filteredWithBorders.find((element) => element.includes(index)) ? 'left' : 'false',
-      size: addOpenedChunkSize(index, ranges, rangesWithBorders),
+      isOpen: (() => {
+        if (openedCells.includes(index)) {
+          return 'left';
+        }
+        if (pressedIndexes.right.clicks.includes(index)) {
+          return 'right';
+        }
+        return 'false';
+      })(),
+      range: addOpenedChunk(index, ranges, rangesWithBorders),
     };
 
     return cell;
