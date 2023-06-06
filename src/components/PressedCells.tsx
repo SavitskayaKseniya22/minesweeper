@@ -20,7 +20,7 @@ type APILeftClicks = {
 type APIRightClicks = {
   increaseRightCounter: () => void;
   updateRightClicks: (index: number) => void;
-  filterRightClicks: (index: number) => void;
+  filterRightClicks: (index: number[]) => void;
 };
 type APIResetClicks = {
   resetClicksValues: () => void;
@@ -36,7 +36,7 @@ type Actions =
   | { type: 'increaseRightCounter' }
   | { type: 'updateLeftClicks'; index: number }
   | { type: 'updateRightClicks'; index: number }
-  | { type: 'filterRightClicks'; index: number }
+  | { type: 'filterRightClicks'; index: number[] }
   | { type: 'resetClicksValues' };
 
 const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType => {
@@ -71,7 +71,7 @@ const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType
         ...state,
         right: {
           ...state.right,
-          clicks: state.right.clicks.filter((elem) => elem !== action.index),
+          clicks: state.right.clicks.filter((elem) => !action.index.includes(elem)),
         },
       };
     case 'increaseRightCounter':
@@ -116,7 +116,7 @@ export function PressedCellsDataProvider({ children }: { children: ReactNode }) 
       dispatch({ type: 'updateRightClicks', index });
     };
 
-    const filterRightClicks = (index: number) => {
+    const filterRightClicks = (index: number[]) => {
       dispatch({ type: 'filterRightClicks', index });
     };
 

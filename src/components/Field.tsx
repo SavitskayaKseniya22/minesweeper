@@ -29,7 +29,6 @@ function Field({ resetValue }: { resetValue: number }) {
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
-
   const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
 
   const dataToMakeCells = useMemo(
@@ -73,6 +72,14 @@ function Field({ resetValue }: { resetValue: number }) {
   const openedCellsSize = useMemo(() => openedCells.length, [openedCells.length]);
 
   useEffect(() => {
+    const data = pressedIndexes.right.clicks.concat(openedCells);
+    const dataWithoutDup = clearOfDuplicates(data);
+    if (data.length !== dataWithoutDup.length) {
+      filterRightClicks(openedCells);
+    }
+  }, [filterRightClicks, openedCells, pressedIndexes.right.clicks]);
+
+  useEffect(() => {
     if (openedCellsSize + Number(bombNumber) === fieldSettings.cellsNumber) {
       setIsGameFinished('win');
     }
@@ -112,7 +119,7 @@ function Field({ resetValue }: { resetValue: number }) {
                 increaseRightCounter();
               }
             } else if (button === 'rightDel') {
-              filterRightClicks(index);
+              filterRightClicks([index]);
               increaseRightCounter();
             }
           }}
