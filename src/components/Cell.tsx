@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useMoveAPI } from './MovesCounter';
+
 import { useBombsApi, useBombsState } from './BombsCounter';
 import { StyledCell } from './styledComponents';
 
@@ -18,45 +18,37 @@ function Cell({
   handleStartAndFinishGame: () => void;
   handlePressedIndex: (button: 'left' | 'rightAdd' | 'rightDel') => void;
 }) {
-  const { increaseLeftClicksValue, increaseRightClicksValue } = useMoveAPI();
   const { increaseBombsValue, decreseBombsValue } = useBombsApi();
   const valueOfBombs = useBombsState();
 
   const handleLeftClick = useCallback(() => {
-    increaseLeftClicksValue();
     handleStartAndFinishGame();
     handlePressedIndex('left');
     if (cellSettings.isBombed) {
       decreseBombsValue();
     }
-  }, [
-    cellSettings.isBombed,
-    decreseBombsValue,
-    handlePressedIndex,
-    handleStartAndFinishGame,
-    increaseLeftClicksValue,
-  ]);
+  }, [cellSettings.isBombed, decreseBombsValue, handlePressedIndex, handleStartAndFinishGame]);
 
   const handleRightClickToHold = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       if (valueOfBombs > 0) {
         e.preventDefault();
         decreseBombsValue();
-        increaseRightClicksValue();
+
         handlePressedIndex('rightAdd');
       }
     },
-    [decreseBombsValue, handlePressedIndex, increaseRightClicksValue, valueOfBombs]
+    [decreseBombsValue, handlePressedIndex, valueOfBombs]
   );
 
   const handleRightClickToRelease = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       e.preventDefault();
       increaseBombsValue();
-      increaseRightClicksValue();
+
       handlePressedIndex('rightDel');
     },
-    [handlePressedIndex, increaseBombsValue, increaseRightClicksValue]
+    [handlePressedIndex, increaseBombsValue]
   );
 
   switch (cellSettings.isOpen) {

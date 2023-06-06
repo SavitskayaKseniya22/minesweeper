@@ -11,7 +11,7 @@ import { GameCycleContext, InitContext } from '../contexts';
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { useBombsApi } from './BombsCounter';
-import { useMoveAPI } from './MovesCounter';
+
 import { PressedIndexesType } from '../utils/interfaces';
 import {
   useLeftClickAPI,
@@ -21,13 +21,12 @@ import {
 } from './PressedCells';
 
 function Field({ resetValue }: { resetValue: number }) {
-  const { resetClicksValue } = useMoveAPI();
   const { resetBombsValue } = useBombsApi();
   const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
 
   const pressedIndexes: PressedIndexesType = usePressedCellsState();
-  const { updateLeftClicks } = useLeftClickAPI();
-  const { updateRightClicks, filterRightClicks } = useRightClickAPI();
+  const { updateLeftClicks, increaseLeftCounter } = useLeftClickAPI();
+  const { updateRightClicks, filterRightClicks, increaseRightCounter } = useRightClickAPI();
   const { resetClicksValues } = useResetClicksAPI();
 
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
@@ -66,16 +65,9 @@ function Field({ resetValue }: { resetValue: number }) {
     if (!isGameFinished && !isGameStarted) {
       resetClicksValues();
       resetBombsValue(Number(bombNumber));
-      resetClicksValue();
+      resetClicksValues();
     }
-  }, [
-    bombNumber,
-    isGameFinished,
-    isGameStarted,
-    resetBombsValue,
-    resetClicksValue,
-    resetClicksValues,
-  ]);
+  }, [bombNumber, isGameFinished, isGameStarted, resetBombsValue, resetClicksValues]);
 
   const openedCells = useMemo(
     () =>
@@ -115,10 +107,13 @@ function Field({ resetValue }: { resetValue: number }) {
           handlePressedIndex={(button: 'left' | 'rightAdd' | 'rightDel') => {
             if (button === 'left') {
               updateLeftClicks(index);
+              increaseLeftCounter();
             } else if (button === 'rightAdd') {
               updateRightClicks(index);
+              increaseRightCounter();
             } else if (button === 'rightDel') {
               filterRightClicks(index);
+              increaseRightCounter();
             }
           }}
           cellSettings={item}
@@ -126,6 +121,8 @@ function Field({ resetValue }: { resetValue: number }) {
       )),
     [
       filterRightClicks,
+      increaseLeftCounter,
+      increaseRightCounter,
       isGameStarted,
       rawCellsList,
       resetValue,
@@ -135,6 +132,10 @@ function Field({ resetValue }: { resetValue: number }) {
       updateRightClicks,
     ]
   );
+
+  useEffect(() => {
+    console.log(pressedIndexes);
+  }, [pressedIndexes]);
 
   return (
     <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>

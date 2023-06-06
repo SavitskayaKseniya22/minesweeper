@@ -4,7 +4,7 @@ import { Navigate, useActionData } from 'react-router-dom';
 import Field from './Field';
 import { InitContext, GameCycleContext } from '../contexts';
 import BombsCounter, { BombsCounterDataProvider } from './BombsCounter';
-import MovesCounter, { MovesCounterDataProvider } from './MovesCounter';
+import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { PressedCellsDataProvider } from './PressedCells';
 
@@ -46,50 +46,48 @@ function GameBoard() {
     <InitContext.Provider value={actionDataValues}>
       <GameCycleContext.Provider value={gameCycleValues}>
         <BombsCounterDataProvider>
-          <MovesCounterDataProvider>
-            <PressedCellsDataProvider>
-              <main>
-                <div className="side">
-                  {isGameFinished === 'lose' && (
-                    <>
-                      <span>game over</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsGameStarted(false);
-                          setIsGameFinished(false);
-                          setResetValue(Math.random());
-                        }}
-                      >
-                        start new game
-                      </button>
-                    </>
-                  )}
-                  {isGameFinished === 'win' && (
-                    <>
-                      <span>game win!</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsGameStarted(false);
-                          setIsGameFinished(false);
-                          setResetValue(Math.random());
-                        }}
-                      >
-                        start new game
-                      </button>
-                    </>
-                  )}
+          <PressedCellsDataProvider>
+            <main>
+              <div className="side">
+                {isGameFinished === 'lose' && (
+                  <>
+                    <span>game over</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsGameStarted(false);
+                        setIsGameFinished(false);
+                        setResetValue(Math.random());
+                      }}
+                    >
+                      start new game
+                    </button>
+                  </>
+                )}
+                {isGameFinished === 'win' && (
+                  <>
+                    <span>game win!</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsGameStarted(false);
+                        setIsGameFinished(false);
+                        setResetValue(Math.random());
+                      }}
+                    >
+                      start new game
+                    </button>
+                  </>
+                )}
 
-                  <BombsCounter />
-                  <MovesCounter />
-                  <Timer intervalRef={intervalRef} resetValue={resetValue} />
-                </div>
+                <BombsCounter />
+                <MovesCounter />
+                <Timer intervalRef={intervalRef} resetValue={resetValue} />
+              </div>
 
-                <Field resetValue={resetValue} />
-              </main>
-            </PressedCellsDataProvider>
-          </MovesCounterDataProvider>
+              <Field resetValue={resetValue} />
+            </main>
+          </PressedCellsDataProvider>
         </BombsCounterDataProvider>
       </GameCycleContext.Provider>
     </InitContext.Provider>
