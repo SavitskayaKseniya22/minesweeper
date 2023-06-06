@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Navigate, useActionData } from 'react-router-dom';
 import Field from './Field';
 import { InitContext, GameCycleContext } from '../contexts';
-import BombsCounter, { BombsCounterDataProvider } from './BombsCounter';
+import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { PressedCellsDataProvider } from './PressedCells';
@@ -45,50 +45,48 @@ function GameBoard() {
   return (
     <InitContext.Provider value={actionDataValues}>
       <GameCycleContext.Provider value={gameCycleValues}>
-        <BombsCounterDataProvider>
-          <PressedCellsDataProvider>
-            <main>
-              <div className="side">
-                {isGameFinished === 'lose' && (
-                  <>
-                    <span>game over</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsGameStarted(false);
-                        setIsGameFinished(false);
-                        setResetValue(Math.random());
-                      }}
-                    >
-                      start new game
-                    </button>
-                  </>
-                )}
-                {isGameFinished === 'win' && (
-                  <>
-                    <span>game win!</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsGameStarted(false);
-                        setIsGameFinished(false);
-                        setResetValue(Math.random());
-                      }}
-                    >
-                      start new game
-                    </button>
-                  </>
-                )}
+        <PressedCellsDataProvider>
+          <main>
+            <div className="side">
+              {isGameFinished === 'lose' && (
+                <>
+                  <span>game over</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsGameStarted(false);
+                      setIsGameFinished(false);
+                      setResetValue(Math.random());
+                    }}
+                  >
+                    start new game
+                  </button>
+                </>
+              )}
+              {isGameFinished === 'win' && (
+                <>
+                  <span>game win!</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsGameStarted(false);
+                      setIsGameFinished(false);
+                      setResetValue(Math.random());
+                    }}
+                  >
+                    start new game
+                  </button>
+                </>
+              )}
 
-                <BombsCounter />
-                <MovesCounter />
-                <Timer intervalRef={intervalRef} resetValue={resetValue} />
-              </div>
+              <BombsCounter />
+              <MovesCounter />
+              <Timer intervalRef={intervalRef} resetValue={resetValue} />
+            </div>
 
-              <Field resetValue={resetValue} />
-            </main>
-          </PressedCellsDataProvider>
-        </BombsCounterDataProvider>
+            <Field resetValue={resetValue} />
+          </main>
+        </PressedCellsDataProvider>
       </GameCycleContext.Provider>
     </InitContext.Provider>
   );

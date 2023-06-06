@@ -1,8 +1,6 @@
 import React, { useCallback } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { useBombsApi, useBombsState } from './BombsCounter';
 import { StyledCell } from './styledComponents';
 
 function Cell({
@@ -18,37 +16,25 @@ function Cell({
   handleStartAndFinishGame: () => void;
   handlePressedIndex: (button: 'left' | 'rightAdd' | 'rightDel') => void;
 }) {
-  const { increaseBombsValue, decreseBombsValue } = useBombsApi();
-  const valueOfBombs = useBombsState();
-
   const handleLeftClick = useCallback(() => {
     handleStartAndFinishGame();
     handlePressedIndex('left');
-    if (cellSettings.isBombed) {
-      decreseBombsValue();
-    }
-  }, [cellSettings.isBombed, decreseBombsValue, handlePressedIndex, handleStartAndFinishGame]);
+  }, [handlePressedIndex, handleStartAndFinishGame]);
 
   const handleRightClickToHold = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-      if (valueOfBombs > 0) {
-        e.preventDefault();
-        decreseBombsValue();
-
-        handlePressedIndex('rightAdd');
-      }
+      e.preventDefault();
+      handlePressedIndex('rightAdd');
     },
-    [decreseBombsValue, handlePressedIndex, valueOfBombs]
+    [handlePressedIndex]
   );
 
   const handleRightClickToRelease = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       e.preventDefault();
-      increaseBombsValue();
-
       handlePressedIndex('rightDel');
     },
-    [handlePressedIndex, increaseBombsValue]
+    [handlePressedIndex]
   );
 
   switch (cellSettings.isOpen) {
