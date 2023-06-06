@@ -74,7 +74,7 @@ export function getCellsContentList(
   trigger: boolean,
   cellsNumber: number,
   bombNumber: string,
-  indexToInsert: number | undefined
+  startIndex: number | undefined
 ) {
   const arrayOfEmptyCells: number[] = new Array(cellsNumber).fill(0);
 
@@ -87,9 +87,9 @@ export function getCellsContentList(
     arrayOfBombs.concat(arrayOfEmptyCells).slice(0, arrayOfEmptyCells.length)
   );
 
-  if (indexToInsert) {
-    gameSetup.splice(indexToInsert as number, 0, 0);
-    const indexToDelete = gameSetup.indexOf(0, indexToInsert as number);
+  if (startIndex) {
+    gameSetup.splice(startIndex as number, 0, 0);
+    const indexToDelete = gameSetup.indexOf(0, startIndex as number);
     gameSetup.splice(indexToDelete + 1, 1);
   }
 

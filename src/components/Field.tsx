@@ -19,42 +19,44 @@ import {
 } from './PressedCells';
 
 function Field({ resetValue }: { resetValue: number }) {
-  const [indexToInsert, setIndexToInsert] = useState<number | undefined>(undefined);
+  const [startIndex, setStartIndex] = useState<number | undefined>(undefined);
 
-  const pressedIndexes: PressedIndexesType = usePressedCellsState();
+  const pressedCells: PressedIndexesType = usePressedCellsState();
+  const { left, right } = pressedCells;
+
   const { updateLeftClicks, increaseLeftCounter } = useLeftClickAPI();
   const { updateRightClicks, filterRightClicks, increaseRightCounter } = useRightClickAPI();
   const { resetClicksValues } = useResetClicksAPI();
 
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
+
   const { difficulty, bombNumber } = useContext(InitContext).actionData;
+
   const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
+  const { cellsNumber, width } = fieldSettings;
 
   const dataToMakeCells = useMemo(
-    () => getCellsContentList(isGameStarted, fieldSettings.cellsNumber, bombNumber, indexToInsert),
-    [bombNumber, fieldSettings.cellsNumber, indexToInsert, isGameStarted]
+    () => getCellsContentList(isGameStarted, cellsNumber, bombNumber, startIndex),
+    [bombNumber, cellsNumber, startIndex, isGameStarted]
   );
 
   const bombsList = useMemo(
     () =>
       dataToMakeCells.map((elem, i) => {
         if (elem === 0) {
-          return getNearbyBombs(i, dataToMakeCells, fieldSettings.width);
+          return getNearbyBombs(i, dataToMakeCells, width);
         }
         return 100;
       }),
-    [dataToMakeCells, fieldSettings.width]
+    [dataToMakeCells, width]
   );
 
-  const ranges = useMemo(
-    () => getConnectedRanges(bombsList, fieldSettings.width),
-    [bombsList, fieldSettings.width]
-  );
+  const ranges = useMemo(() => getConnectedRanges(bombsList, width), [bombsList, width]);
 
   const rawCellsList = useMemo(
-    () => getCellsList(dataToMakeCells, bombsList, ranges, pressedIndexes, fieldSettings.width),
-    [dataToMakeCells, bombsList, ranges, pressedIndexes, fieldSettings.width]
+    () => getCellsList(dataToMakeCells, bombsList, ranges, pressedCells, width),
+    [dataToMakeCells, bombsList, ranges, pressedCells, width]
   );
 
   useEffect(() => {
@@ -64,33 +66,25 @@ function Field({ resetValue }: { resetValue: number }) {
   }, [bombNumber, isGameFinished, isGameStarted, resetClicksValues]);
 
   const openedCells = useMemo(
-    () =>
-      clearOfDuplicates(pressedIndexes.left.clicks.map((elem) => rawCellsList[elem].range).flat()),
-    [pressedIndexes, rawCellsList]
+    () => clearOfDuplicates(left.clicks.map((elem) => rawCellsList[elem].range).flat()),
+    [left.clicks, rawCellsList]
   );
 
   const openedCellsSize = useMemo(() => openedCells.length, [openedCells.length]);
 
   useEffect(() => {
-    const data = pressedIndexes.right.clicks.concat(openedCells);
+    const data = right.clicks.concat(openedCells);
     const dataWithoutDup = clearOfDuplicates(data);
     if (data.length !== dataWithoutDup.length) {
       filterRightClicks(openedCells);
     }
-  }, [filterRightClicks, openedCells, pressedIndexes.right.clicks]);
+  }, [filterRightClicks, openedCells, right.clicks]);
 
   useEffect(() => {
-    if (openedCellsSize + Number(bombNumber) === fieldSettings.cellsNumber) {
+    if (openedCellsSize + Number(bombNumber) === cellsNumber) {
       setIsGameFinished('win');
     }
-  }, [
-    bombNumber,
-    fieldSettings.cellsNumber,
-    openedCellsSize,
-    pressedIndexes,
-    rawCellsList,
-    setIsGameFinished,
-  ]);
+  }, [bombNumber, cellsNumber, openedCellsSize, setIsGameFinished]);
 
   const cellsList = useMemo(
     () =>
@@ -99,7 +93,7 @@ function Field({ resetValue }: { resetValue: number }) {
           key={index.toString() + resetValue}
           handleStartAndFinishGame={() => {
             if (!isGameStarted) {
-              setIndexToInsert(index);
+              setStartIndex(index);
               setIsGameStarted(true);
             }
             if (isGameStarted && item.isBombed) {
@@ -114,7 +108,7 @@ function Field({ resetValue }: { resetValue: number }) {
                 updateRightClicks(index);
               }
             } else if (button === 'rightAdd') {
-              if (Number(bombNumber) - pressedIndexes.right.clicks.length > 0) {
+              if (Number(bombNumber) - right.clicks.length > 0) {
                 updateRightClicks(index);
                 increaseRightCounter();
               }
@@ -132,7 +126,7 @@ function Field({ resetValue }: { resetValue: number }) {
       increaseLeftCounter,
       increaseRightCounter,
       isGameStarted,
-      pressedIndexes.right.clicks.length,
+      right.clicks.length,
       rawCellsList,
       resetValue,
       setIsGameFinished,
