@@ -38,6 +38,17 @@ function Cell({
   );
 
   switch (cellSettings.isOpen) {
+    case 'opened':
+      return cellSettings.isBombed ? (
+        <StyledCell aria-details="opened">
+          <FontAwesomeIcon icon={faBomb} />
+        </StyledCell>
+      ) : (
+        <StyledCell aria-details="opened">
+          {cellSettings.nearbyBombs > 0 ? cellSettings.nearbyBombs : ''}
+        </StyledCell>
+      );
+
     case 'left':
       return cellSettings.isBombed ? (
         <StyledCell aria-details="bomb">

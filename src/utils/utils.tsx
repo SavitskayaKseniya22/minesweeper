@@ -40,6 +40,8 @@ export function checkGridSize(prop: string | undefined) {
 
 export function checkColor(prop: string | undefined) {
   switch (prop) {
+    case 'opened':
+      return 'white';
     case 'empty':
       return 'white';
     case 'bomb':
@@ -112,7 +114,9 @@ export function getCellsList(
   bombsList: number[],
   ranges: number[][],
   pressedIndexes: PressedIndexesType,
-  width: number
+  width: number,
+  endIndex: number | undefined,
+  isGameFinished: false | 'win' | 'lose'
 ) {
   const rangesWithBorders = ranges.map((item) => getRangeWithBorder(item, bombsList, width));
 
@@ -125,6 +129,13 @@ export function getCellsList(
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
       isOpen: (() => {
+        if (isGameFinished) {
+          if (endIndex === index) {
+            return 'left';
+          }
+          return 'opened';
+        }
+
         if (openedCells.includes(index)) {
           return 'left';
         }

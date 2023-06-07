@@ -1,5 +1,6 @@
 import React, { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
 import { PressedIndexesType } from '../utils/interfaces';
+import { clearOfDuplicates } from '../utils/utils';
 
 const initialValue = {
   left: {
@@ -14,16 +15,17 @@ const initialValue = {
 
 type APILeftClicks = {
   increaseLeftCounter: () => void;
-  updateLeftClicks: (index: number) => void;
+  updateLeftClicks: (index: number[]) => void;
 };
 
 type APIRightClicks = {
   increaseRightCounter: () => void;
-  updateRightClicks: (index: number) => void;
+  updateRightClicks: (index: number[]) => void;
   filterRightClicks: (index: number[]) => void;
 };
 type APIResetClicks = {
   resetClicksValues: () => void;
+  setClicksValues: (blank: number[], bombed: number[]) => void;
 };
 
 const PressedCellsValuesContext = createContext<PressedIndexesType>({} as PressedIndexesType);
@@ -34,9 +36,10 @@ const ResetApiContext = createContext<APIResetClicks>({} as APIResetClicks);
 type Actions =
   | { type: 'increaseLeftCounter' }
   | { type: 'increaseRightCounter' }
-  | { type: 'updateLeftClicks'; index: number }
-  | { type: 'updateRightClicks'; index: number }
+  | { type: 'updateLeftClicks'; index: number[] }
+  | { type: 'updateRightClicks'; index: number[] }
   | { type: 'filterRightClicks'; index: number[] }
+  | { type: 'setClicksValues'; blank: number[]; bombed: number[] }
   | { type: 'resetClicksValues' };
 
 const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType => {
@@ -54,7 +57,7 @@ const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType
         ...state,
         left: {
           ...state.left,
-          clicks: [...state.left.clicks, action.index],
+          clicks: clearOfDuplicates([...state.left.clicks, ...action.index]),
         },
       };
 
@@ -63,7 +66,7 @@ const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType
         ...state,
         right: {
           ...state.right,
-          clicks: [...state.right.clicks, action.index],
+          clicks: clearOfDuplicates([...state.right.clicks, ...action.index]),
         },
       };
     case 'filterRightClicks':
@@ -82,6 +85,18 @@ const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType
           counter: state.right.counter + 1,
         },
       };
+    case 'setClicksValues':
+      return {
+        ...state,
+        right: {
+          ...state.right,
+          clicks: action.bombed,
+        },
+        left: {
+          ...state.left,
+          clicks: action.blank,
+        },
+      };
     case 'resetClicksValues':
       return initialValue;
     default:
@@ -97,7 +112,7 @@ export function PressedCellsDataProvider({ children }: { children: ReactNode }) 
       dispatch({ type: 'increaseLeftCounter' });
     };
 
-    const updateLeftClicks = (index: number) => {
+    const updateLeftClicks = (index: number[]) => {
       dispatch({ type: 'updateLeftClicks', index });
     };
 
@@ -112,7 +127,7 @@ export function PressedCellsDataProvider({ children }: { children: ReactNode }) 
       dispatch({ type: 'increaseRightCounter' });
     };
 
-    const updateRightClicks = (index: number) => {
+    const updateRightClicks = (index: number[]) => {
       dispatch({ type: 'updateRightClicks', index });
     };
 
@@ -131,9 +146,13 @@ export function PressedCellsDataProvider({ children }: { children: ReactNode }) 
     const resetClicksValues = () => {
       dispatch({ type: 'resetClicksValues' });
     };
+    const setClicksValues = (blank: number[], bombed: number[]) => {
+      dispatch({ type: 'setClicksValues', blank, bombed });
+    };
 
     return {
       resetClicksValues,
+      setClicksValues,
     };
   }, []);
 
