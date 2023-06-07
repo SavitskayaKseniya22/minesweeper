@@ -152,3 +152,24 @@ export function getCellsList(
   });
   return cells;
 }
+
+export function sortDataToMakeCells(data: number[]) {
+  const sortedData: { freeCells: number[]; bombedCells: number[] } = {
+    freeCells: [],
+    bombedCells: [],
+  };
+
+  data.forEach((elem, index) => {
+    if (elem !== 1) {
+      sortedData.freeCells.push(index);
+    }
+  });
+
+  data.forEach((elem, index) => {
+    if (elem === 1) {
+      sortedData.bombedCells.push(index);
+    }
+  });
+
+  return sortedData;
+}

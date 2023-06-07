@@ -6,6 +6,7 @@ import {
   getCellsList,
   getFieldSettings,
   getNearbyBombs,
+  sortDataToMakeCells,
 } from '../utils/utils';
 import { GameCycleContext, InitContext } from '../contexts';
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
@@ -41,31 +42,11 @@ function Field({ resetValue }: { resetValue: number }) {
     [bombNumber, cellsNumber, startIndex]
   );
 
-  const freeCells = useMemo(
-    () =>
-      dataToMakeCells
-        .map((elem, index) => {
-          if (elem !== 1) {
-            return index;
-          }
-          return 1000;
-        })
-        .filter((elem) => elem !== 1000),
+  const sortedDataToMakeCells = useMemo(
+    () => sortDataToMakeCells(dataToMakeCells),
     [dataToMakeCells]
   );
-
-  const bombedCells = useMemo(
-    () =>
-      dataToMakeCells
-        .map((elem, index) => {
-          if (elem === 1) {
-            return index;
-          }
-          return 1000;
-        })
-        .filter((elem) => elem !== 1000),
-    [dataToMakeCells]
-  );
+  const { freeCells, bombedCells } = sortedDataToMakeCells;
 
   const bombsList = useMemo(
     () =>
