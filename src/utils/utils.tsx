@@ -73,14 +73,13 @@ export function getNearbyBombs(i: number, dataToMakeCells: number[], width: numb
 }
 
 export function getCellsContentList(
-  trigger: boolean,
   cellsNumber: number,
   bombNumber: string,
   startIndex: number | undefined
 ) {
   const arrayOfEmptyCells: number[] = new Array(cellsNumber).fill(0);
 
-  if (!trigger) {
+  if (startIndex === undefined) {
     return arrayOfEmptyCells;
   }
 
@@ -89,11 +88,13 @@ export function getCellsContentList(
     arrayOfBombs.concat(arrayOfEmptyCells).slice(0, arrayOfEmptyCells.length)
   );
 
-  if (startIndex) {
-    gameSetup.splice(startIndex as number, 0, 0);
-    const indexToDelete = gameSetup.indexOf(0, startIndex as number);
-    gameSetup.splice(indexToDelete + 1, 1);
-  }
+  const elemToTransfer = gameSetup.slice(startIndex, startIndex + 1);
+  const indexToTransfer = [gameSetup.indexOf(startIndex + 1), gameSetup.indexOf(0), 0].sort(
+    (a, b) => b - a
+  )[0];
+
+  gameSetup.splice(startIndex, 1, 0);
+  gameSetup.splice(indexToTransfer, 1, elemToTransfer[0]);
 
   return gameSetup;
 }

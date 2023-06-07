@@ -37,8 +37,8 @@ function Field({ resetValue }: { resetValue: number }) {
   const { cellsNumber, width } = fieldSettings;
 
   const dataToMakeCells = useMemo(
-    () => getCellsContentList(isGameStarted, cellsNumber, bombNumber, startIndex),
-    [bombNumber, cellsNumber, isGameStarted, startIndex]
+    () => getCellsContentList(cellsNumber, bombNumber, startIndex),
+    [bombNumber, cellsNumber, startIndex]
   );
 
   const freeCells = useMemo(
