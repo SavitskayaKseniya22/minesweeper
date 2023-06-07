@@ -11,6 +11,8 @@ const initialValue = {
     counter: 0,
     clicks: [],
   },
+  startIndex: undefined,
+  endIndex: undefined,
 };
 
 type APILeftClicks = {
@@ -28,10 +30,16 @@ type APIResetClicks = {
   setClicksValues: (blank: number[], bombed: number[]) => void;
 };
 
+type APIExtremClicks = {
+  setStartIndex: (index: number) => void;
+  setEndIndex: (index: number) => void;
+};
+
 const PressedCellsValuesContext = createContext<PressedIndexesType>({} as PressedIndexesType);
 const LeftClickApiContext = createContext<APILeftClicks>({} as APILeftClicks);
 const RightClickApiContext = createContext<APIRightClicks>({} as APIRightClicks);
 const ResetApiContext = createContext<APIResetClicks>({} as APIResetClicks);
+const ExtremeIndexesApiContext = createContext<APIExtremClicks>({} as APIExtremClicks);
 
 type Actions =
   | { type: 'increaseLeftCounter' }
@@ -39,6 +47,8 @@ type Actions =
   | { type: 'updateLeftClicks'; index: number[] }
   | { type: 'updateRightClicks'; index: number[] }
   | { type: 'filterRightClicks'; index: number[] }
+  | { type: 'setStartIndex'; index: number }
+  | { type: 'setEndIndex'; index: number }
   | { type: 'setClicksValues'; blank: number[]; bombed: number[] }
   | { type: 'resetClicksValues' };
 
@@ -97,6 +107,16 @@ const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType
           clicks: action.blank,
         },
       };
+    case 'setStartIndex':
+      return {
+        ...state,
+        startIndex: action.index,
+      };
+    case 'setEndIndex':
+      return {
+        ...state,
+        endIndex: action.index,
+      };
     case 'resetClicksValues':
       return initialValue;
     default:
@@ -142,6 +162,21 @@ export function PressedCellsDataProvider({ children }: { children: ReactNode }) 
     };
   }, []);
 
+  const apiExtremeClicks = useMemo(() => {
+    const setStartIndex = (index: number) => {
+      dispatch({ type: 'setStartIndex', index });
+    };
+
+    const setEndIndex = (index: number) => {
+      dispatch({ type: 'setEndIndex', index });
+    };
+
+    return {
+      setStartIndex,
+      setEndIndex,
+    };
+  }, []);
+
   const apiResetClicks = useMemo(() => {
     const resetClicksValues = () => {
       dispatch({ type: 'resetClicksValues' });
@@ -160,7 +195,11 @@ export function PressedCellsDataProvider({ children }: { children: ReactNode }) 
     <PressedCellsValuesContext.Provider value={state}>
       <LeftClickApiContext.Provider value={apiLeftClick}>
         <RightClickApiContext.Provider value={apiRightClick}>
-          <ResetApiContext.Provider value={apiResetClicks}>{children}</ResetApiContext.Provider>
+          <ResetApiContext.Provider value={apiResetClicks}>
+            <ExtremeIndexesApiContext.Provider value={apiExtremeClicks}>
+              {children}
+            </ExtremeIndexesApiContext.Provider>
+          </ResetApiContext.Provider>
         </RightClickApiContext.Provider>
       </LeftClickApiContext.Provider>
     </PressedCellsValuesContext.Provider>
@@ -171,3 +210,4 @@ export const usePressedCellsState = () => useContext(PressedCellsValuesContext);
 export const useLeftClickAPI = () => useContext(LeftClickApiContext);
 export const useRightClickAPI = () => useContext(RightClickApiContext);
 export const useResetClicksAPI = () => useContext(ResetApiContext);
+export const useExtremeClicksAPI = () => useContext(ExtremeIndexesApiContext);

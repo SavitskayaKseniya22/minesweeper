@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import Cell from './Cell';
 import {
   clearOfDuplicates,
@@ -12,6 +12,7 @@ import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { PressedIndexesType } from '../utils/interfaces';
 import {
+  useExtremeClicksAPI,
   useLeftClickAPI,
   usePressedCellsState,
   useResetClicksAPI,
@@ -19,15 +20,13 @@ import {
 } from './PressedCells';
 
 function Field({ resetValue }: { resetValue: number }) {
-  const [startIndex, setStartIndex] = useState<number | undefined>(undefined);
-  const [endIndex, setEndIndex] = useState<number | undefined>(undefined);
-
   const pressedCells: PressedIndexesType = usePressedCellsState();
-  const { left, right } = pressedCells;
+  const { left, right, startIndex, endIndex } = pressedCells;
 
   const { updateLeftClicks, increaseLeftCounter } = useLeftClickAPI();
   const { updateRightClicks, filterRightClicks, increaseRightCounter } = useRightClickAPI();
   const { resetClicksValues, setClicksValues } = useResetClicksAPI();
+  const { setStartIndex, setEndIndex } = useExtremeClicksAPI();
 
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
@@ -98,8 +97,6 @@ function Field({ resetValue }: { resetValue: number }) {
   useEffect(() => {
     if (!isGameFinished && !isGameStarted) {
       resetClicksValues();
-      setStartIndex(undefined);
-      setEndIndex(undefined);
     }
   }, [isGameFinished, isGameStarted, resetClicksValues]);
 
@@ -182,8 +179,10 @@ function Field({ resetValue }: { resetValue: number }) {
       rawCellsList,
       resetValue,
       right.clicks.length,
+      setEndIndex,
       setIsGameFinished,
       setIsGameStarted,
+      setStartIndex,
       updateLeftClicks,
       updateRightClicks,
     ]

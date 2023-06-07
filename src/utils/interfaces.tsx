@@ -7,4 +7,6 @@ export interface PressedIndexesType {
     counter: number;
     clicks: number[];
   };
+  startIndex: number | undefined;
+  endIndex: number | undefined;
 }
