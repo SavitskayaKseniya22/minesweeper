@@ -43,7 +43,7 @@ export function checkColor(prop: string | undefined) {
     case 'opened':
       return '#9c8f77';
     case 'empty':
-      return '#9c8f77';
+      return 'rgba(0, 47, 0, 0.8)';
     case 'bomb':
       return 'red';
     case 'question':
@@ -139,12 +139,8 @@ export function getCellsList(
           if (right.totalClicks.includes(index) && right.clicks.includes(index)) {
             return 'opened-right';
           }
-
           if (right.totalClicks.includes(index)) {
             return 'opened';
-          }
-          if (right.clicks.includes(index)) {
-            return 'right';
           }
         }
 

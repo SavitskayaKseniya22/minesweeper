@@ -58,7 +58,7 @@ function Cell({
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       ) : (
-        <StyledCell aria-details="empty">
+        <StyledCell aria-details={cellSettings.nearbyBombs > 0 ? 'opened' : 'empty'}>
           {cellSettings.nearbyBombs > 0 ? cellSettings.nearbyBombs : ''}
         </StyledCell>
       );
