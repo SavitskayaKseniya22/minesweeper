@@ -49,13 +49,12 @@ export const StyledFooter = styled('footer')`
 
 export const StyledContainer = styled('div')`
   background-color: rgba(0, 47, 0, 0.8);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 3rem 10rem;
+  padding: 0.5rem;
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 0.5rem;
+  position: relative;
   &:before,
   &:after {
     content: ' ';
@@ -87,16 +86,26 @@ export const StyledContainer = styled('div')`
   }
 `;
 
+export const StyledContainerCentred = styled(StyledContainer)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 3rem 10rem;
+  align-items: unset;
+`;
+
 export const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 3rem;
   width: 300px;
 
   input,
   select {
+    width: 100%;
     padding: 0.5rem;
-    background-color: rgba(0, 47, 0, 1);
+    background-color: rgba(0, 47, 0, 0);
     color: #00ee00;
     text-align: center;
     cursor: pointer;
@@ -107,6 +116,7 @@ export const StyledForm = styled(Form)`
   input {
     appearance: textfield;
   }
+
   select {
     appearance: none;
     &:focus {

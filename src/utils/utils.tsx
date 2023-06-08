@@ -41,16 +41,16 @@ export function checkGridSize(prop: string | undefined) {
 export function checkColor(prop: string | undefined) {
   switch (prop) {
     case 'opened':
-      return 'white';
+      return '#9c8f77';
     case 'empty':
-      return 'white';
+      return '#9c8f77';
     case 'bomb':
       return 'red';
     case 'question':
       return 'orange';
 
     default:
-      return '#9c8f77';
+      return 'white';
   }
 }
 

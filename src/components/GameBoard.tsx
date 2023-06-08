@@ -7,7 +7,7 @@ import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { PressedCellsDataProvider } from './PressedCells';
-import { StyledAsideItemExtended, StyledButton, StyledContainer } from './styledComponents';
+import { StyledAsideItemExtended, StyledButton, StyledContainerCentred } from './styledComponents';
 
 function GameBoard() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -48,7 +48,7 @@ function GameBoard() {
       <GameCycleContext.Provider value={gameCycleValues}>
         <PressedCellsDataProvider>
           <main>
-            <StyledContainer>
+            <StyledContainerCentred>
               <Field resetValue={resetValue} />
               <aside>
                 <BombsCounter />
@@ -83,7 +83,7 @@ function GameBoard() {
                   </StyledButton>
                 )}
               </aside>
-            </StyledContainer>
+            </StyledContainerCentred>
           </main>
         </PressedCellsDataProvider>
       </GameCycleContext.Provider>
