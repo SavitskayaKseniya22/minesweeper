@@ -99,12 +99,14 @@ function Field({ resetValue }: { resetValue: number }) {
   );
 
   useEffect(() => {
-    const data = right.clicks.concat(openedCells);
-    const dataWithoutDup = clearOfDuplicates(data);
-    if (data.length !== dataWithoutDup.length) {
-      filterRightClicks(openedCells);
+    if (!isGameFinished) {
+      const data = right.clicks.concat(openedCells);
+      const dataWithoutDup = clearOfDuplicates(data);
+      if (data.length !== dataWithoutDup.length) {
+        filterRightClicks(openedCells);
+      }
     }
-  }, [filterRightClicks, openedCells, right.clicks]);
+  }, [filterRightClicks, isGameFinished, openedCells, right.clicks]);
 
   useEffect(() => {
     if (
