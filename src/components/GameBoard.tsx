@@ -7,6 +7,7 @@ import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { PressedCellsDataProvider } from './PressedCells';
+import { StyledAsideItemExtended, StyledButton, StyledContainer } from './styledComponents';
 
 function GameBoard() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -47,11 +48,19 @@ function GameBoard() {
       <GameCycleContext.Provider value={gameCycleValues}>
         <PressedCellsDataProvider>
           <main>
-            <div className="side">
-              {isGameFinished === 'lose' && (
-                <>
-                  <span>game over</span>
-                  <button
+            <StyledContainer>
+              <Field resetValue={resetValue} />
+              <aside>
+                <BombsCounter />
+                <MovesCounter />
+                <Timer intervalRef={intervalRef} resetValue={resetValue} />
+
+                <StyledAsideItemExtended className="gameInfo">
+                  {isGameFinished === 'lose' && <span>game over</span>}
+                  {isGameFinished === 'win' && <span>game win!</span>}
+                </StyledAsideItemExtended>
+                {isGameFinished && (
+                  <StyledButton
                     type="button"
                     onClick={() => {
                       setIsGameStarted(false);
@@ -60,42 +69,21 @@ function GameBoard() {
                     }}
                   >
                     start new game
-                  </button>
-                </>
-              )}
-              {isGameFinished === 'win' && (
-                <>
-                  <span>game win!</span>
-                  <button
+                  </StyledButton>
+                )}
+                {isGameStarted && !isGameFinished && (
+                  <StyledButton
                     type="button"
                     onClick={() => {
-                      setIsGameStarted(false);
-                      setIsGameFinished(false);
-                      setResetValue(Math.random());
+                      setIsGameStarted(true);
+                      setIsGameFinished('lose');
                     }}
                   >
-                    start new game
-                  </button>
-                </>
-              )}
-
-              <BombsCounter />
-              <MovesCounter />
-              <Timer intervalRef={intervalRef} resetValue={resetValue} />
-              {isGameStarted && !isGameFinished && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsGameStarted(true);
-                    setIsGameFinished('lose');
-                  }}
-                >
-                  finish game
-                </button>
-              )}
-            </div>
-
-            <Field resetValue={resetValue} />
+                    finish game
+                  </StyledButton>
+                )}
+              </aside>
+            </StyledContainer>
           </main>
         </PressedCellsDataProvider>
       </GameCycleContext.Provider>

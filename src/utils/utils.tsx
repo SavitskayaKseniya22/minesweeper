@@ -19,11 +19,11 @@ export function getFieldSettings(difficulty: string) {
 export function checkSize(prop: string | undefined) {
   switch (prop) {
     case 'medium':
-      return '42rem';
+      return '32rem';
     case 'hard':
-      return '47rem';
+      return '44rem';
     default:
-      return '28rem';
+      return '22rem';
   }
 }
 

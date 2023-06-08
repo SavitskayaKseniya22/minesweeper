@@ -3,16 +3,13 @@ import { Form } from 'react-router-dom';
 import { checkColor, checkGridSize, checkSize } from '../utils/utils';
 
 export const StyledField = styled.ul`
-  margin: 0 auto;
   width: ${(props) => checkSize(props['aria-details'])};
   height: ${(props) => checkSize(props['aria-details'])};
   display: grid;
   grid-template-columns: ${(props) => checkGridSize(props['aria-details'])};
   grid-template-rows: ${(props) => checkGridSize(props['aria-details'])};
-  grid-column-gap: 2px;
+  grid-column-gap: 1px;
   grid-row-gap: 1px;
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 2rem;
   pointer-events: ${(props) => {
     if (props['aria-busy']) {
       return 'none';
@@ -51,13 +48,14 @@ export const StyledFooter = styled('footer')`
 `;
 
 export const StyledContainer = styled('div')`
-  width: 300px;
   background-color: rgba(0, 47, 0, 0.8);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 2rem;
+  padding: 3rem 10rem;
+  display: flex;
+  gap: 0.5rem;
   &:before,
   &:after {
     content: ' ';
@@ -93,10 +91,10 @@ export const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 300px;
 
   input,
-  select,
-  button {
+  select {
     padding: 0.5rem;
     background-color: rgba(0, 47, 0, 1);
     color: #00ee00;
@@ -114,10 +112,32 @@ export const StyledForm = styled(Form)`
     &:focus {
     }
   }
-  button {
-    background-color: #00ee00;
-    color: rgba(0, 47, 0, 1);
-    font-weight: bold;
-    text-transform: uppercase;
-  }
+`;
+
+export const StyledAsideItem = styled('li')`
+  background-color: rgba(0, 47, 0, 1);
+  border-bottom: 2px solid black;
+  border-right: 1px solid black;
+  color: #00ee00;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  flex-grow: 0;
+`;
+
+export const StyledAsideItemExtended = styled(StyledAsideItem)`
+  flex-grow: 22;
+`;
+
+export const StyledButton = styled('button')`
+  background-color: #00ee00;
+  color: rgba(0, 47, 0, 1);
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 1.2rem;
 `;

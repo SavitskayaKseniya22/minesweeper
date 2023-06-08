@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { StyledContainer, StyledForm } from './styledComponents';
+import { StyledButton, StyledContainer, StyledForm } from './styledComponents';
 
 function MainPage() {
   const { register } = useForm({
@@ -21,7 +21,7 @@ function MainPage() {
             <option value="hard">hard</option>
           </select>
           <input type="number" {...register('bombNumber', { required: true, max: 99, min: 10 })} />
-          <button type="submit">Start</button>
+          <StyledButton type="submit">Start</StyledButton>
         </StyledForm>
       </StyledContainer>
     </main>

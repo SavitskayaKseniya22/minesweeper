@@ -23,7 +23,7 @@ export const GlobalStyle = createGlobalStyle`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-     background-size:100%;
+    background-size:100%;
     background-position: center;
     background-repeat:no-repeat;
     background-image:url(${logo});
@@ -36,15 +36,20 @@ export const GlobalStyle = createGlobalStyle`
     display:flex;
     justify-content:center;
     align-items:center;
+    position:relative;
     
     
   }
 
-  .side{
-    position:absolute;
-    left:0;
-
+  aside{
+    width:200px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:0.5rem;
   }
+
+  
 
   h2{
      font-family: 'Overseer', sans-serif;
@@ -69,6 +74,8 @@ export const GlobalStyle = createGlobalStyle`
   main{
     flex-grow:1;
   }
+
+  
 `;
 
 export default GlobalStyle;

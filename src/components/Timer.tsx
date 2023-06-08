@@ -1,5 +1,8 @@
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
+import { faStopwatch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { StyledAsideItem } from './styledComponents';
 
 function Timer({
   intervalRef,
@@ -26,7 +29,11 @@ function Timer({
     setTime(0);
   }, [resetValue]);
 
-  return <div>{time}</div>;
+  return (
+    <StyledAsideItem>
+      <FontAwesomeIcon icon={faStopwatch} /> {time}
+    </StyledAsideItem>
+  );
 }
 
 export default Timer;
