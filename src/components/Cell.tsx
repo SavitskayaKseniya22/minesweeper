@@ -39,13 +39,16 @@ function Cell({
 
   switch (cellSettings.isOpen) {
     case 'opened':
-      return cellSettings.isBombed ? (
+      return (
         <StyledCell aria-details="opened">
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
-      ) : (
+      );
+    case 'opened-right':
+      return (
         <StyledCell aria-details="opened">
-          {cellSettings.nearbyBombs > 0 ? cellSettings.nearbyBombs : ''}
+          <FontAwesomeIcon icon={faQuestion} />
+          <FontAwesomeIcon icon={faBomb} className="additionIcon" />
         </StyledCell>
       );
 

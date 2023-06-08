@@ -48,6 +48,7 @@ export function checkColor(prop: string | undefined) {
       return 'red';
     case 'question':
       return 'orange';
+
     default:
       return '#9c8f77';
   }
@@ -119,10 +120,11 @@ export function getCellsList(
   endIndex: number | undefined,
   isGameFinished: false | 'win' | 'lose'
 ) {
-  const rangesWithBorders = ranges.map((item) => getRangeWithBorder(item, bombsList, width));
+  const { right, left } = pressedIndexes;
 
+  const rangesWithBorders = ranges.map((item) => getRangeWithBorder(item, bombsList, width));
   const openedCells = clearOfDuplicates(
-    pressedIndexes.left.clicks.map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders)).flat()
+    left.clicks.map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders)).flat()
   );
 
   const cells = list.map((elem, index) => {
@@ -134,13 +136,22 @@ export function getCellsList(
           if (endIndex === index) {
             return 'left';
           }
-          return 'opened';
+          if (right.totalClicks.includes(index) && right.clicks.includes(index)) {
+            return 'opened-right';
+          }
+
+          if (right.totalClicks.includes(index)) {
+            return 'opened';
+          }
+          if (right.clicks.includes(index)) {
+            return 'right';
+          }
         }
 
         if (openedCells.includes(index)) {
           return 'left';
         }
-        if (pressedIndexes.right.clicks.includes(index)) {
+        if (right.clicks.includes(index)) {
           return 'right';
         }
         return 'false';

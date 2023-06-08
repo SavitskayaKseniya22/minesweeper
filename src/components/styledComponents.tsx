@@ -29,6 +29,13 @@ export const StyledCell = styled('li')`
   cursor: pointer;
   background-color: ${(props) => checkColor(props['aria-details'])};
   font-family: 'Overseer', sans-serif;
+  position: relative;
+  .additionIcon {
+    position: absolute;
+    font-size: 0.6rem;
+    bottom: 0.2rem;
+    right: 0.2rem;
+  }
 `;
 
 export const StyledHeader = styled('header')`

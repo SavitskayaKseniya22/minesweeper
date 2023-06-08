@@ -48,6 +48,10 @@ function Field({ resetValue }: { resetValue: number }) {
   );
   const { freeCells, bombedCells } = sortedDataToMakeCells;
 
+  useEffect(() => {
+    setClicksValues(freeCells, bombedCells);
+  }, [bombedCells, freeCells, setClicksValues]);
+
   const bombsList = useMemo(
     () =>
       dataToMakeCells.map((elem, i) => {
@@ -80,12 +84,6 @@ function Field({ resetValue }: { resetValue: number }) {
       resetClicksValues();
     }
   }, [isGameFinished, isGameStarted, resetClicksValues]);
-
-  useEffect(() => {
-    if (isGameFinished && isGameStarted) {
-      setClicksValues(freeCells, bombedCells);
-    }
-  }, [bombedCells, freeCells, isGameFinished, isGameStarted, setClicksValues]);
 
   const openedCells = useMemo(
     () =>
@@ -137,9 +135,6 @@ function Field({ resetValue }: { resetValue: number }) {
             if (button === 'left') {
               updateLeftClicks([index]);
               increaseLeftCounter();
-              if (item.isBombed) {
-                updateRightClicks([index]);
-              }
             } else if (button === 'rightAdd') {
               if (right.clicks.length < Number(bombNumber)) {
                 updateRightClicks([index]);

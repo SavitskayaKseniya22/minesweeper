@@ -82,7 +82,7 @@ function GameBoard() {
               <BombsCounter />
               <MovesCounter />
               <Timer intervalRef={intervalRef} resetValue={resetValue} />
-              {isGameStarted && (
+              {isGameStarted && !isGameFinished && (
                 <button
                   type="button"
                   onClick={() => {

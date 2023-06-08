@@ -6,10 +6,12 @@ const initialValue = {
   left: {
     counter: 0,
     clicks: [],
+    totalClicks: [],
   },
   right: {
     counter: 0,
     clicks: [],
+    totalClicks: [],
   },
   startIndex: undefined,
   endIndex: undefined,
@@ -100,11 +102,11 @@ const reducer = (state: PressedIndexesType, action: Actions): PressedIndexesType
         ...state,
         right: {
           ...state.right,
-          clicks: action.bombed,
+          totalClicks: action.bombed,
         },
         left: {
           ...state.left,
-          clicks: action.blank,
+          totalClicks: action.blank,
         },
       };
     case 'setStartIndex':
