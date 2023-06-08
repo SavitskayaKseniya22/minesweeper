@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Navigate, useActionData } from 'react-router-dom';
+import { Navigate, useActionData, useNavigate } from 'react-router-dom';
 import Field from './Field';
 import { InitContext, GameCycleContext } from '../contexts';
 import BombsCounter from './BombsCounter';
@@ -15,6 +15,7 @@ function GameBoard() {
   const [resetValue, setResetValue] = useState<number>(1);
   const actionData = useActionData() as { difficulty: string; bombNumber: string };
   const intervalRef = useRef<number | NodeJS.Timeout>(0);
+  const navigate = useNavigate();
 
   const actionDataValues = useMemo(
     () => ({
@@ -56,8 +57,8 @@ function GameBoard() {
                 <Timer intervalRef={intervalRef} resetValue={resetValue} />
 
                 <StyledAsideItemExtended className="gameInfo">
-                  {isGameFinished === 'lose' && <span>game over</span>}
-                  {isGameFinished === 'win' && <span>game win!</span>}
+                  {isGameFinished === 'lose' && <span>Game over!</span>}
+                  {isGameFinished === 'win' && <span>Game win!</span>}
                 </StyledAsideItemExtended>
                 {isGameFinished && (
                   <StyledButton
@@ -82,6 +83,14 @@ function GameBoard() {
                     finish game
                   </StyledButton>
                 )}
+                <StyledButton
+                  type="button"
+                  onClick={() => {
+                    navigate('/');
+                  }}
+                >
+                  Back to level selection
+                </StyledButton>
               </aside>
             </StyledContainerCentred>
           </main>
