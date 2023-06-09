@@ -1,31 +1,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch, useSelector } from 'react-redux';
 import Field from './Field';
-import GameCycleContext from '../contexts';
 import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { PressedCellsDataProvider } from './PressedCells';
 import { StyledAsideItemExtended, StyledButton, StyledContainerCentred } from './styledComponents';
+import { RootState } from '../store/store';
+import { updateBothGameStatuses } from '../store/GameCycleSlice';
 
 function GameBoard() {
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isGameFinished, setIsGameFinished] = useState<'win' | 'lose' | false>(false);
   const [resetValue, setResetValue] = useState<number>(1);
   const intervalRef = useRef<number | NodeJS.Timeout>(0);
   const navigate = useNavigate();
-
-  const gameCycleValues = useMemo(
-    () => ({
-      isGameFinished,
-      isGameStarted,
-      setIsGameStarted,
-      setIsGameFinished,
-    }),
-    [isGameFinished, isGameStarted]
-  );
+  const dispatch = useDispatch();
+  const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
+  const { isGameStarted, isGameFinished } = gameCycleValues.settings;
 
   useEffect(() => {
     if (isGameFinished) {
@@ -34,56 +26,53 @@ function GameBoard() {
   }, [isGameFinished]);
 
   return (
-    <GameCycleContext.Provider value={gameCycleValues}>
-      <PressedCellsDataProvider>
-        <main>
-          <StyledContainerCentred>
-            <Field resetValue={resetValue} />
-            <aside>
-              <BombsCounter />
-              <MovesCounter />
-              <Timer intervalRef={intervalRef} resetValue={resetValue} />
+    <PressedCellsDataProvider>
+      <main>
+        <StyledContainerCentred>
+          <Field resetValue={resetValue} />
+          <aside>
+            <BombsCounter />
+            <MovesCounter />
+            <Timer intervalRef={intervalRef} resetValue={resetValue} />
 
-              <StyledAsideItemExtended className="gameInfo">
-                {isGameFinished === 'lose' && <span>Game over!</span>}
-                {isGameFinished === 'win' && <span>Game win!</span>}
-              </StyledAsideItemExtended>
-              {isGameFinished && (
-                <StyledButton
-                  type="button"
-                  onClick={() => {
-                    setIsGameStarted(false);
-                    setIsGameFinished(false);
-                    setResetValue(Math.random());
-                  }}
-                >
-                  start new game
-                </StyledButton>
-              )}
-              {isGameStarted && !isGameFinished && (
-                <StyledButton
-                  type="button"
-                  onClick={() => {
-                    setIsGameStarted(true);
-                    setIsGameFinished('lose');
-                  }}
-                >
-                  finish game
-                </StyledButton>
-              )}
+            <StyledAsideItemExtended className="gameInfo">
+              {isGameFinished === 'lose' && <span>Game over!</span>}
+              {isGameFinished === 'win' && <span>Game win!</span>}
+            </StyledAsideItemExtended>
+            {isGameFinished && (
               <StyledButton
                 type="button"
                 onClick={() => {
-                  navigate('/');
+                  dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false }));
+                  setResetValue(Math.random());
                 }}
               >
-                Back to level selection
+                start new game
               </StyledButton>
-            </aside>
-          </StyledContainerCentred>
-        </main>
-      </PressedCellsDataProvider>
-    </GameCycleContext.Provider>
+            )}
+            {isGameStarted && !isGameFinished && (
+              <StyledButton
+                type="button"
+                onClick={() => {
+                  dispatch(updateBothGameStatuses({ isGameStarted: true, isGameFinished: 'lose' }));
+                }}
+              >
+                finish game
+              </StyledButton>
+            )}
+            <StyledButton
+              type="button"
+              onClick={() => {
+                dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false })); // ??
+                navigate('/');
+              }}
+            >
+              Back to level selection
+            </StyledButton>
+          </aside>
+        </StyledContainerCentred>
+      </main>
+    </PressedCellsDataProvider>
   );
 }
 

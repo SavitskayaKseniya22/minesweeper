@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Cell from './Cell';
 import {
   clearOfDuplicates,
@@ -9,7 +9,7 @@ import {
   getNearbyBombs,
   sortDataToMakeCells,
 } from '../utils/utils';
-import GameCycleContext from '../contexts';
+
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { PressedIndexesType } from '../utils/interfaces';
@@ -21,6 +21,7 @@ import {
   useRightClickAPI,
 } from './PressedCells';
 import { RootState } from '../store/store';
+import { updateFinishGameStatus, updateStartGameStatus } from '../store/GameCycleSlice';
 
 function Field({ resetValue }: { resetValue: number }) {
   const pressedCells: PressedIndexesType = usePressedCellsState();
@@ -31,8 +32,9 @@ function Field({ resetValue }: { resetValue: number }) {
   const { resetClicksValues, setClicksValues } = useResetClicksAPI();
   const { setStartIndex, setEndIndex } = useExtremeClicksAPI();
 
-  const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
-    useContext(GameCycleContext);
+  const dispatch = useDispatch();
+  const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
+  const { isGameStarted, isGameFinished } = gameCycleValues.settings;
 
   const initFormValues = useSelector((state: RootState) => state.formData);
   const { bombNumber, difficulty } = initFormValues.settings;
@@ -115,9 +117,9 @@ function Field({ resetValue }: { resetValue: number }) {
       isGameStarted &&
       !isGameFinished
     ) {
-      setIsGameFinished('win');
+      dispatch(updateFinishGameStatus('win'));
     }
-  }, [freeCells, isGameFinished, isGameStarted, openedCells, setIsGameFinished]);
+  }, [dispatch, freeCells, isGameFinished, isGameStarted, openedCells]);
 
   const cellsList = useMemo(
     () =>
@@ -127,11 +129,12 @@ function Field({ resetValue }: { resetValue: number }) {
           handleStartAndFinishGame={() => {
             if (!isGameStarted) {
               setStartIndex(index);
-              setIsGameStarted(true);
+
+              dispatch(updateStartGameStatus(true));
             }
             if (isGameStarted && item.isBombed) {
               setEndIndex(index);
-              setIsGameFinished('lose');
+              dispatch(updateFinishGameStatus('lose'));
             }
           }}
           handlePressedIndex={(button: 'left' | 'rightAdd' | 'rightDel') => {
@@ -153,6 +156,7 @@ function Field({ resetValue }: { resetValue: number }) {
       )),
     [
       bombNumber,
+      dispatch,
       filterRightClicks,
       increaseLeftCounter,
       increaseRightCounter,
@@ -161,8 +165,6 @@ function Field({ resetValue }: { resetValue: number }) {
       resetValue,
       right.clicks.length,
       setEndIndex,
-      setIsGameFinished,
-      setIsGameStarted,
       setStartIndex,
       updateLeftClicks,
       updateRightClicks,
