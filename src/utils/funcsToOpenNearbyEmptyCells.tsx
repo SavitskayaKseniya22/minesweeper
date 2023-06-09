@@ -97,7 +97,7 @@ function reduceRanges(ranges: number[][], width: number) {
 }
 
 function correctExtremeValue(i: number, width: number, side: string) {
-  if ((i % width === 9 && side === 'left') || (i % width === 0 && side === 'right')) {
+  if ((i % width === width - 1 && side === 'left') || (i % width === 0 && side === 'right')) {
     return -1;
   }
 
