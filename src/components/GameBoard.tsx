@@ -6,7 +6,6 @@ import Field from './Field';
 import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
 import Timer from './Timer';
-import { PressedCellsDataProvider } from './PressedCells';
 import { StyledAsideItemExtended, StyledButton, StyledContainerCentred } from './styledComponents';
 import { RootState } from '../store/store';
 import { updateBothGameStatuses } from '../store/GameCycleSlice';
@@ -26,53 +25,51 @@ function GameBoard() {
   }, [isGameFinished]);
 
   return (
-    <PressedCellsDataProvider>
-      <main>
-        <StyledContainerCentred>
-          <Field resetValue={resetValue} />
-          <aside>
-            <BombsCounter />
-            <MovesCounter />
-            <Timer intervalRef={intervalRef} resetValue={resetValue} />
+    <main>
+      <StyledContainerCentred>
+        <Field resetValue={resetValue} />
+        <aside>
+          <BombsCounter />
+          <MovesCounter />
+          <Timer intervalRef={intervalRef} resetValue={resetValue} />
 
-            <StyledAsideItemExtended className="gameInfo">
-              {isGameFinished === 'lose' && <span>Game over!</span>}
-              {isGameFinished === 'win' && <span>Game win!</span>}
-            </StyledAsideItemExtended>
-            {isGameFinished && (
-              <StyledButton
-                type="button"
-                onClick={() => {
-                  dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false }));
-                  setResetValue(Math.random());
-                }}
-              >
-                start new game
-              </StyledButton>
-            )}
-            {isGameStarted && !isGameFinished && (
-              <StyledButton
-                type="button"
-                onClick={() => {
-                  dispatch(updateBothGameStatuses({ isGameStarted: true, isGameFinished: 'lose' }));
-                }}
-              >
-                finish game
-              </StyledButton>
-            )}
+          <StyledAsideItemExtended className="gameInfo">
+            {isGameFinished === 'lose' && <span>Game over!</span>}
+            {isGameFinished === 'win' && <span>Game win!</span>}
+          </StyledAsideItemExtended>
+          {isGameFinished && (
             <StyledButton
               type="button"
               onClick={() => {
-                dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false })); // ??
-                navigate('/');
+                dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false }));
+                setResetValue(Math.random());
               }}
             >
-              Back to level selection
+              start new game
             </StyledButton>
-          </aside>
-        </StyledContainerCentred>
-      </main>
-    </PressedCellsDataProvider>
+          )}
+          {isGameStarted && !isGameFinished && (
+            <StyledButton
+              type="button"
+              onClick={() => {
+                dispatch(updateBothGameStatuses({ isGameStarted: true, isGameFinished: 'lose' }));
+              }}
+            >
+              finish game
+            </StyledButton>
+          )}
+          <StyledButton
+            type="button"
+            onClick={() => {
+              dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false })); // ??
+              navigate('/');
+            }}
+          >
+            Back to level selection
+          </StyledButton>
+        </aside>
+      </StyledContainerCentred>
+    </main>
   );
 }
 

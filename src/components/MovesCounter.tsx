@@ -1,11 +1,15 @@
 import React from 'react';
 import { faComputerMouse, faL, faR } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePressedCellsState } from './PressedCells';
+
+import { useSelector } from 'react-redux';
 import { StyledAsideItem } from './styledComponents';
+import { RootState } from '../store/store';
 
 function MovesCounter() {
-  const { left, right } = usePressedCellsState();
+  const pressedCellsValues = useSelector((state: RootState) => state.pressedCells);
+  const { left, right } = pressedCellsValues;
+
   return (
     <StyledAsideItem>
       <FontAwesomeIcon icon={faComputerMouse} /> <FontAwesomeIcon icon={faL} /> {left.counter}{' '}
