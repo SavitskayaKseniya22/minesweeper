@@ -75,7 +75,7 @@ export function getNearbyBombs(i: number, dataToMakeCells: number[], width: numb
 
 export function getCellsContentList(
   cellsNumber: number,
-  bombNumber: string,
+  bombNumber: number,
   startIndex: number | undefined
 ) {
   const arrayOfEmptyCells: number[] = new Array(cellsNumber).fill(0);
@@ -84,7 +84,7 @@ export function getCellsContentList(
     return arrayOfEmptyCells;
   }
 
-  const arrayOfBombs: number[] = new Array(Number(bombNumber)).fill(1);
+  const arrayOfBombs: number[] = new Array(bombNumber).fill(1);
   const gameSetup = shuffle(
     arrayOfBombs.concat(arrayOfEmptyCells).slice(0, arrayOfEmptyCells.length)
   );

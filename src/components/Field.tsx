@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import Cell from './Cell';
 import {
   clearOfDuplicates,
@@ -8,7 +9,7 @@ import {
   getNearbyBombs,
   sortDataToMakeCells,
 } from '../utils/utils';
-import { GameCycleContext, InitContext } from '../contexts';
+import GameCycleContext from '../contexts';
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { PressedIndexesType } from '../utils/interfaces';
@@ -19,6 +20,7 @@ import {
   useResetClicksAPI,
   useRightClickAPI,
 } from './PressedCells';
+import { RootState } from '../store/store';
 
 function Field({ resetValue }: { resetValue: number }) {
   const pressedCells: PressedIndexesType = usePressedCellsState();
@@ -32,7 +34,8 @@ function Field({ resetValue }: { resetValue: number }) {
   const { isGameFinished, isGameStarted, setIsGameFinished, setIsGameStarted } =
     useContext(GameCycleContext);
 
-  const { difficulty, bombNumber } = useContext(InitContext).actionData;
+  const initFormValues = useSelector((state: RootState) => state.formData);
+  const { bombNumber, difficulty } = initFormValues.settings;
 
   const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
   const { cellsNumber, width } = fieldSettings;

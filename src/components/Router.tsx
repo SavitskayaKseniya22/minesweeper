@@ -18,14 +18,7 @@ const router = createBrowserRouter(
     >
       <Route path="/" element={<Outlet />}>
         <Route index element={<MainPage />} />
-        <Route
-          path="game-board"
-          element={<GameBoard />}
-          action={async ({ request }) => {
-            const formData = await request.formData();
-            return Object.fromEntries(formData);
-          }}
-        />
+        <Route path="game-board" element={<GameBoard />} />
         <Route path="*" element="<div>404</div>" />
       </Route>
     </Route>

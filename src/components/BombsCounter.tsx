@@ -1,13 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { faBomb } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSelector } from 'react-redux';
 import { usePressedCellsState } from './PressedCells';
-import { InitContext } from '../contexts';
+
 import { StyledAsideItem } from './styledComponents';
+import { RootState } from '../store/store';
 
 function BombsCounter() {
-  const { bombNumber } = useContext(InitContext).actionData;
+  const initFormValues = useSelector((state: RootState) => state.formData.settings);
+  const { bombNumber } = initFormValues;
   const { right } = usePressedCellsState();
   return (
     <StyledAsideItem>
