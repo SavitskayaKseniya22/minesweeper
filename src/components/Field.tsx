@@ -13,7 +13,7 @@ import {
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 
-import { RootState } from '../store/store';
+import { RootState } from '../store/persistStore';
 import { updateFinishGameStatus, updateStartGameStatus } from '../store/GameCycleSlice';
 import {
   filterRightClicks,

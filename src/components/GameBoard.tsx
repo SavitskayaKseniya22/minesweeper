@@ -7,7 +7,7 @@ import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { StyledAsideItemExtended, StyledButton, StyledContainerCentred } from './styledComponents';
-import { RootState } from '../store/store';
+import { RootState } from '../store/persistStore';
 import { updateBothGameStatuses } from '../store/GameCycleSlice';
 
 function GameBoard() {

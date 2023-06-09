@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useSelector } from 'react-redux';
 import { StyledAsideItem } from './styledComponents';
-import { RootState } from '../store/store';
+import { RootState } from '../store/persistStore';
 
 function MovesCounter() {
   const pressedCellsValues = useSelector((state: RootState) => state.pressedCells);
