@@ -9,9 +9,9 @@ export function clearOfDuplicates(array: number[]) {
 
 export function getFieldSettings(difficulty: string) {
   const fieldSettings = {
-    easy: { cellsNumber: 100, width: 10 },
-    medium: { cellsNumber: 225, width: 15 },
-    hard: { cellsNumber: 625, width: 25 },
+    easy: { cellsNumber: 100, width: 10, bombNumberDefault: 10 },
+    medium: { cellsNumber: 225, width: 15, bombNumberDefault: 30 },
+    hard: { cellsNumber: 625, width: 25, bombNumberDefault: 100 },
   };
   return fieldSettings[difficulty as keyof typeof fieldSettings];
 }

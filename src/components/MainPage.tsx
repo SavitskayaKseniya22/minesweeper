@@ -1,19 +1,29 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import {
   StyledButton,
   StyledContainer,
   StyledContainerCentred,
   StyledForm,
 } from './styledComponents';
+import { getFieldSettings } from '../utils/utils';
 
 function MainPage() {
-  const { register } = useForm({
+  const { register, control, setValue } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { difficulty: 'easy', bombNumber: 10 },
   });
+
+  const difficulty = useWatch({
+    control,
+    name: 'difficulty',
+  });
+
+  useEffect(() => {
+    setValue('bombNumber', getFieldSettings(difficulty).bombNumberDefault);
+  }, [difficulty, setValue]);
 
   return (
     <main>
