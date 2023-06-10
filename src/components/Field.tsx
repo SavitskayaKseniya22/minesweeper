@@ -5,7 +5,6 @@ import {
   clearOfDuplicates,
   getCellsContentList,
   getCellsList,
-  getFieldSettings,
   getNearbyBombs,
   sortDataToMakeCells,
 } from '../utils/utils';
@@ -37,11 +36,9 @@ function Field({ resetValue }: { resetValue: number }) {
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
   const { isGameStarted, isGameFinished } = gameCycleValues.settings;
 
-  const initFormValues = useSelector((state: RootState) => state.formData);
-  const { bombNumber, difficulty } = initFormValues.settings;
-
-  const fieldSettings = useMemo(() => getFieldSettings(difficulty), [difficulty]);
-  const { cellsNumber, width } = fieldSettings;
+  const initFormValues = useSelector((state: RootState) => state.gameSettings);
+  const { bombNumber, difficulty } = initFormValues.formValues;
+  const { cellsNumber, width } = initFormValues.fieldParameters;
 
   const dataToMakeCells = useMemo(
     () => getCellsContentList(cellsNumber, bombNumber, startIndex),

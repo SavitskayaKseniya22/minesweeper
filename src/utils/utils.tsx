@@ -7,13 +7,49 @@ export function clearOfDuplicates(array: number[]) {
   return Array.from(new Set(array));
 }
 
-export function getFieldSettings(difficulty: string) {
-  const fieldSettings = {
-    easy: { cellsNumber: 100, width: 10, bombNumberDefault: 10 },
-    medium: { cellsNumber: 225, width: 15, bombNumberDefault: 30 },
-    hard: { cellsNumber: 625, width: 25, bombNumberDefault: 100 },
-  };
-  return fieldSettings[difficulty as keyof typeof fieldSettings];
+export function getFieldParameters(difficulty: string) {
+  switch (difficulty) {
+    case 'easy':
+      return {
+        cellsNumber: 100,
+        width: 10,
+        bombNumberDefault: 10,
+        range: {
+          min: 10,
+          max: 99,
+        },
+      };
+    case 'medium':
+      return {
+        cellsNumber: 225,
+        width: 15,
+        bombNumberDefault: 30,
+        range: {
+          min: 30,
+          max: 224,
+        },
+      };
+    case 'hard':
+      return {
+        cellsNumber: 625,
+        width: 25,
+        bombNumberDefault: 100,
+        range: {
+          min: 100,
+          max: 624,
+        },
+      };
+    default:
+      return {
+        cellsNumber: 100,
+        width: 10,
+        bombNumberDefault: 10,
+        range: {
+          min: 10,
+          max: 99,
+        },
+      };
+  }
 }
 
 export function checkSize(prop: string | undefined) {

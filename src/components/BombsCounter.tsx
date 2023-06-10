@@ -8,7 +8,7 @@ import { StyledAsideItem } from './styledComponents';
 import { RootState } from '../store/persistStore';
 
 function BombsCounter() {
-  const initFormValues = useSelector((state: RootState) => state.formData.settings);
+  const initFormValues = useSelector((state: RootState) => state.gameSettings.formValues);
   const { bombNumber } = initFormValues;
   const pressedCellsValues = useSelector((state: RootState) => state.pressedCells);
   const { right } = pressedCellsValues;

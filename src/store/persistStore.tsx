@@ -2,7 +2,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
-import formReducer from './FormSlice';
+import gameSettingsReducer from './GameSettingsSlice';
 import gameCycleReducer from './GameCycleSlice';
 import pressedCellsReducer from './PressedCellsSlice';
 
@@ -12,7 +12,7 @@ const persistConfig = {
 };
 
 export const rootReducer = combineReducers({
-  formData: formReducer,
+  gameSettings: gameSettingsReducer,
   gameCycle: gameCycleReducer,
   pressedCells: pressedCellsReducer,
 });

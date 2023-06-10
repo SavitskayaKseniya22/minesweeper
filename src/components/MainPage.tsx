@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
 import {
@@ -10,19 +10,28 @@ import {
   StyledContainerCentred,
   StyledForm,
 } from './styledComponents';
-import { getFieldSettings } from '../utils/utils';
-
-import { update } from '../store/FormSlice';
+import { updateFieldParameters, updateFormValues } from '../store/GameSettingsSlice';
+import { RootState } from '../store/persistStore';
 
 function MainPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { register, control, handleSubmit, setValue } = useForm({
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitSuccessful },
+  } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { difficulty: 'easy', bombNumber: 10 },
   });
+
+  const initFormValues = useSelector((state: RootState) => state.gameSettings);
+
+  const { bombNumberDefault, range } = initFormValues.fieldParameters;
 
   const difficulty = useWatch({
     control,
@@ -35,15 +44,21 @@ function MainPage() {
   });
 
   useEffect(() => {
-    setValue('bombNumber', getFieldSettings(difficulty).bombNumberDefault);
-  }, [difficulty, setValue]);
+    setValue('bombNumber', bombNumberDefault);
+  }, [bombNumberDefault, dispatch, setValue]);
 
   useEffect(() => {
-    dispatch(update({ difficulty, bombNumber }));
+    dispatch(updateFormValues({ difficulty, bombNumber }));
   }, [bombNumber, difficulty, dispatch]);
 
+  useEffect(() => {
+    dispatch(updateFieldParameters(difficulty));
+  }, [difficulty, dispatch]);
+
   const onSubmit = () => {
-    navigate('/game-board');
+    if (isSubmitSuccessful) {
+      navigate('/game-board');
+    }
   };
 
   return (
@@ -63,7 +78,7 @@ function MainPage() {
             <h3>Enter number of bombs</h3>
             <input
               type="number"
-              {...register('bombNumber', { required: true, max: 99, min: 10 })}
+              {...register('bombNumber', { required: true, max: range.max, min: range.min })}
             />
           </StyledContainer>
 
