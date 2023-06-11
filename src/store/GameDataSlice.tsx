@@ -81,7 +81,7 @@ export const gameDataSlice = createSlice({
       state.clicks.endIndex = action.payload;
     },
 
-    resetClicksValues: (state) => {
+    resetGameData: (state) => {
       state.clicks.endIndex = initialState.clicks.endIndex;
       state.clicks.startIndex = initialState.clicks.startIndex;
       state.clicks.left = initialState.clicks.left;
@@ -94,7 +94,7 @@ export const gameDataSlice = createSlice({
 export const {
   increaseLeftCounter,
   increaseRightCounter,
-  resetClicksValues,
+  resetGameData,
   setEndIndex,
   setStartIndex,
   filterRightClicks,

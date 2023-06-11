@@ -12,20 +12,27 @@ import {
 } from './styledComponents';
 import { updateFieldParameters, updateFormValues } from '../store/GameSettingsSlice';
 import { RootState } from '../store/persistStore';
+import { resetGameData } from '../store/GameDataSlice';
+import { resetGameCycle } from '../store/GameCycleSlice';
 
 function MainPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const initFormValues = useSelector((state: RootState) => state.gameSettings);
+  const { formValues } = initFormValues;
 
   const { register, control, handleSubmit, setValue } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: { difficulty: 'easy', bombNumber: 10 },
+    defaultValues: {
+      difficulty: formValues.difficulty || 'easy',
+      bombNumber: formValues.bombNumber || 10,
+    },
   });
 
-  const initFormValues = useSelector((state: RootState) => state.gameSettings);
-
   const { bombNumberDefault, range } = initFormValues.fieldParameters;
+  const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
+  const { isGameStarted } = gameCycleValues;
 
   const difficulty = useWatch({
     control,
@@ -50,13 +57,21 @@ function MainPage() {
   }, [difficulty, dispatch]);
 
   const onSubmit = () => {
+    dispatch(resetGameCycle());
+    dispatch(resetGameData());
     navigate('/game-board');
   };
 
   return (
     <main>
       <StyledContainerCentred>
-        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+        <StyledForm
+          onSubmit={handleSubmit(onSubmit)}
+          onChange={() => {
+            dispatch(resetGameCycle());
+            dispatch(resetGameData());
+          }}
+        >
           <StyledContainer>
             <h3>Choose game difficulty</h3>
             <select {...register('difficulty')}>
@@ -75,6 +90,16 @@ function MainPage() {
           </StyledContainer>
 
           <StyledButton type="submit">Start</StyledButton>
+          {isGameStarted && (
+            <StyledButton
+              type="button"
+              onClick={() => {
+                navigate('/game-board');
+              }}
+            >
+              resume game
+            </StyledButton>
+          )}
         </StyledForm>
       </StyledContainerCentred>
     </main>

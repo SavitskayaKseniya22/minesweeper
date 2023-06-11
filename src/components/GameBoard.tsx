@@ -8,7 +8,8 @@ import MovesCounter from './MovesCounter';
 import Timer from './Timer';
 import { StyledAsideItemExtended, StyledButton, StyledContainerCentred } from './styledComponents';
 import { RootState } from '../store/persistStore';
-import { updateBothGameStatuses } from '../store/GameCycleSlice';
+import { resetGameCycle, updateFinishGameStatus } from '../store/GameCycleSlice';
+import { resetGameData } from '../store/GameDataSlice';
 
 function GameBoard() {
   const [resetValue, setResetValue] = useState<number>(1);
@@ -16,7 +17,7 @@ function GameBoard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
-  const { isGameStarted, isGameFinished } = gameCycleValues.settings;
+  const { isGameStarted, isGameFinished } = gameCycleValues;
 
   useEffect(() => {
     if (isGameFinished) {
@@ -41,7 +42,8 @@ function GameBoard() {
             <StyledButton
               type="button"
               onClick={() => {
-                dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false }));
+                dispatch(resetGameCycle());
+                dispatch(resetGameData());
                 setResetValue(Math.random());
               }}
             >
@@ -52,7 +54,7 @@ function GameBoard() {
             <StyledButton
               type="button"
               onClick={() => {
-                dispatch(updateBothGameStatuses({ isGameStarted: true, isGameFinished: 'lose' }));
+                dispatch(updateFinishGameStatus('lose'));
               }}
             >
               finish game
@@ -61,7 +63,6 @@ function GameBoard() {
           <StyledButton
             type="button"
             onClick={() => {
-              dispatch(updateBothGameStatuses({ isGameStarted: false, isGameFinished: false })); // ??
               navigate('/');
             }}
           >

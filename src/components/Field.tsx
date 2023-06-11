@@ -11,7 +11,6 @@ import {
 
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
-
 import { RootState } from '../store/persistStore';
 import { updateFinishGameStatus, updateStartGameStatus } from '../store/GameCycleSlice';
 import {
@@ -28,7 +27,7 @@ import {
 function Field({ resetValue }: { resetValue: number }) {
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
-  const { isGameStarted, isGameFinished } = gameCycleValues.settings;
+  const { isGameStarted, isGameFinished } = gameCycleValues;
   const gameSettings = useSelector((state: RootState) => state.gameSettings);
   const { bombNumber, difficulty } = gameSettings.formValues;
   const { cellsNumber, width } = gameSettings.fieldParameters;
@@ -121,11 +120,6 @@ function Field({ resetValue }: { resetValue: number }) {
   );
 
   useEffect(() => {
-    if (!isGameFinished && !isGameStarted) {
-      // dispatch(resetClicksValues());
-    }
-  }, [dispatch, isGameFinished, isGameStarted]);
-  useEffect(() => {
     if (!isGameFinished) {
       const data = right.list.concat(openedCells);
       const dataWithoutDup = clearOfDuplicates(data);
@@ -134,6 +128,7 @@ function Field({ resetValue }: { resetValue: number }) {
       }
     }
   }, [dispatch, isGameFinished, openedCells, right.list]);
+
   useEffect(() => {
     if (
       JSON.stringify(openedCells) === JSON.stringify(freeCells) &&
@@ -143,6 +138,7 @@ function Field({ resetValue }: { resetValue: number }) {
       dispatch(updateFinishGameStatus('win'));
     }
   }, [dispatch, freeCells, isGameFinished, isGameStarted, openedCells]);
+
   return (
     <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>
       {cellsList}

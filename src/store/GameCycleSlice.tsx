@@ -1,20 +1,14 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface GameCycleSettingsState {
+export interface GameCycleState {
   isGameStarted: boolean;
   isGameFinished: false | 'win' | 'lose';
 }
 
-export interface GameCycleState {
-  settings: GameCycleSettingsState;
-}
-
 const initialState: GameCycleState = {
-  settings: {
-    isGameStarted: false,
-    isGameFinished: false,
-  },
+  isGameStarted: false,
+  isGameFinished: false,
 };
 
 export const gameCycleSlice = createSlice({
@@ -27,7 +21,7 @@ export const gameCycleSlice = createSlice({
         payload: boolean;
       }
     ) => {
-      state.settings.isGameStarted = action.payload;
+      state.isGameStarted = action.payload;
     },
     updateFinishGameStatus: (
       state,
@@ -35,19 +29,16 @@ export const gameCycleSlice = createSlice({
         payload: false | 'win' | 'lose';
       }
     ) => {
-      state.settings.isGameFinished = action.payload;
+      state.isGameFinished = action.payload;
     },
-    updateBothGameStatuses: (
-      state,
-      action: {
-        payload: GameCycleSettingsState;
-      }
-    ) => {
-      state.settings = action.payload;
+
+    resetGameCycle: (state) => {
+      state.isGameFinished = initialState.isGameFinished;
+      state.isGameStarted = initialState.isGameStarted;
     },
   },
 });
 
-export const { updateStartGameStatus, updateFinishGameStatus, updateBothGameStatuses } =
+export const { updateStartGameStatus, resetGameCycle, updateFinishGameStatus } =
   gameCycleSlice.actions;
 export default gameCycleSlice.reducer;
