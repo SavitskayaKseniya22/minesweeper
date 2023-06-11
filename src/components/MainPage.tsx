@@ -17,13 +17,7 @@ function MainPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    setValue,
-    formState: { isSubmitSuccessful },
-  } = useForm({
+  const { register, control, handleSubmit, setValue } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { difficulty: 'easy', bombNumber: 10 },
@@ -56,9 +50,7 @@ function MainPage() {
   }, [difficulty, dispatch]);
 
   const onSubmit = () => {
-    if (isSubmitSuccessful) {
-      navigate('/game-board');
-    }
+    navigate('/game-board');
   };
 
   return (

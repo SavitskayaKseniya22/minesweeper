@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 
 import { getBorderIndexes, getRangeWithBorder } from './funcsToOpenNearbyEmptyCells';
-import { PressedIndexesType } from './interfaces';
+import { GameDataState } from './interfaces';
 
 export function clearOfDuplicates(array: number[]) {
   return Array.from(new Set(array));
@@ -115,7 +115,6 @@ export function getCellsContentList(
   startIndex: number | undefined
 ) {
   const arrayOfEmptyCells: number[] = new Array(cellsNumber).fill(0);
-
   if (startIndex === undefined) {
     return arrayOfEmptyCells;
   }
@@ -148,22 +147,21 @@ export function addOpenedChunk(i: number, shortRange: number[][], longRange: num
 }
 
 export function getCellsList(
-  list: number[],
+  gameData: GameDataState,
   bombsList: number[],
   ranges: number[][],
-  pressedIndexes: PressedIndexesType,
   width: number,
-  endIndex: number | undefined,
-  isGameFinished: false | 'win' | 'lose'
+  isGameFinished: false | 'win' | 'lose',
+  bombedCells: number[]
 ) {
-  const { right, left } = pressedIndexes;
+  const { right, left, endIndex } = gameData.clicks;
 
   const rangesWithBorders = ranges.map((item) => getRangeWithBorder(item, bombsList, width));
   const openedCells = clearOfDuplicates(
-    left.clicks.map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders)).flat()
+    left.list.map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders)).flat()
   );
 
-  const cells = list.map((elem, index) => {
+  const cells = gameData.initData.map((elem, index) => {
     const cell = {
       isBombed: Boolean(elem),
       nearbyBombs: bombsList[index],
@@ -172,10 +170,10 @@ export function getCellsList(
           if (endIndex === index) {
             return 'left';
           }
-          if (right.totalClicks.includes(index) && right.clicks.includes(index)) {
+          if (bombedCells.includes(index) && right.list.includes(index)) {
             return 'opened-right';
           }
-          if (right.totalClicks.includes(index)) {
+          if (bombedCells.includes(index)) {
             return 'opened';
           }
         }
@@ -183,7 +181,7 @@ export function getCellsList(
         if (openedCells.includes(index)) {
           return 'left';
         }
-        if (right.clicks.includes(index)) {
+        if (right.list.includes(index)) {
           return 'right';
         }
         return 'false';

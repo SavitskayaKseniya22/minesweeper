@@ -7,8 +7,8 @@ import { StyledAsideItem } from './styledComponents';
 import { RootState } from '../store/persistStore';
 
 function MovesCounter() {
-  const pressedCellsValues = useSelector((state: RootState) => state.pressedCells);
-  const { left, right } = pressedCellsValues;
+  const gameDataValues = useSelector((state: RootState) => state.gameData).clicks;
+  const { left, right } = gameDataValues;
 
   return (
     <StyledAsideItem>

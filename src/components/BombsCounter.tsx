@@ -10,12 +10,12 @@ import { RootState } from '../store/persistStore';
 function BombsCounter() {
   const initFormValues = useSelector((state: RootState) => state.gameSettings.formValues);
   const { bombNumber } = initFormValues;
-  const pressedCellsValues = useSelector((state: RootState) => state.pressedCells);
-  const { right } = pressedCellsValues;
+  const gameDataValues = useSelector((state: RootState) => state.gameData).clicks;
+  const { right } = gameDataValues;
 
   return (
     <StyledAsideItem>
-      <FontAwesomeIcon icon={faBomb} /> {Number(bombNumber) - right.clicks.length}
+      <FontAwesomeIcon icon={faBomb} /> {Number(bombNumber) - right.list.length}
     </StyledAsideItem>
   );
 }

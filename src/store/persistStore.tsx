@@ -4,7 +4,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
 import gameSettingsReducer from './GameSettingsSlice';
 import gameCycleReducer from './GameCycleSlice';
-import pressedCellsReducer from './PressedCellsSlice';
+import gameDataReducer from './GameDataSlice';
 
 const persistConfig = {
   key: 'root',
@@ -14,7 +14,7 @@ const persistConfig = {
 export const rootReducer = combineReducers({
   gameSettings: gameSettingsReducer,
   gameCycle: gameCycleReducer,
-  pressedCells: pressedCellsReducer,
+  gameData: gameDataReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

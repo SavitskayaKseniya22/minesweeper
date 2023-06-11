@@ -18,42 +18,43 @@ import {
   filterRightClicks,
   increaseLeftCounter,
   increaseRightCounter,
-  resetClicksValues,
-  setClicksValues,
   setEndIndex,
   setStartIndex,
+  updateInitData,
   updateLeftClicks,
   updateRightClicks,
-} from '../store/PressedCellsSlice';
+} from '../store/GameDataSlice';
 
 function Field({ resetValue }: { resetValue: number }) {
   const dispatch = useDispatch();
-
-  const pressedCellsValues = useSelector((state: RootState) => state.pressedCells);
-
-  const { left, right, startIndex, endIndex } = pressedCellsValues;
-
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
   const { isGameStarted, isGameFinished } = gameCycleValues.settings;
+  const gameSettings = useSelector((state: RootState) => state.gameSettings);
+  const { bombNumber, difficulty } = gameSettings.formValues;
+  const { cellsNumber, width } = gameSettings.fieldParameters;
 
-  const initFormValues = useSelector((state: RootState) => state.gameSettings);
-  const { bombNumber, difficulty } = initFormValues.formValues;
-  const { cellsNumber, width } = initFormValues.fieldParameters;
+  const gameData = useSelector((state: RootState) => state.gameData);
+  const { left, right, startIndex } = gameData.clicks;
+  const { initData } = gameData;
 
-  const dataToMakeCells = useMemo(
-    () => getCellsContentList(cellsNumber, bombNumber, startIndex),
-    [bombNumber, cellsNumber, startIndex]
-  );
+  const dataToMakeCells = useMemo(() => {
+    if (initData.length > 0 && initData.find((element) => element !== 0)) {
+      return initData;
+    }
+    return getCellsContentList(cellsNumber, bombNumber, startIndex);
+  }, [bombNumber, cellsNumber, startIndex, initData]);
+
+  useEffect(() => {
+    if (JSON.stringify(initData) !== JSON.stringify(dataToMakeCells)) {
+      dispatch(updateInitData(dataToMakeCells));
+    }
+  }, [dataToMakeCells, dispatch, initData]);
 
   const sortedDataToMakeCells = useMemo(
     () => sortDataToMakeCells(dataToMakeCells),
     [dataToMakeCells]
   );
   const { freeCells, bombedCells } = sortedDataToMakeCells;
-
-  useEffect(() => {
-    dispatch(setClicksValues({ blank: freeCells, bombed: bombedCells }));
-  }, [bombedCells, dispatch, freeCells]);
 
   const bombsList = useMemo(
     () =>
@@ -69,55 +70,20 @@ function Field({ resetValue }: { resetValue: number }) {
   const ranges = useMemo(() => getConnectedRanges(bombsList, width), [bombsList, width]);
 
   const rawCellsList = useMemo(
-    () =>
-      getCellsList(
-        dataToMakeCells,
-        bombsList,
-        ranges,
-        pressedCellsValues,
-        width,
-        endIndex,
-        isGameFinished
-      ),
-    [dataToMakeCells, bombsList, ranges, pressedCellsValues, width, endIndex, isGameFinished]
+    () => getCellsList(gameData, bombsList, ranges, width, isGameFinished, bombedCells),
+    [bombsList, ranges, gameData, width, isGameFinished, bombedCells]
   );
-
-  useEffect(() => {
-    if (!isGameFinished && !isGameStarted) {
-      dispatch(resetClicksValues());
-    }
-  }, [dispatch, isGameFinished, isGameStarted]);
 
   const openedCells = useMemo(
     () =>
       clearOfDuplicates(
-        left.clicks
+        left.list
           .map((elem) => rawCellsList[elem].range)
           .flat()
           .sort((a, b) => a - b)
       ),
-    [left.clicks, rawCellsList]
+    [left.list, rawCellsList]
   );
-
-  useEffect(() => {
-    if (!isGameFinished) {
-      const data = right.clicks.concat(openedCells);
-      const dataWithoutDup = clearOfDuplicates(data);
-      if (data.length !== dataWithoutDup.length) {
-        dispatch(filterRightClicks(openedCells));
-      }
-    }
-  }, [dispatch, isGameFinished, openedCells, right.clicks]);
-
-  useEffect(() => {
-    if (
-      JSON.stringify(openedCells) === JSON.stringify(freeCells) &&
-      isGameStarted &&
-      !isGameFinished
-    ) {
-      dispatch(updateFinishGameStatus('win'));
-    }
-  }, [dispatch, freeCells, isGameFinished, isGameStarted, openedCells]);
 
   const cellsList = useMemo(
     () =>
@@ -139,7 +105,7 @@ function Field({ resetValue }: { resetValue: number }) {
               dispatch(updateLeftClicks([index]));
               dispatch(increaseLeftCounter());
             } else if (button === 'rightAdd') {
-              if (right.clicks.length < Number(bombNumber)) {
+              if (right.list.length < Number(bombNumber)) {
                 dispatch(updateRightClicks([index]));
                 dispatch(increaseRightCounter());
               }
@@ -151,9 +117,32 @@ function Field({ resetValue }: { resetValue: number }) {
           cellSettings={item}
         />
       )),
-    [bombNumber, dispatch, isGameStarted, rawCellsList, resetValue, right.clicks.length]
+    [bombNumber, dispatch, isGameStarted, rawCellsList, resetValue, right.list.length]
   );
 
+  useEffect(() => {
+    if (!isGameFinished && !isGameStarted) {
+      // dispatch(resetClicksValues());
+    }
+  }, [dispatch, isGameFinished, isGameStarted]);
+  useEffect(() => {
+    if (!isGameFinished) {
+      const data = right.list.concat(openedCells);
+      const dataWithoutDup = clearOfDuplicates(data);
+      if (data.length !== dataWithoutDup.length) {
+        dispatch(filterRightClicks(openedCells));
+      }
+    }
+  }, [dispatch, isGameFinished, openedCells, right.list]);
+  useEffect(() => {
+    if (
+      JSON.stringify(openedCells) === JSON.stringify(freeCells) &&
+      isGameStarted &&
+      !isGameFinished
+    ) {
+      dispatch(updateFinishGameStatus('win'));
+    }
+  }, [dispatch, freeCells, isGameFinished, isGameStarted, openedCells]);
   return (
     <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>
       {cellsList}
