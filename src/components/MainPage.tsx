@@ -50,7 +50,7 @@ function MainPage() {
   }, [bombNumberDefault, dispatch, setValue]);
 
   useEffect(() => {
-    dispatch(updateFormValues({ difficulty, bombNumber }));
+    dispatch(updateFormValues({ difficulty, bombNumber: Number(bombNumber) }));
   }, [bombNumber, difficulty, dispatch]);
 
   useEffect(() => {
