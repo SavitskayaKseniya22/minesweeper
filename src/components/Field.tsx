@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { Dispatch, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AnyAction } from 'redux';
 import Cell from './Cell';
 import {
   clearOfDuplicates,
@@ -23,11 +24,63 @@ import {
   updateLeftClicks,
   updateRightClicks,
 } from '../store/GameDataSlice';
+import {
+  ScoreTableState,
+  updateFirstResult,
+  updateSecondResult,
+  updateThirdResult,
+} from '../store/ScoreTableSlice';
+
+function isItRecord(
+  timeValue: number,
+  difficulty: string,
+  scoreTable: ScoreTableState,
+  cellsList: {
+    isBombed: boolean;
+    nearbyBombs: number;
+    isOpen: string;
+    range: number[];
+  }[],
+  dispatch: Dispatch<AnyAction>
+) {
+  const scoreData = scoreTable[difficulty as keyof ScoreTableState];
+
+  const savedData = {
+    difficulty,
+    data: {
+      name: 'name',
+      time: timeValue,
+      data: cellsList,
+    },
+  };
+
+  if (scoreData.first === undefined || timeValue <= scoreData.first.time) {
+    dispatch(updateFirstResult(savedData));
+  } else if (
+    scoreData.second === undefined ||
+    (scoreData.first &&
+      scoreData.second &&
+      timeValue > scoreData.first.time &&
+      timeValue <= scoreData.second.time)
+  ) {
+    dispatch(updateSecondResult(savedData));
+  } else if (
+    scoreData.third === undefined ||
+    (scoreData.third &&
+      scoreData.second &&
+      timeValue < scoreData.second.time &&
+      timeValue <= scoreData.third.time)
+  ) {
+    dispatch(updateThirdResult(savedData));
+  }
+}
 
 function Field({ resetValue }: { resetValue: number }) {
+  const stopwatch = useSelector((state: RootState) => state.stopwatch);
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
   const { isGameStarted, isGameFinished } = gameCycleValues;
+
   const gameSettings = useSelector((state: RootState) => state.gameSettings);
   const { bombNumber, difficulty } = gameSettings.formValues;
   const { cellsNumber, width } = gameSettings.fieldParameters;
@@ -36,6 +89,7 @@ function Field({ resetValue }: { resetValue: number }) {
   const { left, right, startIndex } = gameData.clicks;
   const { initData } = gameData;
 
+  const scoreTable = useSelector((state: RootState) => state.scoreTable);
   const dataToMakeCells = useMemo(() => {
     if (initData.length > 0 && initData.find((element) => element !== 0)) {
       return initData;
@@ -136,8 +190,19 @@ function Field({ resetValue }: { resetValue: number }) {
       !isGameFinished
     ) {
       dispatch(updateFinishGameStatus('win'));
+      isItRecord(stopwatch.value, difficulty, scoreTable, rawCellsList, dispatch);
     }
-  }, [dispatch, freeCells, isGameFinished, isGameStarted, openedCells]);
+  }, [
+    difficulty,
+    dispatch,
+    freeCells,
+    isGameFinished,
+    isGameStarted,
+    openedCells,
+    rawCellsList,
+    scoreTable,
+    stopwatch.value,
+  ]);
 
   return (
     <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>

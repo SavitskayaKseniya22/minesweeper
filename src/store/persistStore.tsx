@@ -6,6 +6,7 @@ import gameSettingsReducer from './GameSettingsSlice';
 import gameCycleReducer from './GameCycleSlice';
 import gameDataReducer from './GameDataSlice';
 import stopwatchReducer from './StopwatchSlice';
+import scoreTableReducer from './ScoreTableSlice';
 
 const persistConfig = {
   key: 'root',
@@ -17,6 +18,7 @@ export const rootReducer = combineReducers({
   gameCycle: gameCycleReducer,
   gameData: gameDataReducer,
   stopwatch: stopwatchReducer,
+  scoreTable: scoreTableReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
