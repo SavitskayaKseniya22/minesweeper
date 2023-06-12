@@ -5,6 +5,7 @@ import thunk from 'redux-thunk';
 import gameSettingsReducer from './GameSettingsSlice';
 import gameCycleReducer from './GameCycleSlice';
 import gameDataReducer from './GameDataSlice';
+import stopwatchReducer from './StopwatchSlice';
 
 const persistConfig = {
   key: 'root',
@@ -15,6 +16,7 @@ export const rootReducer = combineReducers({
   gameSettings: gameSettingsReducer,
   gameCycle: gameCycleReducer,
   gameData: gameDataReducer,
+  stopwatch: stopwatchReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -1,29 +1,24 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Field from './Field';
 import BombsCounter from './BombsCounter';
 import MovesCounter from './MovesCounter';
-import Timer from './Timer';
+import Timer from './Stopwatch';
 import { StyledAsideItemExtended, StyledButton, StyledContainerCentred } from './styledComponents';
 import { RootState } from '../store/persistStore';
 import { resetGameCycle, updateFinishGameStatus } from '../store/GameCycleSlice';
 import { resetGameData } from '../store/GameDataSlice';
+import { resetStopwatch } from '../store/StopwatchSlice';
 
 function GameBoard() {
   const [resetValue, setResetValue] = useState<number>(1);
-  const intervalRef = useRef<number | NodeJS.Timeout>(0);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
   const { isGameStarted, isGameFinished } = gameCycleValues;
-
-  useEffect(() => {
-    if (isGameFinished) {
-      clearInterval(intervalRef.current);
-    }
-  }, [isGameFinished]);
 
   return (
     <main>
@@ -32,7 +27,7 @@ function GameBoard() {
         <aside>
           <BombsCounter />
           <MovesCounter />
-          <Timer intervalRef={intervalRef} resetValue={resetValue} />
+          <Timer />
 
           <StyledAsideItemExtended className="gameInfo">
             {isGameFinished === 'lose' && <span>Game over!</span>}
@@ -44,6 +39,7 @@ function GameBoard() {
               onClick={() => {
                 dispatch(resetGameCycle());
                 dispatch(resetGameData());
+                dispatch(resetStopwatch());
                 setResetValue(Math.random());
               }}
             >

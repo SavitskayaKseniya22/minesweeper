@@ -14,6 +14,7 @@ import { updateFieldParameters, updateFormValues } from '../store/GameSettingsSl
 import { RootState } from '../store/persistStore';
 import { resetGameData } from '../store/GameDataSlice';
 import { resetGameCycle } from '../store/GameCycleSlice';
+import { resetStopwatch } from '../store/StopwatchSlice';
 
 function MainPage() {
   const dispatch = useDispatch();
@@ -59,6 +60,7 @@ function MainPage() {
   const onSubmit = () => {
     dispatch(resetGameCycle());
     dispatch(resetGameData());
+    dispatch(resetStopwatch());
     navigate('/game-board');
   };
 
@@ -70,6 +72,7 @@ function MainPage() {
           onChange={() => {
             dispatch(resetGameCycle());
             dispatch(resetGameData());
+            dispatch(resetStopwatch());
           }}
         >
           <StyledContainer>
