@@ -13,6 +13,7 @@ import userReducer from './UserSlice';
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['user'],
 };
 
 const userPersistConfig = {

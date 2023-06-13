@@ -251,6 +251,7 @@ export function isItRecord(timeValue: number, difficulty: string, scoreTable: Sc
 }
 
 export function saveRecord(
+  userName: string,
   place: number,
   timeValue: number,
   difficulty: string,
@@ -265,7 +266,7 @@ export function saveRecord(
   const savedData = {
     difficulty,
     data: {
-      name: 'name',
+      name: userName,
       time: timeValue,
       data: cellsList,
       date: new Date().toString(),

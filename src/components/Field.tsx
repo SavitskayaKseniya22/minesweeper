@@ -33,6 +33,7 @@ import {
 
 function Field({ resetValue }: { resetValue: number }) {
   const stopwatch = useSelector((state: RootState) => state.stopwatch);
+  const userName = useSelector((state: RootState) => state.user.name);
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
   const { isGameStarted, isGameFinished } = gameCycleValues;
@@ -149,7 +150,7 @@ function Field({ resetValue }: { resetValue: number }) {
       const record = isItRecord(stopwatch.value, difficulty, scoreTable);
 
       if (record) {
-        saveRecord(record.place, stopwatch.value, difficulty, rawCellsList, dispatch);
+        saveRecord(userName, record.place, stopwatch.value, difficulty, rawCellsList, dispatch);
         dispatch(updateIsItRecord(record));
       }
     }
@@ -163,6 +164,7 @@ function Field({ resetValue }: { resetValue: number }) {
     rawCellsList,
     scoreTable,
     stopwatch.value,
+    userName,
   ]);
 
   return (

@@ -18,19 +18,22 @@ import { RootState } from '../store/persistStore';
 import { resetGameData } from '../store/GameDataSlice';
 import { resetGameCycle } from '../store/GameCycleSlice';
 import { resetStopwatch } from '../store/StopwatchSlice';
+import { updateName } from '../store/UserSlice';
 
 function MainPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const initFormValues = useSelector((state: RootState) => state.gameSettings);
+  const name = useSelector((state: RootState) => state.user.name);
   const { formValues } = initFormValues;
 
   const { register, control, handleSubmit, setValue } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
-      difficulty: formValues.difficulty || 'easy',
-      bombNumber: formValues.bombNumber || 10,
+      difficulty: formValues.difficulty,
+      bombNumber: formValues.bombNumber,
+      name,
     },
   });
 
@@ -46,6 +49,11 @@ function MainPage() {
   const bombNumber = useWatch({
     control,
     name: 'bombNumber',
+  });
+
+  const userName = useWatch({
+    control,
+    name: 'name',
   });
 
   useEffect(() => {
@@ -64,6 +72,7 @@ function MainPage() {
     dispatch(resetGameCycle());
     dispatch(resetGameData());
     dispatch(resetStopwatch());
+    dispatch(updateName(userName));
     navigate('/game-board');
   };
 
@@ -101,7 +110,12 @@ function MainPage() {
             <input
               type="number"
               {...register('bombNumber', { required: true, max: range.max, min: range.min })}
+              placeholder={`${String(range.min)} - ${String(range.max)}`}
             />
+          </StyledContainer>
+          <StyledContainer>
+            <h3>Enter a name</h3>
+            <input type="text" {...register('name', { required: true })} placeholder="Anonymous" />
           </StyledContainer>
 
           <StyledButtonWide type="submit">Start</StyledButtonWide>

@@ -2,11 +2,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface UserState {
-  name: string | undefined;
+  name: string;
 }
 
 const initialState: UserState = {
-  name: undefined,
+  name: 'Anonymous',
 };
 
 export const userSlice = createSlice({
