@@ -66,9 +66,11 @@ export const GlobalStyle = createGlobalStyle`
     list-style:none;
   }
 
+
   ul{
     margin:0;
     padding:0;
+    
   }
 
   main{

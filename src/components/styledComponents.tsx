@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Form } from 'react-router-dom';
 import { checkColor, checkGridSize, checkSize } from '../utils/utils';
 
@@ -47,7 +47,7 @@ export const StyledFooter = styled('footer')`
   padding: 1rem;
 `;
 
-export const StyledContainer = styled('div')`
+export const BasicStyledContainer = css`
   background-color: rgba(0, 47, 0, 0.8);
   padding: 0.5rem;
   display: flex;
@@ -72,7 +72,7 @@ export const StyledContainer = styled('div')`
     border-top: none;
     bottom: 0;
   }
-  h3 {
+  & > h3 {
     text-transform: uppercase;
     position: absolute;
     top: -1.1rem;
@@ -85,6 +85,9 @@ export const StyledContainer = styled('div')`
     border-bottom: 2px solid rgba(0, 47, 0, 0.8);
   }
 `;
+export const StyledContainer = styled('div')`
+  ${BasicStyledContainer}
+`;
 
 export const StyledContainerCentred = styled(StyledContainer)`
   position: absolute;
@@ -93,6 +96,24 @@ export const StyledContainerCentred = styled(StyledContainer)`
   transform: translate(-50%, -50%);
   padding: 3rem 10rem;
   align-items: unset;
+`;
+
+export const StyledList = styled('ul')`
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+`;
+
+export const StyledListItem = styled('li')`
+  ${BasicStyledContainer}
+  ol {
+    width: 100%;
+  }
+  li {
+    list-style-type: decimal;
+    list-style: unset;
+  }
 `;
 
 export const StyledForm = styled(Form)`
@@ -148,6 +169,19 @@ export const StyledButton = styled('button')`
   cursor: pointer;
   border: none;
   outline: none;
-  width: 100%;
   font-size: 1.2rem;
+  position: relative;
+`;
+
+export const StyledButtonWide = styled(StyledButton)`
+  width: 100%;
+`;
+
+export const StyledTransparentButton = styled(StyledButton)`
+  background-color: transparent;
+  color: #00ee00;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 2rem;
 `;

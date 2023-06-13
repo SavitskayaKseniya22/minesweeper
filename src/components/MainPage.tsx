@@ -4,11 +4,14 @@ import { useForm, useWatch } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 import {
-  StyledButton,
+  StyledButtonWide,
   StyledContainer,
   StyledContainerCentred,
   StyledForm,
+  StyledTransparentButton,
 } from './styledComponents';
 import { updateFieldParameters, updateFormValues } from '../store/GameSettingsSlice';
 import { RootState } from '../store/persistStore';
@@ -67,6 +70,15 @@ function MainPage() {
   return (
     <main>
       <StyledContainerCentred>
+        <StyledTransparentButton
+          type="button"
+          onClick={() => {
+            navigate('/stats');
+          }}
+        >
+          <FontAwesomeIcon icon={faClipboard} />
+        </StyledTransparentButton>
+
         <StyledForm
           onSubmit={handleSubmit(onSubmit)}
           onChange={() => {
@@ -92,16 +104,16 @@ function MainPage() {
             />
           </StyledContainer>
 
-          <StyledButton type="submit">Start</StyledButton>
+          <StyledButtonWide type="submit">Start</StyledButtonWide>
           {isGameStarted && (
-            <StyledButton
+            <StyledButtonWide
               type="button"
               onClick={() => {
                 navigate('/game-board');
               }}
             >
               resume game
-            </StyledButton>
+            </StyledButtonWide>
           )}
         </StyledForm>
       </StyledContainerCentred>

@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface ScoreItemState {
   name: string;
   time: number;
+  date: string;
   data: {
     isBombed: boolean;
     nearbyBombs: number;

@@ -1,19 +1,25 @@
-import React, { Dispatch, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
+
 import Cell from './Cell';
 import {
   clearOfDuplicates,
   getCellsContentList,
   getCellsList,
   getNearbyBombs,
+  isItRecord,
+  saveRecord,
   sortDataToMakeCells,
 } from '../utils/utils';
 
 import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { RootState } from '../store/persistStore';
-import { updateFinishGameStatus, updateStartGameStatus } from '../store/GameCycleSlice';
+import {
+  updateFinishGameStatus,
+  updateIsItRecord,
+  updateStartGameStatus,
+} from '../store/GameCycleSlice';
 import {
   filterRightClicks,
   increaseLeftCounter,
@@ -24,56 +30,6 @@ import {
   updateLeftClicks,
   updateRightClicks,
 } from '../store/GameDataSlice';
-import {
-  ScoreTableState,
-  updateFirstResult,
-  updateSecondResult,
-  updateThirdResult,
-} from '../store/ScoreTableSlice';
-
-function isItRecord(
-  timeValue: number,
-  difficulty: string,
-  scoreTable: ScoreTableState,
-  cellsList: {
-    isBombed: boolean;
-    nearbyBombs: number;
-    isOpen: string;
-    range: number[];
-  }[],
-  dispatch: Dispatch<AnyAction>
-) {
-  const scoreData = scoreTable[difficulty as keyof ScoreTableState];
-
-  const savedData = {
-    difficulty,
-    data: {
-      name: 'name',
-      time: timeValue,
-      data: cellsList,
-    },
-  };
-
-  if (scoreData.first === undefined || timeValue <= scoreData.first.time) {
-    dispatch(updateFirstResult(savedData));
-  } else if (
-    scoreData.second === undefined ||
-    (scoreData.first &&
-      scoreData.second &&
-      timeValue > scoreData.first.time &&
-      timeValue <= scoreData.second.time)
-  ) {
-    dispatch(updateSecondResult(savedData));
-  } else if (
-    scoreData.third === undefined ||
-    (scoreData.third &&
-      scoreData.second &&
-      timeValue < scoreData.second.time &&
-      timeValue <= scoreData.third.time)
-  ) {
-    dispatch(updateThirdResult(savedData));
-  }
-}
 
 function Field({ resetValue }: { resetValue: number }) {
   const stopwatch = useSelector((state: RootState) => state.stopwatch);
@@ -190,7 +146,12 @@ function Field({ resetValue }: { resetValue: number }) {
       !isGameFinished
     ) {
       dispatch(updateFinishGameStatus('win'));
-      isItRecord(stopwatch.value, difficulty, scoreTable, rawCellsList, dispatch);
+      const record = isItRecord(stopwatch.value, difficulty, scoreTable);
+
+      if (record) {
+        saveRecord(record.place, stopwatch.value, difficulty, rawCellsList, dispatch);
+        dispatch(updateIsItRecord(record));
+      }
     }
   }, [
     difficulty,

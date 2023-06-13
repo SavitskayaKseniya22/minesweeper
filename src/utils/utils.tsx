@@ -1,5 +1,13 @@
 /* eslint-disable no-plusplus */
 
+import { Dispatch } from 'react';
+import { AnyAction } from 'redux';
+import {
+  ScoreTableState,
+  updateFirstResult,
+  updateSecondResult,
+  updateThirdResult,
+} from '../store/ScoreTableSlice';
 import { getBorderIndexes, getRangeWithBorder } from './funcsToOpenNearbyEmptyCells';
 import { GameDataState } from './interfaces';
 
@@ -213,4 +221,63 @@ export function sortDataToMakeCells(data: number[]) {
   });
 
   return sortedData;
+}
+
+export function isItRecord(timeValue: number, difficulty: string, scoreTable: ScoreTableState) {
+  const scoreData = scoreTable[difficulty as keyof ScoreTableState];
+
+  if (scoreData.first === undefined || timeValue <= scoreData.first.time) {
+    return { place: 1 };
+  }
+  if (
+    scoreData.second === undefined ||
+    (scoreData.first &&
+      scoreData.second &&
+      timeValue > scoreData.first.time &&
+      timeValue <= scoreData.second.time)
+  ) {
+    return { place: 2 };
+  }
+  if (
+    scoreData.third === undefined ||
+    (scoreData.third &&
+      scoreData.second &&
+      timeValue > scoreData.second.time &&
+      timeValue <= scoreData.third.time)
+  ) {
+    return { place: 3 };
+  }
+  return false;
+}
+
+export function saveRecord(
+  place: number,
+  timeValue: number,
+  difficulty: string,
+  cellsList: {
+    isBombed: boolean;
+    nearbyBombs: number;
+    isOpen: string;
+    range: number[];
+  }[],
+  dispatch: Dispatch<AnyAction>
+) {
+  const savedData = {
+    difficulty,
+    data: {
+      name: 'name',
+      time: timeValue,
+      data: cellsList,
+      date: new Date().toString(),
+    },
+  };
+  if (place === 1) {
+    dispatch(updateFirstResult(savedData));
+  }
+  if (place === 2) {
+    dispatch(updateSecondResult(savedData));
+  }
+  if (place === 3) {
+    dispatch(updateThirdResult(savedData));
+  }
 }
