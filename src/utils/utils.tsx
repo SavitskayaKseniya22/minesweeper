@@ -8,7 +8,7 @@ import {
   updateSecondResult,
   updateThirdResult,
 } from '../store/ScoreTableSlice';
-import { getBorderIndexes, getRangeWithBorder } from './funcsToOpenNearbyEmptyCells';
+import { getBorderIndexes } from './funcsToOpenNearbyEmptyCells';
 import { GameDataState } from './interfaces';
 
 export function clearOfDuplicates(array: number[]) {
@@ -82,7 +82,7 @@ export function checkGridSize(prop: string | undefined) {
   }
 }
 
-export function checkColor(prop: string | undefined) {
+export function checkBackgroundColor(prop: string | undefined) {
   switch (prop) {
     case 'opened':
       return '#9c8f77';
@@ -92,9 +92,18 @@ export function checkColor(prop: string | undefined) {
       return 'red';
     case 'question':
       return 'orange';
-
     default:
       return 'white';
+  }
+}
+
+export function checkFontColor(prop: string | undefined) {
+  switch (prop) {
+    case 'empty':
+      return 'transparent';
+
+    default:
+      return 'black';
   }
 }
 
@@ -157,44 +166,37 @@ export function addOpenedChunk(i: number, shortRange: number[][], longRange: num
 export function getCellsList(
   gameData: GameDataState,
   bombsList: number[],
-  ranges: number[][],
-  width: number,
-  isGameFinished: false | 'win' | 'lose',
-  bombedCells: number[]
+  openedCells: number[],
+  isGameFinished: false | 'win' | 'lose'
 ) {
-  const { right, left, endIndex } = gameData.clicks;
+  const { list } = gameData.clicks.right;
+  const { endIndex } = gameData.clicks;
+  const { initData } = gameData;
 
-  const rangesWithBorders = ranges.map((item) => getRangeWithBorder(item, bombsList, width));
-  const openedCells = clearOfDuplicates(
-    left.list.map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders)).flat()
-  );
-
-  const cells = gameData.initData.map((elem, index) => {
+  const cells = initData.map((elem, index) => {
+    const isBombed = Boolean(elem);
     const cell = {
-      isBombed: Boolean(elem),
+      isBombed,
       nearbyBombs: bombsList[index],
       isOpen: (() => {
-        if (isGameFinished) {
-          if (endIndex === index) {
-            return 'left';
+        if (isGameFinished && isBombed) {
+          if (index === endIndex) {
+            return 'opened-bombed-chosen';
           }
-          if (bombedCells.includes(index) && right.list.includes(index)) {
-            return 'opened-right';
+          if (list.includes(index)) {
+            return 'opened-bombed-questioned';
           }
-          if (bombedCells.includes(index)) {
-            return 'opened';
-          }
+          return 'opened-bombed-all';
         }
 
         if (openedCells.includes(index)) {
-          return 'left';
+          return 'opened-free';
         }
-        if (right.list.includes(index)) {
-          return 'right';
+        if (list.includes(index)) {
+          return 'questioned';
         }
         return 'false';
       })(),
-      range: addOpenedChunk(index, ranges, rangesWithBorders),
     };
 
     return cell;
@@ -259,7 +261,6 @@ export function saveRecord(
     isBombed: boolean;
     nearbyBombs: number;
     isOpen: string;
-    range: number[];
   }[],
   dispatch: Dispatch<AnyAction>
 ) {

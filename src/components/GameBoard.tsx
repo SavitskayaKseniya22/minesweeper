@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Field from './Field';
@@ -17,8 +17,6 @@ import { resetGameData } from '../store/GameDataSlice';
 import { resetStopwatch } from '../store/StopwatchSlice';
 
 function GameBoard() {
-  const [resetValue, setResetValue] = useState<number>(1);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
@@ -27,7 +25,7 @@ function GameBoard() {
   return (
     <main>
       <StyledContainerCentred>
-        <Field resetValue={resetValue} />
+        <Field />
         <aside>
           <BombsCounter />
           <MovesCounter />
@@ -51,7 +49,6 @@ function GameBoard() {
                 dispatch(resetGameCycle());
                 dispatch(resetGameData());
                 dispatch(resetStopwatch());
-                setResetValue(Math.random());
               }}
             >
               start new game

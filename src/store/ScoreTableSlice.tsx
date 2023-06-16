@@ -9,7 +9,6 @@ export interface ScoreItemState {
     isBombed: boolean;
     nearbyBombs: number;
     isOpen: string;
-    range: number[];
   }[];
 }
 

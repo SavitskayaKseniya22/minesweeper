@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Cell from './Cell';
 import {
+  addOpenedChunk,
   clearOfDuplicates,
   getCellsContentList,
   getCellsList,
@@ -12,7 +13,7 @@ import {
   sortDataToMakeCells,
 } from '../utils/utils';
 
-import getConnectedRanges from '../utils/funcsToOpenNearbyEmptyCells';
+import getConnectedRanges, { getRangeWithBorder } from '../utils/funcsToOpenNearbyEmptyCells';
 import { StyledField } from './styledComponents';
 import { RootState } from '../store/persistStore';
 import {
@@ -31,7 +32,7 @@ import {
   updateRightClicks,
 } from '../store/GameDataSlice';
 
-function Field({ resetValue }: { resetValue: number }) {
+function Field() {
   const stopwatch = useSelector((state: RootState) => state.stopwatch);
   const userName = useSelector((state: RootState) => state.user.name);
   const dispatch = useDispatch();
@@ -64,7 +65,7 @@ function Field({ resetValue }: { resetValue: number }) {
     () => sortDataToMakeCells(dataToMakeCells),
     [dataToMakeCells]
   );
-  const { freeCells, bombedCells } = sortedDataToMakeCells;
+  const { freeCells } = sortedDataToMakeCells;
 
   const bombsList = useMemo(
     () =>
@@ -79,27 +80,32 @@ function Field({ resetValue }: { resetValue: number }) {
 
   const ranges = useMemo(() => getConnectedRanges(bombsList, width), [bombsList, width]);
 
-  const rawCellsList = useMemo(
-    () => getCellsList(gameData, bombsList, ranges, width, isGameFinished, bombedCells),
-    [bombsList, ranges, gameData, width, isGameFinished, bombedCells]
+  const rangesWithBorders = useMemo(
+    () => ranges.map((item) => getRangeWithBorder(item, bombsList, width)),
+    [bombsList, ranges, width]
   );
 
   const openedCells = useMemo(
     () =>
       clearOfDuplicates(
         left.list
-          .map((elem) => rawCellsList[elem].range)
+          .map((elem) => addOpenedChunk(elem, ranges, rangesWithBorders))
           .flat()
           .sort((a, b) => a - b)
       ),
-    [left.list, rawCellsList]
+    [left.list, ranges, rangesWithBorders]
+  );
+
+  const rawCellsList = useMemo(
+    () => getCellsList(gameData, bombsList, openedCells, isGameFinished),
+    [bombsList, gameData, isGameFinished, openedCells]
   );
 
   const cellsList = useMemo(
     () =>
       rawCellsList.map((item, index) => (
         <Cell
-          key={index.toString() + resetValue}
+          key={index.toString() + item.nearbyBombs}
           handleStartAndFinishGame={() => {
             if (!isGameStarted) {
               dispatch(setStartIndex(index));
@@ -127,18 +133,15 @@ function Field({ resetValue }: { resetValue: number }) {
           cellSettings={item}
         />
       )),
-    [bombNumber, dispatch, isGameStarted, rawCellsList, resetValue, right.list.length]
+    [bombNumber, dispatch, isGameStarted, rawCellsList, right.list.length]
   );
 
   useEffect(() => {
-    if (!isGameFinished) {
-      const data = right.list.concat(openedCells);
-      const dataWithoutDup = clearOfDuplicates(data);
-      if (data.length !== dataWithoutDup.length) {
-        dispatch(filterRightClicks(openedCells));
-      }
+    const filterdRightClicks = right.list.filter((elem) => openedCells.includes(elem));
+    if (filterdRightClicks.length) {
+      dispatch(filterRightClicks(filterdRightClicks));
     }
-  }, [dispatch, isGameFinished, openedCells, right.list]);
+  }, [dispatch, openedCells, right.list]);
 
   useEffect(() => {
     if (

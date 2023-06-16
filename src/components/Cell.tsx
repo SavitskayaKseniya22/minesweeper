@@ -38,13 +38,21 @@ function Cell({
   );
 
   switch (cellSettings.isOpen) {
-    case 'opened':
+    case 'opened-bombed-all':
       return (
         <StyledCell aria-details="opened">
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       );
-    case 'opened-right':
+
+    case 'opened-bombed-chosen':
+      return (
+        <StyledCell aria-details="bomb">
+          <FontAwesomeIcon icon={faBomb} />
+        </StyledCell>
+      );
+
+    case 'opened-bombed-questioned':
       return (
         <StyledCell aria-details="opened">
           <FontAwesomeIcon icon={faQuestion} />
@@ -52,18 +60,14 @@ function Cell({
         </StyledCell>
       );
 
-    case 'left':
-      return cellSettings.isBombed ? (
-        <StyledCell aria-details="bomb">
-          <FontAwesomeIcon icon={faBomb} />
-        </StyledCell>
-      ) : (
+    case 'opened-free':
+      return (
         <StyledCell aria-details={cellSettings.nearbyBombs > 0 ? 'opened' : 'empty'}>
-          {cellSettings.nearbyBombs > 0 ? cellSettings.nearbyBombs : ''}
+          {cellSettings.nearbyBombs}
         </StyledCell>
       );
 
-    case 'right':
+    case 'questioned':
       return (
         <StyledCell
           aria-details="question"

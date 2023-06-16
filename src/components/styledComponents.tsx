@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Form } from 'react-router-dom';
-import { checkColor, checkGridSize, checkSize } from '../utils/utils';
+import { checkBackgroundColor, checkFontColor, checkGridSize, checkSize } from '../utils/utils';
 
 export const StyledField = styled.ul`
   width: ${(props) => checkSize(props['aria-details'])};
@@ -19,12 +19,12 @@ export const StyledField = styled.ul`
 `;
 
 export const StyledCell = styled('li')`
-  color: black;
+  color: ${(props) => checkFontColor(props['aria-details'])};
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: ${(props) => checkColor(props['aria-details'])};
+  background-color: ${(props) => checkBackgroundColor(props['aria-details'])};
   font-family: 'Overseer', sans-serif;
   position: relative;
   .additionIcon {
