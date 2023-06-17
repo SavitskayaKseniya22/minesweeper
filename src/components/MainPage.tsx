@@ -19,6 +19,7 @@ import { resetGameData } from '../store/GameDataSlice';
 import { resetGameCycle } from '../store/GameCycleSlice';
 import { resetStopwatch } from '../store/StopwatchSlice';
 import { updateName } from '../store/UserSlice';
+import { FormErrorMessagesList } from './FormErrorMessage';
 
 function MainPage() {
   const dispatch = useDispatch();
@@ -27,9 +28,16 @@ function MainPage() {
   const name = useSelector((state: RootState) => state.user.name);
   const { formValues } = initFormValues;
 
-  const { register, control, handleSubmit, setValue } = useForm({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+
+    formState: { errors },
+  } = useForm({
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
     defaultValues: {
       difficulty: formValues.difficulty,
       bombNumber: formValues.bombNumber,
@@ -104,20 +112,50 @@ function MainPage() {
               <option value="hard">hard</option>
             </select>
           </StyledContainer>
-
           <StyledContainer>
             <h3>Enter number of bombs</h3>
             <input
-              type="number"
-              {...register('bombNumber', { required: true, max: range.max, min: range.min })}
+              type="text"
+              {...register('bombNumber', {
+                required: {
+                  value: true,
+                  message: `Please enter a value between ${range.min} and  ${range.max}.`,
+                },
+                pattern: {
+                  value: /[0-9]+/,
+                  message: 'The value is not a number.',
+                },
+                max: {
+                  value: range.max,
+                  message: `The value of bombs is too high. Enter a value between ${range.min} and  ${range.max}.`,
+                },
+                min: {
+                  value: range.min,
+                  message: `The value of bombs is too low. Enter a value between ${range.min} and  ${range.max}.`,
+                },
+              })}
               placeholder={`${String(range.min)} - ${String(range.max)}`}
             />
           </StyledContainer>
+
           <StyledContainer>
             <h3>Enter a name</h3>
-            <input type="text" {...register('name', { required: true })} placeholder="Anonymous" />
-          </StyledContainer>
+            <input
+              type="text"
+              {...register('name', {
+                required: {
+                  value: true,
+                  message: `Please enter a name.`,
+                },
 
+                minLength: {
+                  value: 4,
+                  message: `The name is too short. Please enter a name that is longer than three characters.`,
+                },
+              })}
+              placeholder="Anonymous"
+            />
+          </StyledContainer>
           <StyledButtonWide type="submit">Start</StyledButtonWide>
           {isGameStarted && (
             <StyledButtonWide
@@ -131,6 +169,7 @@ function MainPage() {
           )}
         </StyledForm>
       </StyledContainerCentred>
+      <FormErrorMessagesList errors={errors} names={['name', 'bombNumber']} />
     </main>
   );
 }

@@ -53,7 +53,7 @@ export const BasicStyledContainer = css`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   position: relative;
   &:before,
   &:after {
