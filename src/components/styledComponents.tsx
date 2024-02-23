@@ -35,18 +35,6 @@ export const StyledCell = styled('li')`
   }
 `;
 
-export const StyledHeader = styled('header')`
-  background: rgba(0, 0, 0, 0.5);
-  text-align: center;
-  padding: 1rem;
-`;
-
-export const StyledFooter = styled('footer')`
-  background: rgba(0, 0, 0, 0.5);
-  text-align: center;
-  padding: 1rem;
-`;
-
 export const BasicStyledContainer = css`
   background-color: rgba(0, 47, 0, 0.8);
   padding: 0.5rem;

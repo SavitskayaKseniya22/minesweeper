@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { StyledCell } from './styledComponents';
+import { StyledCell } from '../../../components/styledComponents';
 
 function Cell({
   cellSettings,

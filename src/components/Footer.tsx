@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyledFooter } from './styledComponents';
+import styled from 'styled-components';
+
+export const StyledFooter = styled('footer')`
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  padding: 1rem;
+`;
 
 function Footer() {
   return (

@@ -113,6 +113,7 @@ export function shuffle(array: number[]) {
     const j = Math.floor(Math.random() * (i + 1));
     [arrayToChange[i], arrayToChange[j]] = [arrayToChange[j], arrayToChange[i]];
   }
+
   return arrayToChange;
 }
 

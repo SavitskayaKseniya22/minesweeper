@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { ErrorMessage } from '@hookform/error-message';
 import { FieldErrors } from 'react-hook-form';
-import negative from '../assets/images/FO3NegativeKarmaPoints.webp';
-import { BasicStyledContainer } from './styledComponents';
+import negative from '../../assets/images/FO3NegativeKarmaPoints.webp';
+import { BasicStyledContainer } from '../../components/styledComponents';
 
 export const StyledErrorMessage = styled('li')`
   ${BasicStyledContainer}

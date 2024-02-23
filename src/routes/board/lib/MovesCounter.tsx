@@ -3,8 +3,8 @@ import { faComputerMouse, faL, faR } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useSelector } from 'react-redux';
-import { StyledAsideItem } from './styledComponents';
-import { RootState } from '../store/persistStore';
+import { StyledAsideItem } from '../../../components/styledComponents';
+import { RootState } from '../../../store/store';
 
 function MovesCounter() {
   const gameDataValues = useSelector((state: RootState) => state.gameData).clicks;

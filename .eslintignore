@@ -3,5 +3,7 @@ node_modules
 build
 coverage
 
+fonts.d.ts
+
 
 .eslintrc.js

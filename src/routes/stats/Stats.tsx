@@ -8,8 +8,8 @@ import {
   StyledList,
   StyledListItem,
   StyledTransparentButton,
-} from './styledComponents';
-import { RootState } from '../store/persistStore';
+} from '../../components/styledComponents';
+import { RootState } from '../../store/store';
 
 function Stats() {
   const scoreTable = useSelector((state: RootState) => state.scoreTable);

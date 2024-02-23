@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import logo from '../assets/images/main-background2.jpg';
+import background from '../assets/images/main-background2.jpg';
 import overseer from '../assets/fonts/Overseer/OverseerItalic.otf';
 
 export const FontStyles = createGlobalStyle`
@@ -12,6 +12,7 @@ export const FontStyles = createGlobalStyle`
 `;
 
 export const GlobalStyle = createGlobalStyle`
+
   
   * {
     box-sizing: border-box;
@@ -26,7 +27,7 @@ export const GlobalStyle = createGlobalStyle`
     background-size:100%;
     background-position: center;
     background-repeat:no-repeat;
-    background-image:url(${logo});
+    background-image:url(${background});
     color:white;
     font-family: 'Roboto Condensed', sans-serif;
     
@@ -37,7 +38,7 @@ export const GlobalStyle = createGlobalStyle`
     justify-content:center;
     align-items:center;
     position:relative;
-    
+    flex-grow:1;
     
   }
 
@@ -71,10 +72,6 @@ export const GlobalStyle = createGlobalStyle`
     margin:0;
     padding:0;
     
-  }
-
-  main{
-    flex-grow:1;
   }
 
   

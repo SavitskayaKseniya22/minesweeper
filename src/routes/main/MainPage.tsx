@@ -12,13 +12,13 @@ import {
   StyledContainerCentred,
   StyledForm,
   StyledTransparentButton,
-} from './styledComponents';
-import { updateFieldParameters, updateFormValues } from '../store/GameSettingsSlice';
-import { RootState } from '../store/persistStore';
-import { resetGameData } from '../store/GameDataSlice';
-import { resetGameCycle } from '../store/GameCycleSlice';
-import { resetStopwatch } from '../store/StopwatchSlice';
-import { updateName } from '../store/UserSlice';
+} from '../../components/styledComponents';
+import { updateFieldParameters, updateFormValues } from '../../store/GameSettingsSlice';
+import { RootState } from '../../store/store';
+import { resetGameData } from '../../store/GameDataSlice';
+import { resetGameCycle } from '../../store/GameCycleSlice';
+import { resetStopwatch } from '../../store/StopwatchSlice';
+import { updateName } from '../../store/UserSlice';
 import { FormErrorMessagesList } from './FormErrorMessage';
 
 function MainPage() {

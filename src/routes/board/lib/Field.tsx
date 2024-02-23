@@ -11,16 +11,16 @@ import {
   isItRecord,
   saveRecord,
   sortDataToMakeCells,
-} from '../utils/utils';
+} from '../../../utils/utils';
 
-import getConnectedRanges, { getRangeWithBorder } from '../utils/funcsToOpenNearbyEmptyCells';
-import { StyledField } from './styledComponents';
-import { RootState } from '../store/persistStore';
+import getConnectedRanges, { getRangeWithBorder } from '../../../utils/funcsToOpenNearbyEmptyCells';
+import { StyledField } from '../../../components/styledComponents';
+import { RootState } from '../../../store/store';
 import {
   updateFinishGameStatus,
   updateIsItRecord,
   updateStartGameStatus,
-} from '../store/GameCycleSlice';
+} from '../../../store/GameCycleSlice';
 import {
   filterRightClicks,
   increaseLeftCounter,
@@ -30,7 +30,7 @@ import {
   updateInitData,
   updateLeftClicks,
   updateRightClicks,
-} from '../store/GameDataSlice';
+} from '../../../store/GameDataSlice';
 
 function Field() {
   const stopwatch = useSelector((state: RootState) => state.stopwatch);

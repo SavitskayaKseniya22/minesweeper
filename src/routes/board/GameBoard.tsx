@@ -2,19 +2,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Field from './Field';
-import BombsCounter from './BombsCounter';
-import MovesCounter from './MovesCounter';
-import Timer from './Stopwatch';
+import Field from './lib/Field';
+import BombsCounter from './lib/BombsCounter';
+import MovesCounter from './lib/MovesCounter';
+import Stopwatch from './lib/Stopwatch';
 import {
   StyledAsideItemExtended,
   StyledButtonWide,
   StyledContainerCentred,
-} from './styledComponents';
-import { RootState } from '../store/persistStore';
-import { resetGameCycle, updateFinishGameStatus } from '../store/GameCycleSlice';
-import { resetGameData } from '../store/GameDataSlice';
-import { resetStopwatch } from '../store/StopwatchSlice';
+} from '../../components/styledComponents';
+import { RootState } from '../../store/store';
+import { resetGameCycle, updateFinishGameStatus } from '../../store/GameCycleSlice';
+import { resetGameData } from '../../store/GameDataSlice';
+import { resetStopwatch } from '../../store/StopwatchSlice';
 
 function GameBoard() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ function GameBoard() {
         <aside>
           <BombsCounter />
           <MovesCounter />
-          <Timer />
+          <Stopwatch />
 
           <StyledAsideItemExtended className="gameInfo">
             {isGameFinished === 'lose' && <span>Game over!</span>}
