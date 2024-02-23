@@ -4,6 +4,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { FieldErrors } from 'react-hook-form';
 import negative from '../../assets/images/FO3NegativeKarmaPoints.webp';
 import { BasicStyledContainer } from '../../components/styledComponents';
+import { MainFormFieldType } from '../../utils/interfaces';
 
 export const StyledErrorMessage = styled('li')`
   ${BasicStyledContainer}
@@ -22,7 +23,7 @@ export function FormErrorMessageContainer({
     bombNumber: number;
     name: string;
   }>;
-  name: 'name' | 'bombNumber' | 'difficulty';
+  name: MainFormFieldType;
 }) {
   return (
     <StyledErrorMessage>
@@ -54,7 +55,7 @@ export function FormErrorMessagesList({
     name: string;
   }>;
 
-  names: ('name' | 'difficulty' | 'bombNumber')[];
+  names: MainFormFieldType[];
 }) {
   return (
     <StyledErrorMessagesList>

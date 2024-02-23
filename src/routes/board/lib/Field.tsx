@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import styled from 'styled-components';
 import Cell from './Cell';
 import {
   addOpenedChunk,
+  checkGridSize,
+  checkSize,
   clearOfDuplicates,
   getCellsContentList,
   getCellsList,
@@ -14,7 +17,6 @@ import {
 } from '../../../utils/utils';
 
 import getConnectedRanges, { getRangeWithBorder } from '../../../utils/funcsToOpenNearbyEmptyCells';
-import { StyledField } from '../../../components/styledComponents';
 import { RootState } from '../../../store/store';
 import {
   updateFinishGameStatus,
@@ -31,6 +33,21 @@ import {
   updateLeftClicks,
   updateRightClicks,
 } from '../../../store/GameDataSlice';
+import { ClickType, DifficultyType, FinishedGameStatusType } from '../../../utils/interfaces';
+
+export const StyledField = styled.ul<{
+  'data-difficulty': DifficultyType;
+  'data-disabled': boolean;
+}>`
+  width: ${(props) => checkSize(props['data-difficulty'])};
+  height: ${(props) => checkSize(props['data-difficulty'])};
+  display: grid;
+  grid-template-columns: ${(props) => checkGridSize(props['data-difficulty'])};
+  grid-template-rows: ${(props) => checkGridSize(props['data-difficulty'])};
+  grid-column-gap: 1px;
+  grid-row-gap: 1px;
+  pointer-events: ${(props) => (props['data-disabled'] ? 'none' : 'auto')};
+`;
 
 function Field() {
   const stopwatch = useSelector((state: RootState) => state.stopwatch);
@@ -113,19 +130,19 @@ function Field() {
             }
             if (isGameStarted && item.isBombed) {
               dispatch(setEndIndex(index));
-              dispatch(updateFinishGameStatus('lose'));
+              dispatch(updateFinishGameStatus(FinishedGameStatusType.LOSE));
             }
           }}
-          handlePressedIndex={(button: 'left' | 'rightAdd' | 'rightDel') => {
-            if (button === 'left') {
+          handlePressedIndex={(button: ClickType) => {
+            if (button === ClickType.LEFT) {
               dispatch(updateLeftClicks([index]));
               dispatch(increaseLeftCounter());
-            } else if (button === 'rightAdd') {
+            } else if (button === ClickType.RIGHTADD) {
               if (right.list.length < Number(bombNumber)) {
                 dispatch(updateRightClicks([index]));
                 dispatch(increaseRightCounter());
               }
-            } else if (button === 'rightDel') {
+            } else if (button === ClickType.RIGHTDEL) {
               dispatch(filterRightClicks([index]));
               dispatch(increaseRightCounter());
             }
@@ -149,7 +166,7 @@ function Field() {
       isGameStarted &&
       !isGameFinished
     ) {
-      dispatch(updateFinishGameStatus('win'));
+      dispatch(updateFinishGameStatus(FinishedGameStatusType.WIN));
       const record = isItRecord(stopwatch.value, difficulty, scoreTable);
 
       if (record) {
@@ -171,7 +188,7 @@ function Field() {
   ]);
 
   return (
-    <StyledField aria-busy={Boolean(isGameFinished)} aria-details={difficulty}>
+    <StyledField data-disabled={Boolean(isGameFinished)} data-difficulty={difficulty}>
       {cellsList}
     </StyledField>
   );

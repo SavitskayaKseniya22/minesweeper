@@ -1,39 +1,4 @@
 import styled, { css } from 'styled-components';
-import { Form } from 'react-router-dom';
-import { checkBackgroundColor, checkFontColor, checkGridSize, checkSize } from '../utils/utils';
-
-export const StyledField = styled.ul`
-  width: ${(props) => checkSize(props['aria-details'])};
-  height: ${(props) => checkSize(props['aria-details'])};
-  display: grid;
-  grid-template-columns: ${(props) => checkGridSize(props['aria-details'])};
-  grid-template-rows: ${(props) => checkGridSize(props['aria-details'])};
-  grid-column-gap: 1px;
-  grid-row-gap: 1px;
-  pointer-events: ${(props) => {
-    if (props['aria-busy']) {
-      return 'none';
-    }
-    return 'auto';
-  }};
-`;
-
-export const StyledCell = styled('li')`
-  color: ${(props) => checkFontColor(props['aria-details'])};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  background-color: ${(props) => checkBackgroundColor(props['aria-details'])};
-  font-family: 'Overseer', sans-serif;
-  position: relative;
-  .additionIcon {
-    position: absolute;
-    font-size: 0.6rem;
-    bottom: 0.2rem;
-    right: 0.2rem;
-  }
-`;
 
 export const BasicStyledContainer = css`
   background-color: rgba(0, 47, 0, 0.8);
@@ -101,35 +66,6 @@ export const StyledListItem = styled('li')`
   li {
     list-style-type: decimal;
     list-style: unset;
-  }
-`;
-
-export const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-  width: 300px;
-
-  input,
-  select {
-    width: 100%;
-    padding: 0.5rem;
-    background-color: rgba(0, 47, 0, 0);
-    color: #00ee00;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-    outline: none;
-  }
-
-  input {
-    appearance: textfield;
-  }
-
-  select {
-    appearance: none;
-    &:focus {
-    }
   }
 `;
 

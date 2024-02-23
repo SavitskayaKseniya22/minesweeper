@@ -1,7 +1,27 @@
 import React, { useCallback } from 'react';
 import { faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { StyledCell } from '../../../components/styledComponents';
+import styled from 'styled-components';
+import { CellBombStatusType, CellType, ClickType } from '../../../utils/interfaces';
+import { checkFontColor, checkBackgroundColor } from '../../../utils/utils';
+
+export const StyledCell = styled('li')<{ 'data-status'?: CellBombStatusType }>`
+  color: ${(props) => checkFontColor(props['data-status'])};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: ${(props) => checkBackgroundColor(props['data-status'])};
+  font-family: 'Overseer', sans-serif;
+  position: relative;
+
+  .cell__icon_additioned {
+    position: absolute;
+    font-size: 0.6rem;
+    bottom: 0.2rem;
+    right: 0.2rem;
+  }
+`;
 
 function Cell({
   cellSettings,
@@ -11,20 +31,20 @@ function Cell({
   cellSettings: {
     isBombed: boolean;
     nearbyBombs: number;
-    isOpen: string;
+    isOpen: CellType;
   };
   handleStartAndFinishGame: () => void;
-  handlePressedIndex: (button: 'left' | 'rightAdd' | 'rightDel') => void;
+  handlePressedIndex: (button: ClickType) => void;
 }) {
   const handleLeftClick = useCallback(() => {
     handleStartAndFinishGame();
-    handlePressedIndex('left');
+    handlePressedIndex(ClickType.LEFT);
   }, [handlePressedIndex, handleStartAndFinishGame]);
 
   const handleRightClickToHold = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       e.preventDefault();
-      handlePressedIndex('rightAdd');
+      handlePressedIndex(ClickType.RIGHTADD);
     },
     [handlePressedIndex]
   );
@@ -32,45 +52,49 @@ function Cell({
   const handleRightClickToRelease = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       e.preventDefault();
-      handlePressedIndex('rightDel');
+      handlePressedIndex(ClickType.RIGHTDEL);
     },
     [handlePressedIndex]
   );
 
   switch (cellSettings.isOpen) {
-    case 'opened-bombed-all':
+    case CellType['opened-bombed-all']:
       return (
-        <StyledCell aria-details="opened">
+        <StyledCell data-status={CellBombStatusType.OPENED}>
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       );
 
-    case 'opened-bombed-chosen':
+    case CellType['opened-bombed-chosen']:
       return (
-        <StyledCell aria-details="bomb">
+        <StyledCell data-status={CellBombStatusType.BOMBED}>
           <FontAwesomeIcon icon={faBomb} />
         </StyledCell>
       );
 
-    case 'opened-bombed-questioned':
+    case CellType['opened-bombed-questioned']:
       return (
-        <StyledCell aria-details="opened">
+        <StyledCell data-status={CellBombStatusType.OPENED}>
           <FontAwesomeIcon icon={faQuestion} />
-          <FontAwesomeIcon icon={faBomb} className="additionIcon" />
+          <FontAwesomeIcon icon={faBomb} className="cell__icon_additioned" />
         </StyledCell>
       );
 
-    case 'opened-free':
+    case CellType['opened-free']:
       return (
-        <StyledCell aria-details={cellSettings.nearbyBombs > 0 ? 'opened' : 'empty'}>
+        <StyledCell
+          data-status={
+            cellSettings.nearbyBombs > 0 ? CellBombStatusType.OPENED : CellBombStatusType.EMPTY
+          }
+        >
           {cellSettings.nearbyBombs}
         </StyledCell>
       );
 
-    case 'questioned':
+    case CellType.questioned:
       return (
         <StyledCell
-          aria-details="question"
+          data-status={CellBombStatusType.QUESTIONED}
           onClick={handleLeftClick}
           onContextMenu={handleRightClickToRelease}
         >
@@ -78,7 +102,13 @@ function Cell({
         </StyledCell>
       );
     default:
-      return <StyledCell onClick={handleLeftClick} onContextMenu={handleRightClickToHold} />;
+      return (
+        <StyledCell
+          data-status={CellBombStatusType.DEFAULT}
+          onClick={handleLeftClick}
+          onContextMenu={handleRightClickToHold}
+        />
+      );
   }
 }
 

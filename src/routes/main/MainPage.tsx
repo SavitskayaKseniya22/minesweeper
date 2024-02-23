@@ -2,15 +2,14 @@
 import React, { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { useNavigate } from 'react-router-dom';
+import { Form, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
 import {
   StyledButtonWide,
   StyledContainer,
   StyledContainerCentred,
-  StyledForm,
   StyledTransparentButton,
 } from '../../components/styledComponents';
 import { updateFieldParameters, updateFormValues } from '../../store/GameSettingsSlice';
@@ -20,6 +19,36 @@ import { resetGameCycle } from '../../store/GameCycleSlice';
 import { resetStopwatch } from '../../store/StopwatchSlice';
 import { updateName } from '../../store/UserSlice';
 import { FormErrorMessagesList } from './FormErrorMessage';
+import { MainFormFieldType } from '../../utils/interfaces';
+
+export const StyledForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  width: 300px;
+
+  input,
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: rgba(0, 47, 0, 0);
+    color: #00ee00;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+
+  input {
+    appearance: textfield;
+  }
+
+  select {
+    appearance: none;
+    &:focus {
+    }
+  }
+`;
 
 function MainPage() {
   const dispatch = useDispatch();
@@ -51,21 +80,21 @@ function MainPage() {
 
   const difficulty = useWatch({
     control,
-    name: 'difficulty',
+    name: MainFormFieldType.DIFFICULTY,
   });
 
   const bombNumber = useWatch({
     control,
-    name: 'bombNumber',
+    name: MainFormFieldType.BOMBNUMBER,
   });
 
   const userName = useWatch({
     control,
-    name: 'name',
+    name: MainFormFieldType.NAME,
   });
 
   useEffect(() => {
-    setValue('bombNumber', bombNumberDefault);
+    setValue(MainFormFieldType.BOMBNUMBER, bombNumberDefault);
   }, [bombNumberDefault, dispatch, setValue]);
 
   useEffect(() => {
@@ -106,7 +135,7 @@ function MainPage() {
         >
           <StyledContainer>
             <h3>Choose game difficulty</h3>
-            <select {...register('difficulty')}>
+            <select {...register(MainFormFieldType.DIFFICULTY)}>
               <option value="easy">easy</option>
               <option value="medium">medium</option>
               <option value="hard">hard</option>
@@ -116,7 +145,7 @@ function MainPage() {
             <h3>Enter number of bombs</h3>
             <input
               type="text"
-              {...register('bombNumber', {
+              {...register(MainFormFieldType.BOMBNUMBER, {
                 required: {
                   value: true,
                   message: `Please enter a value between ${range.min} and  ${range.max}.`,
@@ -142,7 +171,7 @@ function MainPage() {
             <h3>Enter a name</h3>
             <input
               type="text"
-              {...register('name', {
+              {...register(MainFormFieldType.NAME, {
                 required: {
                   value: true,
                   message: `Please enter a name.`,
@@ -169,7 +198,10 @@ function MainPage() {
           )}
         </StyledForm>
       </StyledContainerCentred>
-      <FormErrorMessagesList errors={errors} names={['name', 'bombNumber']} />
+      <FormErrorMessagesList
+        errors={errors}
+        names={[MainFormFieldType.NAME, MainFormFieldType.BOMBNUMBER]}
+      />
     </main>
   );
 }

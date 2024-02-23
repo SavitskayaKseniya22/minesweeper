@@ -15,6 +15,7 @@ import { RootState } from '../../store/store';
 import { resetGameCycle, updateFinishGameStatus } from '../../store/GameCycleSlice';
 import { resetGameData } from '../../store/GameDataSlice';
 import { resetStopwatch } from '../../store/StopwatchSlice';
+import { FinishedGameStatusType } from '../../utils/interfaces';
 
 function GameBoard() {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ function GameBoard() {
           <Stopwatch />
 
           <StyledAsideItemExtended className="gameInfo">
-            {isGameFinished === 'lose' && <span>Game over!</span>}
-            {isGameFinished === 'win' && <span>Game win!</span>}
+            {isGameFinished === FinishedGameStatusType.LOSE && <span>Game over!</span>}
+            {isGameFinished === FinishedGameStatusType.WIN && <span>Game win!</span>}
             <br />
             {isItRecord && (
               <span>
@@ -58,7 +59,7 @@ function GameBoard() {
             <StyledButtonWide
               type="button"
               onClick={() => {
-                dispatch(updateFinishGameStatus('lose'));
+                dispatch(updateFinishGameStatus(FinishedGameStatusType.LOSE));
               }}
             >
               finish game

@@ -9,25 +9,21 @@ import {
   updateThirdResult,
 } from '../store/ScoreTableSlice';
 import { getBorderIndexes } from './funcsToOpenNearbyEmptyCells';
-import { GameDataState } from './interfaces';
+import {
+  CellBombStatusType,
+  CellType,
+  DifficultyType,
+  FinishedGameStatusType,
+  GameDataState,
+} from './interfaces';
 
 export function clearOfDuplicates(array: number[]) {
   return Array.from(new Set(array));
 }
 
-export function getFieldParameters(difficulty: string) {
+export function getFieldParameters(difficulty: DifficultyType) {
   switch (difficulty) {
-    case 'easy':
-      return {
-        cellsNumber: 100,
-        width: 10,
-        bombNumberDefault: 10,
-        range: {
-          min: 10,
-          max: 99,
-        },
-      };
-    case 'medium':
+    case DifficultyType.MEDIUM:
       return {
         cellsNumber: 225,
         width: 15,
@@ -37,7 +33,7 @@ export function getFieldParameters(difficulty: string) {
           max: 224,
         },
       };
-    case 'hard':
+    case DifficultyType.HARD:
       return {
         cellsNumber: 625,
         width: 25,
@@ -60,46 +56,46 @@ export function getFieldParameters(difficulty: string) {
   }
 }
 
-export function checkSize(prop: string | undefined) {
+export function checkSize(prop: DifficultyType) {
   switch (prop) {
-    case 'medium':
+    case DifficultyType.MEDIUM:
       return '32rem';
-    case 'hard':
+    case DifficultyType.HARD:
       return '44rem';
     default:
       return '22rem';
   }
 }
 
-export function checkGridSize(prop: string | undefined) {
+export function checkGridSize(prop: DifficultyType) {
   switch (prop) {
-    case 'medium':
+    case DifficultyType.MEDIUM:
       return 'repeat(15, 1fr)';
-    case 'hard':
+    case DifficultyType.HARD:
       return 'repeat(25, 1fr)';
     default:
       return 'repeat(10, 1fr)';
   }
 }
 
-export function checkBackgroundColor(prop: string | undefined) {
+export function checkBackgroundColor(prop: CellBombStatusType | undefined) {
   switch (prop) {
-    case 'opened':
+    case CellBombStatusType.OPENED:
       return '#9c8f77';
-    case 'empty':
+    case CellBombStatusType.EMPTY:
       return 'rgba(0, 47, 0, 0.8)';
-    case 'bomb':
+    case CellBombStatusType.BOMBED:
       return 'red';
-    case 'question':
+    case CellBombStatusType.QUESTIONED:
       return 'orange';
     default:
       return 'white';
   }
 }
 
-export function checkFontColor(prop: string | undefined) {
+export function checkFontColor(prop: CellBombStatusType | undefined) {
   switch (prop) {
-    case 'empty':
+    case CellBombStatusType.EMPTY:
       return 'transparent';
 
     default:
@@ -168,7 +164,7 @@ export function getCellsList(
   gameData: GameDataState,
   bombsList: number[],
   openedCells: number[],
-  isGameFinished: false | 'win' | 'lose'
+  isGameFinished: false | FinishedGameStatusType
 ) {
   const { list } = gameData.clicks.right;
   const { endIndex } = gameData.clicks;
@@ -176,31 +172,29 @@ export function getCellsList(
 
   const cells = initData.map((elem, index) => {
     const isBombed = Boolean(elem);
-    const cell = {
+    return {
       isBombed,
       nearbyBombs: bombsList[index],
-      isOpen: (() => {
+      isOpen: ((): CellType => {
         if (isGameFinished && isBombed) {
           if (index === endIndex) {
-            return 'opened-bombed-chosen';
+            return CellType['opened-bombed-chosen'];
           }
           if (list.includes(index)) {
-            return 'opened-bombed-questioned';
+            return CellType['opened-bombed-questioned'];
           }
-          return 'opened-bombed-all';
+          return CellType['opened-bombed-all'];
         }
 
         if (openedCells.includes(index)) {
-          return 'opened-free';
+          return CellType['opened-free'];
         }
         if (list.includes(index)) {
-          return 'questioned';
+          return CellType.questioned;
         }
-        return 'false';
+        return CellType.false;
       })(),
     };
-
-    return cell;
   });
   return cells;
 }
@@ -226,8 +220,12 @@ export function sortDataToMakeCells(data: number[]) {
   return sortedData;
 }
 
-export function isItRecord(timeValue: number, difficulty: string, scoreTable: ScoreTableState) {
-  const scoreData = scoreTable[difficulty as keyof ScoreTableState];
+export function isItRecord(
+  timeValue: number,
+  difficulty: DifficultyType,
+  scoreTable: ScoreTableState
+) {
+  const scoreData = scoreTable[difficulty];
 
   if (scoreData.first === undefined || timeValue <= scoreData.first.time) {
     return { place: 1 };
@@ -254,21 +252,21 @@ export function isItRecord(timeValue: number, difficulty: string, scoreTable: Sc
 }
 
 export function saveRecord(
-  userName: string,
+  name: string,
   place: number,
   timeValue: number,
-  difficulty: string,
+  difficulty: DifficultyType,
   cellsList: {
     isBombed: boolean;
     nearbyBombs: number;
-    isOpen: string;
+    isOpen: CellType;
   }[],
   dispatch: Dispatch<AnyAction>
 ) {
   const savedData = {
     difficulty,
     data: {
-      name: userName,
+      name,
       time: timeValue,
       data: cellsList,
       date: new Date().toString(),

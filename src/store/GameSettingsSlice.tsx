@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import { getFieldParameters } from '../utils/utils';
+import { DifficultyType } from '../utils/interfaces';
 
 export interface FormValuesState {
-  difficulty: string;
+  difficulty: DifficultyType;
   bombNumber: number;
 }
 
@@ -24,7 +25,7 @@ export interface GameSettingsState {
 
 const initialState: GameSettingsState = {
   formValues: {
-    difficulty: 'easy',
+    difficulty: DifficultyType.EASY,
     bombNumber: 10,
   },
   fieldParameters: {
@@ -53,7 +54,7 @@ export const gameSettingsSlice = createSlice({
     updateFieldParameters: (
       state,
       action: {
-        payload: string;
+        payload: DifficultyType;
       }
     ) => {
       state.fieldParameters = getFieldParameters(action.payload);

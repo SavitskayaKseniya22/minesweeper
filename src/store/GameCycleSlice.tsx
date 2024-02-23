@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { FinishedGameStatusType } from '../utils/interfaces';
 
 export interface GameCycleState {
   isGameStarted: boolean;
-  isGameFinished: false | 'win' | 'lose';
+  isGameFinished: false | FinishedGameStatusType;
   isItRecord: { place: number } | false;
 }
 
@@ -28,7 +29,7 @@ export const gameCycleSlice = createSlice({
     updateFinishGameStatus: (
       state,
       action: {
-        payload: false | 'win' | 'lose';
+        payload: false | FinishedGameStatusType;
       }
     ) => {
       state.isGameFinished = action.payload;
