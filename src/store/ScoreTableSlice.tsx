@@ -43,39 +43,35 @@ const initialState: ScoreTableState = {
   },
 };
 
-export type ScorePayloadType = { difficulty: DifficultyType; data: ScoreItemState };
-
 export const scoreTableSlice = createSlice({
   name: 'scoreTable',
   initialState,
   reducers: {
-    updateFirstResult: (
+    updateScoreTable: (
       state,
       action: {
-        payload: ScorePayloadType;
+        payload: { difficulty: DifficultyType; data: ScoreItemState; place: number };
       }
     ) => {
-      state[action.payload.difficulty].third = state.easy.second;
-      state[action.payload.difficulty].second = state.easy.first;
-      state[action.payload.difficulty].first = action.payload.data;
-    },
-    updateSecondResult: (
-      state,
-      action: {
-        payload: ScorePayloadType;
+      const { place, data, difficulty } = action.payload;
+      switch (place) {
+        case 1:
+          state[difficulty].third = state.easy.second;
+          state[difficulty].second = state.easy.first;
+          state[difficulty].first = data;
+          break;
+        case 2:
+          state[difficulty].third = state.easy.second;
+          state[difficulty].second = data;
+          break;
+        case 3:
+          state[difficulty].third = data;
+          break;
+        default:
+          break;
       }
-    ) => {
-      state[action.payload.difficulty].third = state.easy.second;
-      state[action.payload.difficulty].second = action.payload.data;
     },
-    updateThirdResult: (
-      state,
-      action: {
-        payload: ScorePayloadType;
-      }
-    ) => {
-      state[action.payload.difficulty].third = action.payload.data;
-    },
+
     resetScoreTable: (state) => {
       state.easy = initialState.easy;
       state.hard = initialState.hard;
@@ -84,6 +80,5 @@ export const scoreTableSlice = createSlice({
   },
 });
 
-export const { resetScoreTable, updateFirstResult, updateSecondResult, updateThirdResult } =
-  scoreTableSlice.actions;
+export const { resetScoreTable, updateScoreTable } = scoreTableSlice.actions;
 export default scoreTableSlice.reducer;

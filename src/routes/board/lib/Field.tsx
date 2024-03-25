@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import styled from 'styled-components';
 import Cell from './Cell';
 import {
@@ -12,10 +11,8 @@ import {
   getCellsList,
   getNearbyBombs,
   isItRecord,
-  saveRecord,
   sortDataToMakeCells,
 } from '../../../utils/utils';
-
 import getConnectedRanges, { getRangeWithBorder } from '../../../utils/funcsToOpenNearbyEmptyCells';
 import { RootState } from '../../../store/store';
 import {
@@ -34,6 +31,7 @@ import {
   updateRightClicks,
 } from '../../../store/GameDataSlice';
 import { ClickType, DifficultyType, FinishedGameStatusType } from '../../../utils/interfaces';
+import { updateScoreTable } from '../../../store/ScoreTableSlice';
 
 export const StyledField = styled.ul<{
   'data-difficulty': DifficultyType;
@@ -51,7 +49,7 @@ export const StyledField = styled.ul<{
 
 function Field() {
   const stopwatch = useSelector((state: RootState) => state.stopwatch);
-  const userName = useSelector((state: RootState) => state.user.name);
+  const name = useSelector((state: RootState) => state.user.name);
   const dispatch = useDispatch();
   const gameCycleValues = useSelector((state: RootState) => state.gameCycle);
   const { isGameStarted, isGameFinished } = gameCycleValues;
@@ -167,10 +165,17 @@ function Field() {
       !isGameFinished
     ) {
       dispatch(updateFinishGameStatus(FinishedGameStatusType.WIN));
-      const record = isItRecord(stopwatch.value, difficulty, scoreTable);
+      const record = isItRecord({ time: stopwatch.value, records: scoreTable[difficulty] });
 
       if (record) {
-        saveRecord(userName, record.place, stopwatch.value, difficulty, rawCellsList, dispatch);
+        dispatch(
+          updateScoreTable({
+            difficulty,
+            place: record.place,
+            data: { name, time: stopwatch.value, data: rawCellsList, date: new Date().toString() },
+          })
+        );
+
         dispatch(updateIsItRecord(record));
       }
     }
@@ -184,7 +189,7 @@ function Field() {
     rawCellsList,
     scoreTable,
     stopwatch.value,
-    userName,
+    name,
   ]);
 
   return (

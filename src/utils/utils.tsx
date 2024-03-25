@@ -1,13 +1,6 @@
 /* eslint-disable no-plusplus */
 
-import { Dispatch } from 'react';
-import { AnyAction } from 'redux';
-import {
-  ScoreTableState,
-  updateFirstResult,
-  updateSecondResult,
-  updateThirdResult,
-} from '../store/ScoreTableSlice';
+import { ScoreLevelState } from '../store/ScoreTableSlice';
 import { getBorderIndexes } from './funcsToOpenNearbyEmptyCells';
 import {
   CellBombStatusType,
@@ -208,11 +201,7 @@ export function sortDataToMakeCells(data: number[]) {
   data.forEach((elem, index) => {
     if (elem !== 1) {
       sortedData.freeCells.push(index);
-    }
-  });
-
-  data.forEach((elem, index) => {
-    if (elem === 1) {
+    } else {
       sortedData.bombedCells.push(index);
     }
   });
@@ -220,65 +209,16 @@ export function sortDataToMakeCells(data: number[]) {
   return sortedData;
 }
 
-export function isItRecord(
-  timeValue: number,
-  difficulty: DifficultyType,
-  scoreTable: ScoreTableState
-) {
-  const scoreData = scoreTable[difficulty];
-
-  if (scoreData.first === undefined || timeValue <= scoreData.first.time) {
+export function isItRecord({ time, records }: { time: number; records: ScoreLevelState }) {
+  const { first, second, third } = records;
+  if (first === undefined || time <= first.time) {
     return { place: 1 };
   }
-  if (
-    scoreData.second === undefined ||
-    (scoreData.first &&
-      scoreData.second &&
-      timeValue > scoreData.first.time &&
-      timeValue <= scoreData.second.time)
-  ) {
+  if (second === undefined || (first && second && time > first.time && time <= second.time)) {
     return { place: 2 };
   }
-  if (
-    scoreData.third === undefined ||
-    (scoreData.third &&
-      scoreData.second &&
-      timeValue > scoreData.second.time &&
-      timeValue <= scoreData.third.time)
-  ) {
+  if (third === undefined || (third && second && time > second.time && time <= third.time)) {
     return { place: 3 };
   }
   return false;
-}
-
-export function saveRecord(
-  name: string,
-  place: number,
-  timeValue: number,
-  difficulty: DifficultyType,
-  cellsList: {
-    isBombed: boolean;
-    nearbyBombs: number;
-    isOpen: CellType;
-  }[],
-  dispatch: Dispatch<AnyAction>
-) {
-  const savedData = {
-    difficulty,
-    data: {
-      name,
-      time: timeValue,
-      data: cellsList,
-      date: new Date().toString(),
-    },
-  };
-  if (place === 1) {
-    dispatch(updateFirstResult(savedData));
-  }
-  if (place === 2) {
-    dispatch(updateSecondResult(savedData));
-  }
-  if (place === 3) {
-    dispatch(updateThirdResult(savedData));
-  }
 }

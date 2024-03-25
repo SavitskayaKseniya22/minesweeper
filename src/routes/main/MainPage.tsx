@@ -45,8 +45,6 @@ export const StyledForm = styled(Form)`
 
   select {
     appearance: none;
-    &:focus {
-    }
   }
 `;
 
@@ -68,8 +66,7 @@ function MainPage() {
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: {
-      difficulty: formValues.difficulty,
-      bombNumber: formValues.bombNumber,
+      ...formValues,
       name,
     },
   });
