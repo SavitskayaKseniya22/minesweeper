@@ -1,0 +1,9 @@
+node_modules
+# Ignore artifacts:
+build
+coverage
+
+fonts.d.ts
+
+
+.eslintrc.js
