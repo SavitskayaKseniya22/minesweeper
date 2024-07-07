@@ -40,7 +40,8 @@
     "prettier": "prettier --write .",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format": "npx prettier . --write"
   },
   "lint-staged": {
     "*.{tsx}": [
